@@ -1,0 +1,19 @@
+.ConfirmEmail {
+  &__content {
+    max-width: 400px;
+    margin: 60px auto !important;
+  }
+
+  &__subcontent {
+    max-width: 400px;
+    margin: 24px auto !important;
+  }
+
+  &__texticon {
+    transform: translateY(6px);
+  }
+}
+
+.NewGame__timer {
+  margin-bottom: 24px;
+}
