@@ -7,3 +7,9 @@ export { default as SignupPage } from './Signup';
 export { default as HistoryPage } from './History';
 export { default as ConfirmEmailPage } from './ConfirmEmail';
 export { default as GameOfTheDayPage } from './GameOfTheDay';
+export { default as MultiPage } from './Multi';
+
+// Multi
+export { default as LobbyPage } from './Multi/Lobby';
+export { default as PlayPage } from './Multi/Play';
+export { default as ResultsPage } from './Multi/Results';

@@ -49,27 +49,27 @@ const columns = [
 
 function History(props) {
   useEffect(() => {
-    if (props.history.all.length === 0) {
-    (async function() {
-      await props.historyActions.getFullHistory();
-    })();
+    if (props.history.all.length === 0 && props.user._id) {
+      (async function () {
+        await props.historyActions.getFullHistory(props.user._id);
+      })();
     }
-  }, [props.history.all, props.historyActions]);
+  }, [props.history.all, props.historyActions, props.user]);
 
   return (
     <div>
       <CssBaseline />
       <Typography variant="h2">Historique des parties</Typography>
       <Box sx={{ height: 735, width: '100%' }}>
-          <DataGrid
-            getRowId={(row) => row._id}
-            rows={props.history.all}
-            columns={columns}
-            pageSize={20}
-            rowsPerPageOptions={[20]}
-            disableSelectionOnClick
-          />
-        </Box>
+        <DataGrid
+          getRowId={(row) => row._id}
+          rows={props.history.all}
+          columns={columns}
+          pageSize={20}
+          rowsPerPageOptions={[20]}
+          disableSelectionOnClick
+        />
+      </Box>
     </div>
   )
 }
@@ -77,6 +77,7 @@ function History(props) {
 function mapStateToProps(state) {
   return {
     history: state.history,
+    user: state.users.me,
   }
 }
 

@@ -1,0 +1,19 @@
+.Chat {
+  &__section {
+    width: '100%';
+    height: '80vh';
+  }
+
+  &__headBG {
+    background-color: '#e0e0e0';
+  }
+
+  &__border {
+    border-right: '1px solid #e0e0e0';
+  }
+
+  &__messageArea {
+    height: '70vh';
+    overflow-y: 'auto';
+  }
+}

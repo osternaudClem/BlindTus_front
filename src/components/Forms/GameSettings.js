@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -23,7 +24,7 @@ function valuetext(value) {
   return `${value} secondes`;
 }
 
-function GameSettings({ onSettingsSaved }) {
+function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode }) {
   const [time, updateTime] = useSlider(30);
   const [movieNumber, updateMovieNumber] = useTextfield(5);
   const [difficulty, updateDifficulty] = useTextfield('easy');
@@ -33,8 +34,8 @@ function GameSettings({ onSettingsSaved }) {
   const handleClickSettings = function (event) {
     event.preventDefault();
 
-    if (code && code !== '') {
-      return navigate(`/new-game?code=${code}`);
+    if (code && code !== '' && redirect) {
+      return navigate(`/${redirect}?code=${code}`);
     }
 
     onSettingsSaved({ time, movieNumber, difficulty });
@@ -44,32 +45,59 @@ function GameSettings({ onSettingsSaved }) {
     updateCode('');
   }
 
+  const onTimeChange = function (event, value) {
+    updateTime(event, value);
+    sendChangeSettings({ updatedTime: value });
+  }
+
+  const onMovieNumberChange = function (event) {
+    updateMovieNumber(event);
+    sendChangeSettings({ updatedMovieNumber: event.target.value });
+  }
+
+  const onDifficultyChange = function (event) {
+    updateDifficulty(event);
+    sendChangeSettings({ updatedDifficulty: event.target.value });
+  }
+
+  const sendChangeSettings = function (settings) {
+    if (onSettingsChange) {
+      onSettingsChange({
+        timeLimit: settings.updatedTime || time,
+        totalMusics: settings.updatedMovieNumber || movieNumber,
+        difficulty: settings.updatedDifficulty || difficulty,
+      });
+    }
+  }
+
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%' }} component="form" onSubmit={handleClickSettings}>
       <Grid container spacing={3}>
+        {!noGameCode &&
+          <Grid item xs={12}>
+            <FormControl>
+              <TextField
+                label="Code de la partie"
+                value={code}
+                onChange={updateCode}
+                InputProps={{
+                  endAdornment:
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="erase text field"
+                        onClick={handleClickResetCode}
+                        edge="end"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </InputAdornment>
+                }}
+              />
+            </FormControl>
+            <Divider textAlign="left" sx={{ marginTop: '24px' }}>Ou Créez votre partie sur mesure</Divider>
+          </Grid>
+        }
         <Grid item xs={12}>
-          <FormControl>
-            <TextField
-              label="Code de la partie"
-              value={code}
-              onChange={updateCode}
-              InputProps={{
-                endAdornment:
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="erase text field"
-                      onClick={handleClickResetCode}
-                      edge="end"
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </InputAdornment>
-              }}
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-        <Divider textAlign="left" sx={{ marginBottom: '24px' }}>Ou Créez votre partie sur mesure</Divider>
           <Typography gutterBottom>
             Durée de chaques manches: {time} secondes
           </Typography>
@@ -82,7 +110,7 @@ function GameSettings({ onSettingsSaved }) {
             marks
             min={5}
             max={180}
-            onChange={updateTime}
+            onChange={onTimeChange}
           />
         </Grid>
         <Grid item xs={12}>
@@ -94,11 +122,11 @@ function GameSettings({ onSettingsSaved }) {
             defaultValue={movieNumber}
             InputProps={{
               inputProps: {
-                min: 3,
+                min: 2,
                 max: 20,
               }
             }}
-            onChange={updateMovieNumber}
+            onChange={onMovieNumberChange}
           />
         </Grid>
         <Grid item xs={12}>
@@ -112,7 +140,7 @@ function GameSettings({ onSettingsSaved }) {
               name="row-radio-buttons-group"
               defaultValue={difficulty}
               value={difficulty}
-              onChange={updateDifficulty}
+              onChange={onDifficultyChange}
             >
               <FormControlLabel value="easy" control={<Radio />} label="Facile" />
               <FormControlLabel value="difficult" control={<Radio />} label="Difficile" />
@@ -127,5 +155,18 @@ function GameSettings({ onSettingsSaved }) {
     </Box>
   )
 }
+
+GameSettings.propTypes = {
+  noGameCode: PropTypes.bool,
+  onSettingsSaved: PropTypes.func.isRequired,
+  onSettingsChange: PropTypes.func,
+  redirect: PropTypes.string,
+};
+
+GameSettings.defaultProps = {
+  noGameCode: false,
+  onSettingsChange: null,
+  redirect: null,
+};
 
 export default GameSettings;

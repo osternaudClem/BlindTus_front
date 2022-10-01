@@ -48,14 +48,11 @@ export function signup(user) {
   return async function (dispatch) {
     try {
       const success = await axios.post(`${API}/users`, { ...user });     
-      // dispatch({ type: types.POST_USER_SUCCESS, user: success.data });
-      console.log('>>> success', success.data);
-      return {};
-      // return success.data;
+      dispatch({ type: types.POST_USER_SUCCESS, user: success.data });
+      return success.data;
     } catch (error) {
-      // console.log(error.response.data)
+      console.log(error.response.data)
       return error.response.data;
-      // throw error.response;
     }
   }
 }

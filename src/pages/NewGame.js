@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,19 +16,12 @@ import {
   TextField,
   Grid,
   Box,
-  Button,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Paper,
 } from '@mui/material';
 
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
-import { GameSettings } from '../components/Forms';
+import { GameSettings, GameSettingsResume } from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
 import './Page.scss';
 
@@ -52,6 +45,7 @@ function NewGame(props) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get('code');
+  const answerField = useRef(null);
 
   useEffect(() => {
     props.scoresActions.reset();
@@ -62,6 +56,12 @@ function NewGame(props) {
     }
 
   }, [props.scoresActions, props.gamesActions, code]);
+
+  useEffect(() => {
+    if (!inputDisabled) {
+      answerField.current.focus();
+    }
+  }, [inputDisabled])
 
   const getMusics = async function (limit) {
     if (props.musics.selection.length > 0) {
@@ -115,7 +115,7 @@ function NewGame(props) {
     if (difficulty === 'easy') {
       titles = [...titles, ...movie.simple_title];
     }
-   
+
     let isCorrect = false;
 
     titles.map(title => {
@@ -178,62 +178,12 @@ function NewGame(props) {
 
     if (code) {
       return (
-        <Paper elevation={2} sx={{ width: '600px' }}>
-          <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-            <Grid container alignItems="center">
-              <Grid item xs>
-                <Typography variant="h5">Parametre de la partie</Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h4">{code}</Typography>
-              </Grid>
-            </Grid>
-            <List>
-              <div>
-                <ListItem
-                  secondaryAction={
-                    <Typography variant="body">{props.games.currentGame.round_time}</Typography>
-                  }
-                >
-                  <ListItemText
-                    primaryTypographyProps={{ noWrap: true }}
-                    primary="Temps des manches"
-                  />
-                </ListItem>
-                <Divider variant="middle" />
-              </div>
-
-              <div>
-                <ListItem
-                  secondaryAction={
-                    <Typography variant="body">{props.games.currentGame.difficulty}</Typography>
-                  }
-                >
-                  <ListItemText
-                    primaryTypographyProps={{ noWrap: true }}
-                    primary="Difficulté"
-                  />
-                </ListItem>
-                <Divider variant="middle" />
-              </div>
-
-              <div>
-                <ListItem
-                  secondaryAction={
-                    <Typography variant="body">{props.games.currentGame.musics && props.games.currentGame.musics.length}</Typography>
-                  }
-                >
-                  <ListItemText
-                    primaryTypographyProps={{ noWrap: true }}
-                    primary="Nombre de musiques"
-                  />
-                </ListItem>
-                <Divider variant="middle" />
-              </div>
-            </List>
-            <Button onClick={handleClickStart} variant="contained" sx={{ marginTop: '24px' }}>Lancer la partie</Button>
-          </Box>
-        </Paper>
+        <GameSettingsResume
+          game={props.games.currentGame}
+          displayStart
+          code={code}
+          onClickStart={handleClickStart}
+        />
       );
     }
 
@@ -280,6 +230,7 @@ function NewGame(props) {
             autoFocus
             color={color}
             disabled={inputDisabled}
+            inputRef={answerField}
             InputProps={{
               style: { height: '80px', fontSize: '24px' }
             }}

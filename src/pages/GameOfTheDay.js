@@ -92,8 +92,7 @@ function GameOfTheDay(props) {
         setTries(props.historyToday.today.attempts && props.historyToday.today.attempts.length);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.today.game, props.historyToday.today, userId, props.historyTodayActions, props.todayActions]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -114,7 +113,6 @@ function GameOfTheDay(props) {
   const saveHistory = async function (answer, isCorrect) {
     const attempts = props.historyToday.today && props.historyToday.today.attempts ? JSON.parse(JSON.stringify(props.historyToday.today.attempts)) : [];
     attempts.push(answer);
-    // console.log('>>> attempts', attempts)
 
     props.historyTodayActions.saveHistory({
       ...props.historyToday.today,
@@ -149,13 +147,19 @@ function GameOfTheDay(props) {
 
     setInputDisabled(true);
 
-    const title = movie.simple_title || movie.title_fr;
+    const titles = [movie.title, movie.title_fr, ...movie.simple_title];
+    
+    let isCorrect = false;
 
-    console.log('>>> title', title);
-    console.log('>>> answer', answer);
+    titles.map(title => {
+      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase(), answer.toLowerCase());
 
-    const similarity = stringSimilarity.compareTwoStrings(title[0].toLowerCase(), answer.toLowerCase());
-    const isCorrect = similarity >= 0.8;
+      if (similarity >= 0.8) {
+        isCorrect = true;
+      }
+
+      return null;
+    });
 
     setIsCorrect(isCorrect);
     saveHistory(answer, isCorrect);

@@ -18,7 +18,6 @@ export default function historyTodayReducers(state = initialState.historyToday, 
     }
 
     case types.SAVE_HISTORY_TODAY_SUCCESS: {
-      console.log('>>> history', action.history);
       return {
         ...state,
         today: action.history,

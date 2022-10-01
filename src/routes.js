@@ -14,6 +14,9 @@ import {
   HistoryPage,
   ConfirmEmailPage,
   GameOfTheDayPage,
+  LobbyPage,
+  PlayPage,
+  ResultsPage,
 } from './pages';
 
 const darkTheme = createTheme({
@@ -39,6 +42,9 @@ const RoutesUrl = () => (
           <Route path="/today" element={<GameOfTheDayPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/test" element={<TestPage />} />
+          <Route path="/lobby" element={<LobbyPage />} />
+          <Route path="/play" element={<PlayPage />} />
+          <Route path="/multi/results" element={<ResultsPage />} />
         </Route>
         <Route path="/" element={<NotConnected />}>
           <Route path="/login" element={<LoginPage />} />

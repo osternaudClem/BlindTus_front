@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material/';
 import { getCookie } from 'react-use-cookie';
+import { SocketContext, socket } from '../context/socket';
 import { usersActions } from '../actions';
 import { Header } from '../components/Header';
 
@@ -28,12 +29,12 @@ function App(props) {
 
 
   return (
-    <div>
+    <SocketContext.Provider value={socket}>
       <Header />
       <Container maxWidth="xl" className="Page">
         <Outlet />
       </Container>
-    </div>
+    </SocketContext.Provider>
   );
 }
 
