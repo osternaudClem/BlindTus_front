@@ -31,7 +31,7 @@ function Signup(props) {
   const [username, updateUsername] = useTextfield('');
   const [email, updateEmail] = useTextfield('');
   const [password, updatePassword] = useTextfield();
-  const [showPassword, updateShowPassword] = useToggle();
+  const [showPassword, updateShowPassword] = useToggle(false);
   const [confirmPassowrd, updateConfirmPassword] = useTextfield();
   const [errors, setErrors] = useState({});
   const [serverErrors, setServerErrors] = useState(null);
@@ -134,7 +134,7 @@ function Signup(props) {
                   onClick={updateShowPassword}
                   edge="end"
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
           }}

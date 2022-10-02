@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import stringSimilarity from 'string-similarity';
@@ -28,12 +28,13 @@ import {
   todayActions,
   historyTodayActions,
 } from '../actions';
-import { useTextfield } from '../hooks/formHooks';
 import { Timer } from '../components/Timer';
 import { Steps } from '../components/Steps';
 import { CircleButton } from '../components/Buttons';
 import { HistoryDay } from '../components/History';
 import { Result } from '../components/Results';
+import { useTextfield } from '../hooks/formHooks';
+import { UserContext } from '../contexts/userContext';
 
 const TIMERS = [5, 10, 15, 25, 60];
 // const TIMERS = [5, 4, 3, 4, 3];
@@ -54,6 +55,7 @@ function GameOfTheDay(props) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
+  const { user } = useContext(UserContext);
   const userId = getCookie('user');
 
   const handleCloseAlert = function () {
@@ -93,7 +95,7 @@ function GameOfTheDay(props) {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.today.game]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -114,12 +116,11 @@ function GameOfTheDay(props) {
   const saveHistory = async function (answer, isCorrect) {
     const attempts = props.historyToday.today && props.historyToday.today.attempts ? JSON.parse(JSON.stringify(props.historyToday.today.attempts)) : [];
     attempts.push(answer);
-    // console.log('>>> attempts', attempts)
 
     props.historyTodayActions.saveHistory({
       ...props.historyToday.today,
       today: props.today.game._id,
-      user: props.user._id,
+      user: user._id,
       attempts,
       isWin: isCorrect,
       isCompleted: isCorrect || (props.historyToday.today && props.historyToday.today.attempts.length === 4),
@@ -150,9 +151,6 @@ function GameOfTheDay(props) {
     setInputDisabled(true);
 
     const title = movie.simple_title || movie.title_fr;
-
-    console.log('>>> title', title);
-    console.log('>>> answer', answer);
 
     const similarity = stringSimilarity.compareTwoStrings(title[0].toLowerCase(), answer.toLowerCase());
     const isCorrect = similarity >= 0.8;
@@ -218,7 +216,7 @@ function GameOfTheDay(props) {
       >
         <Typography component="h1" variant="h3" align="center" marginBottom={10}>
           Musique du jour
-          <IconButton aria-label="Example" onClick={handleClickOpen}>
+          <IconButton onClick={handleClickOpen}>
             <HelpIcon />
           </IconButton>
         </Typography>
@@ -383,7 +381,6 @@ function GameOfTheDay(props) {
 
 function mapStateToProps(state) {
   return {
-    user: state.users.me,
     today: state.today,
     historyToday: state.historyToday,
   }

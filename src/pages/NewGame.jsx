@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -30,6 +30,7 @@ import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
 import { GameSettings } from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
+import { UserContext } from '../contexts/userContext';
 import './Page.scss';
 
 const TIMER_PENDING = 5;
@@ -48,6 +49,7 @@ function NewGame(props) {
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -115,7 +117,7 @@ function NewGame(props) {
     if (difficulty === 'easy') {
       titles = [...titles, ...movie.simple_title];
     }
-   
+
     let isCorrect = false;
 
     titles.map(title => {
@@ -332,7 +334,7 @@ function NewGame(props) {
       if (musicNumber >= totalMusics) {
         props.historyActions.saveHistory({
           scores: props.scores.currentGame,
-          user: props.users.me,
+          user: user,
           game: props.games.currentGame,
         })
         navigate('/end-game');
@@ -360,7 +362,6 @@ function NewGame(props) {
 
 function mapStateToProps(state) {
   return {
-    users: state.users,
     musics: state.musics,
     scores: state.scores,
     games: state.games,

@@ -1,46 +1,77 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import {
-  musicsActions,
-  scoresActions,
-  gamesActions,
-} from '../actions';
 
 import {
   CssBaseline,
   Typography,
+  Box,
 } from '@mui/material';
-import { MovieCard } from '../components/Cards';
-
 
 function Test(props) {
-  useEffect(() => {
-  }, []);
-
+ 
   return (
-    <div>
+    <Box sx={{ width: '100%', maxWidth: 500 }}>
       <CssBaseline />
-      <Typography variant="h3">Page de test</Typography>
-
-      <MovieCard movie={props.games.currentGame.musics[0].movie} music={props.games.currentGame.musics[0]} />
-    </div>
+      <Typography variant="h1" gutterBottom>
+        h1. Heading
+      </Typography>
+      <Typography variant="h2" gutterBottom>
+        h2. Heading
+      </Typography>
+      <Typography variant="h3" gutterBottom>
+        h3. Heading
+      </Typography>
+      <Typography variant="h4" gutterBottom>
+        h4. Heading
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        h5. Heading
+      </Typography>
+      <Typography variant="h6" gutterBottom>
+        h6. Heading
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur
+      </Typography>
+      <Typography variant="subtitle2" gutterBottom>
+        subtitle2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+        neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+        quasi quidem quibusdam.
+      </Typography>
+      <Typography variant="body2" gutterBottom>
+        body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+        neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+        quasi quidem quibusdam.
+      </Typography>
+      <Typography variant="button" display="block" gutterBottom>
+        button text
+      </Typography>
+      <Typography variant="caption" display="block" gutterBottom>
+        caption text
+      </Typography>
+      <Typography variant="overline" display="block" gutterBottom>
+        overline text
+      </Typography>
+    </Box>
   )
 }
 
 function mapStateToProps(state) {
   return {
-    musics: state.musics,
-    scores: state.scores,
-    games: state.games,
+
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    musicsActions: bindActionCreators(musicsActions, dispatch),
-    scoresActions: bindActionCreators(scoresActions, dispatch),
-    gamesActions: bindActionCreators(gamesActions, dispatch),
+
   }
 }
 

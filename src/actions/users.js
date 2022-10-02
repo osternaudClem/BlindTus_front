@@ -47,7 +47,7 @@ export function getUserById(user_id) {
 export function signup(user) {
   return async function (dispatch) {
     try {
-      const success = await axios.post(`${API}/users`, { ...user });     
+      const success = await axios.post(`${API}/users`, { ...user });
       // dispatch({ type: types.POST_USER_SUCCESS, user: success.data });
       console.log('>>> success', success.data);
       return {};
@@ -56,6 +56,28 @@ export function signup(user) {
       // console.log(error.response.data)
       return error.response.data;
       // throw error.response;
+    }
+  }
+}
+
+export function updateUser(userId, update) {
+  return async function () {
+    try {
+      const success = await axios.patch(`${API}/users/${userId}`, { ...update });
+      return success.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+}
+
+export function changePassword(userId, update) {
+  return async function () {
+    try {
+      const success = await axios.patch(`${API}/users/changePassword/${userId}`, { ...update });
+      return success.data;
+    } catch (error) {
+      return error.response.data;
     }
   }
 }
