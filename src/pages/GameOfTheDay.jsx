@@ -94,8 +94,7 @@ function GameOfTheDay(props) {
         setTries(props.historyToday.today.attempts && props.historyToday.today.attempts.length);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.today.game]);
+  }, [props.today.game, props.historyToday.today, userId, props.historyTodayActions, props.todayActions]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -150,10 +149,19 @@ function GameOfTheDay(props) {
 
     setInputDisabled(true);
 
-    const title = movie.simple_title || movie.title_fr;
+    const titles = [movie.title, movie.title_fr, ...movie.simple_title];
+    
+    let isCorrect = false;
 
-    const similarity = stringSimilarity.compareTwoStrings(title[0].toLowerCase(), answer.toLowerCase());
-    const isCorrect = similarity >= 0.8;
+    titles.map(title => {
+      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase(), answer.toLowerCase());
+
+      if (similarity >= 0.8) {
+        isCorrect = true;
+      }
+
+      return null;
+    });
 
     setIsCorrect(isCorrect);
     saveHistory(answer, isCorrect);

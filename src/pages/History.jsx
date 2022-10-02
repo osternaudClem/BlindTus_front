@@ -49,12 +49,12 @@ const columns = [
 
 function History(props) {
   useEffect(() => {
-    if (props.history.all.length === 0) {
+    if (props.history.all.length === 0 && props.user._id) {
       (async function () {
-        await props.historyActions.getFullHistory();
+        await props.historyActions.getFullHistory(props.user._id);
       })();
     }
-  }, [props.history.all, props.historyActions]);
+  }, [props.history.all, props.historyActions, props.user]);
 
   return (
     <div>
@@ -78,6 +78,7 @@ function History(props) {
 function mapStateToProps(state) {
   return {
     history: state.history,
+    user: state.users.me,
   }
 }
 

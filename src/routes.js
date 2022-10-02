@@ -14,6 +14,9 @@ import {
   HistoryPage,
   ConfirmEmailPage,
   GameOfTheDayPage,
+  LobbyPage,
+  PlayPage,
+  ResultsPage,
   UserSettingsPage,
 } from './pages';
 
@@ -52,6 +55,9 @@ const RoutesUrl = () => (
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/settings" element={<UserSettingsPage />} />
           <Route path="/test" element={<TestPage />} />
+          <Route path="/lobby" element={<LobbyPage />} />
+          <Route path="/play" element={<PlayPage />} />
+          <Route path="/multi/results" element={<ResultsPage />} />
         </Route>
         <Route path="/" element={<NotConnected />}>
           <Route path="/login" element={<LoginPage />} />

@@ -2,6 +2,9 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
+import { createAvatar } from '@dicebear/avatars';
+import * as style from '@dicebear/avatars-bottts-sprites';
+
 import {
   AppBar,
   Box,
@@ -30,6 +33,10 @@ const pages = [
     url: '/today',
   },
   {
+    label: 'Multijoueur',
+    url: '/lobby',
+  },
+  {
     label: 'Test',
     url: '/test',
   },
@@ -53,6 +60,12 @@ const settings = [
   },
 ];
 
+let svg = createAvatar(style, {
+  seed: 'cl3tus',
+  dataUri: true,
+});
+
+console.log('>>> svg', svg)
 const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -91,7 +104,7 @@ const ResponsiveAppBar = (props) => {
   }
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

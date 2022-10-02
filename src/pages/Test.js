@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import {
   CssBaseline,
@@ -7,7 +6,7 @@ import {
   Box,
 } from '@mui/material';
 
-function Test(props) {
+function Test() {
  
   return (
     <Box sx={{ width: '100%', maxWidth: 500 }}>
@@ -63,16 +62,4 @@ function Test(props) {
   )
 }
 
-function mapStateToProps(state) {
-  return {
-
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Test)
+export default Test;

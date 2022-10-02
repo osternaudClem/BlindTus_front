@@ -3,22 +3,14 @@ import { api } from '../config';
 import * as types from '../datas/actionTypes';
 const API = api[process.env.NODE_ENV];
 
-export function getFullHistory() {
+export function getFullHistory(userId) {
   return async function (dispatch) {
-    function onSuccess(success) {
+    try {
+      const success = await axios.get(`${API}/history?user=${userId}`);
       dispatch({ type: types.GET_HISTORY_SUCCESS, history: success.data });
       return success.data;
-    }
-
-    function onError(error) {
-      throw error.response;
-    }
-
-    try {
-      const success = await axios.get(`${API}/history`);
-      return onSuccess(success);
     } catch (error) {
-      return onError(error);
+      throw error.response;
     }
   };
 }
