@@ -2,8 +2,6 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
-import { createAvatar } from '@dicebear/avatars';
-import * as style from '@dicebear/avatars-bottts-sprites';
 
 import {
   AppBar,
@@ -19,8 +17,8 @@ import {
   MenuItem,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { UserContext } from '../../contexts/userContext';
 
+import { UserContext } from '../../contexts/userContext';
 import logo from '../../assets/logo_light.png';
 
 const pages = [
@@ -60,12 +58,6 @@ const settings = [
   },
 ];
 
-let svg = createAvatar(style, {
-  seed: 'cl3tus',
-  dataUri: true,
-});
-
-console.log('>>> svg', svg)
 const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);

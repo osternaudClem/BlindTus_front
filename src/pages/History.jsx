@@ -6,8 +6,11 @@ import {
   CssBaseline,
   Typography,
   Box,
+  Avatar,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
+import { Stack } from '@mui/system';
 
 const columns = [
   {
@@ -44,22 +47,63 @@ const columns = [
     flex: 1,
     valueGetter: (params) => params.row.game.difficulty === 'easy' ? 'Facile' : 'Difficile',
   },
+  {
+    field: 'created_by',
+    headerName: 'Créé par',
+    minWidth: 150,
+    flex: 1,
+    valueGetter: (params) => params.row.game.created_by.username,
+    renderCell: (params) => {
+      const user = params.row.game.created_by;
+      return (
+        <Stack direction="row" alignItems="center">
+          <Avatar src={user.avatar} alt={user.username} />
+          <Typography variant="subtitle1" marginLeft={2}>{user.username}</Typography>
+        </Stack>
+      )
+    }
+  },
+  {
+    field: 'created_at',
+    headerName: 'Date de création',
+    minWidth: 150,
+    flex: 1,
+  },    
 ];
 
+const StyledGridOverlay = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+}));
+
+
+function CustomNoRowsOverlay() {
+  return (
+    <StyledGridOverlay>
+      <Box sx={{ mt: 1 }}>Historique vide !</Box>
+    </StyledGridOverlay>
+  );
+}
 
 function History(props) {
   useEffect(() => {
     if (props.history.all.length === 0 && props.user._id) {
       (async function () {
         await props.historyActions.getFullHistory(props.user._id);
+
       })();
     }
-  }, [props.history.all, props.historyActions, props.user]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div>
       <CssBaseline />
-      <Typography variant="h2">Historique des parties</Typography>
+      <Typography component="h1" variant="h2" gutterBottom>Historique des parties</Typography>
       <Box sx={{ width: '100%' }}>
         <DataGrid
           autoHeight
@@ -67,8 +111,11 @@ function History(props) {
           rows={props.history.all}
           columns={columns}
           pageSize={10}
-          rowsPerPageOptions={[20]}
+          rowsPerPageOptions={[10]}
           disableSelectionOnClick
+          components={{
+            NoRowsOverlay: CustomNoRowsOverlay,
+          }}
         />
       </Box>
     </div>

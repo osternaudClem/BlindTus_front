@@ -152,7 +152,7 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode 
         </Grid>
 
         <Grid item xs={12}>
-          <Button variant="contained" onClick={handleClickSettings}>Lancer la partie</Button>
+          <Button variant="contained" onClick={handleClickSettings} type="submit">Lancer la partie</Button>
         </Grid>
       </Grid>
     </Box>

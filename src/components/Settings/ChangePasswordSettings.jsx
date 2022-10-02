@@ -64,7 +64,7 @@ function ChangePasswordSettings(props) {
     }
 
     const response = await props.usersActions.changePassword(user._id, { password: currentPassword, newPassword });
-    console.log('>>> response', response.messages);
+
     if (response.error) {
       return setServerErrors(response.messages);
     }
@@ -178,7 +178,6 @@ function ChangePasswordSettings(props) {
   );
 
   function renderError() {
-    console.log('>>> serverErrors', serverErrors)
     if (!serverErrors) {
       return;
     }

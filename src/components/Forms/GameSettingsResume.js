@@ -9,6 +9,8 @@ import {
   ListItemText,
   Divider,
   Paper,
+  Stack,
+  Avatar,
 } from '@mui/material';
 
 function GameSettingsResume({ game, displayStart, code, onClickStart }) {
@@ -24,6 +26,22 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
           </Grid>
         </Grid>
         <List>
+          <div>
+            <ListItem
+              secondaryAction={
+                <Stack direction="row" alignItems="center">
+                  <Typography variant="body" marginRight={2}>{game.created_by.username}</Typography>
+                  <Avatar src={game.created_by.avatar} alt={game.created_by.username} />
+                </Stack>
+              }
+            >
+              <ListItemText
+                primaryTypographyProps={{ noWrap: true }}
+                primary="Généré par"
+              />
+            </ListItem>
+            <Divider variant="middle" />
+          </div>
           <div>
             <ListItem
               secondaryAction={

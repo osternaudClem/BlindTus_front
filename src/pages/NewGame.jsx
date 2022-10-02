@@ -16,6 +16,8 @@ import {
   TextField,
   Grid,
   Box,
+  Paper,
+  Typography,
 } from '@mui/material';
 
 import { Timer } from '../components/Timer';
@@ -80,6 +82,7 @@ function NewGame(props) {
       round_time: time,
       difficulty,
       musics,
+      created_by: user._id,
     });
 
     setIsStarted(true);
@@ -131,7 +134,6 @@ function NewGame(props) {
     });
 
     setIsCorrect(isCorrect);
-
     if (isCorrect) {
       score = timeLeft * 100 / timeLimit;
     }
@@ -190,7 +192,10 @@ function NewGame(props) {
     }
 
     return (
-      <GameSettings onSettingsSaved={onSettingsSaved} />
+      <Paper elevation={2} sx={{ padding: '2rem' }}>
+        <Typography component="h2" variant="h3" gutterBottom>Nouvelle partie</Typography>
+        <GameSettings onSettingsSaved={onSettingsSaved} redirect="new-game" />
+      </Paper>
     );
   }
 
