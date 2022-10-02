@@ -19,6 +19,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 import { useSlider, useTextfield } from '../../hooks/formHooks';
 
+const MOVIE_MIN = 5;
+const MOVIE_MAX = 100;
+
 function valuetext(value) {
   return `${value} secondes`;
 }
@@ -94,8 +97,8 @@ function GameSettings({ onSettingsSaved }) {
             defaultValue={movieNumber}
             InputProps={{
               inputProps: {
-                min: 3,
-                max: 20,
+                min: MOVIE_MIN,
+                max: MOVIE_MAX,
               }
             }}
             onChange={updateMovieNumber}

@@ -42,7 +42,7 @@ const columns = [
     headerName: 'Difficulté',
     minWidth: 150,
     flex: 1,
-    valueGetter: (params) => params.row.game.difficulty  === 'easy' ? 'Facile' : 'Difficile',
+    valueGetter: (params) => params.row.game.difficulty === 'easy' ? 'Facile' : 'Difficile',
   },
 ];
 
@@ -60,12 +60,13 @@ function History(props) {
     <div>
       <CssBaseline />
       <Typography variant="h2">Historique des parties</Typography>
-      <Box sx={{ height: 735, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <DataGrid
+          autoHeight
           getRowId={(row) => row._id}
           rows={props.history.all}
           columns={columns}
-          pageSize={20}
+          pageSize={10}
           rowsPerPageOptions={[20]}
           disableSelectionOnClick
         />
