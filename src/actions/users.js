@@ -56,3 +56,25 @@ export function signup(user) {
     }
   }
 }
+
+export function updateUser(userId, update) {
+  return async function () {
+    try {
+      const success = await axios.patch(`${API}/users/${userId}`, { ...update });
+      return success.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+}
+
+export function changePassword(userId, update) {
+  return async function () {
+    try {
+      const success = await axios.patch(`${API}/users/changePassword/${userId}`, { ...update });
+      return success.data;
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+}

@@ -15,7 +15,7 @@ const columns = [
     headerName: 'CODE',
     minWidth: 150,
     flex: 1,
-    renderCell: (params) => params.row.game.code,
+    valueGetter: (params) => params.row.game.code,
   },
   {
     field: 'total_score',
@@ -28,21 +28,21 @@ const columns = [
     headerName: 'Nombre de musics',
     minWidth: 150,
     flex: 1,
-    renderCell: (params) => params.value.musics.length,
+    valueGetter: (params) => params.value.musics.length,
   },
   {
     field: 'round_time',
     headerName: 'Temps',
     minWidth: 150,
     flex: 1,
-    renderCell: (params) => `${params.row.game.round_time} secondes`,
+    valueGetter: (params) => `${params.row.game.round_time} secondes`,
   },
   {
     field: 'difficulty',
     headerName: 'Difficulté',
     minWidth: 150,
     flex: 1,
-    renderCell: (params) => params.row.game.difficulty === 'easy' ? 'Facile' : 'Difficile',
+    valueGetter: (params) => params.row.game.difficulty === 'easy' ? 'Facile' : 'Difficile',
   },
 ];
 
@@ -60,12 +60,13 @@ function History(props) {
     <div>
       <CssBaseline />
       <Typography variant="h2">Historique des parties</Typography>
-      <Box sx={{ height: 735, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <DataGrid
+          autoHeight
           getRowId={(row) => row._id}
           rows={props.history.all}
           columns={columns}
-          pageSize={20}
+          pageSize={10}
           rowsPerPageOptions={[20]}
           disableSelectionOnClick
         />

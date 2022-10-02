@@ -19,7 +19,6 @@ import { useTextfield } from '../../hooks/formHooks';
 import { Chat } from '../../components/Chat';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 
-const TIMER_PENDING = 5;
 const TIMER_GAME = 30;
 
 function Lobby(props) {
@@ -37,7 +36,7 @@ function Lobby(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // window.addEventListener('beforeunload', handleTabClose);
+    window.addEventListener('beforeunload', handleTabClose);
 
     socket.on('MESSAGE', message => {
       setMessages(m => [...m, message]);
@@ -74,10 +73,10 @@ function Lobby(props) {
       console.log('>>> reason', reason);
     });
 
-    // return () => {
-    //   window.removeEventListener('beforeunload', handleTabClose);
-    // };
-  }, []);
+    return () => {
+      window.removeEventListener('beforeunload', handleTabClose);
+    };
+  }, [navigate]);
 
   const handleTabClose = function(event) {
     event.preventDefault();

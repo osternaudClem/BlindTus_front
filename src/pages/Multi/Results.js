@@ -10,113 +10,8 @@ import {
 
 
 function Results(props) {
-  // const [game, setGame] = useState({
-  //   "id": "277cccf8-d6ab-4ce6-9240-79a5e506e0ae",
-  //   "room": "1878",
-  //   "step": 0,
-  //   "movies": [
-  //     "Dead Silence",
-  //     "X-Men",
-  //     "Intouchables",
-  //     "Backdraft",
-  //     "The Truman Show"
-  //   ],
-  //   "rounds": [
-  //     {
-  //       "step": 0,
-  //       "scores": [
-  //         {
-  //           "user": "lFLHphEXrJJ2nKckAAAP",
-  //           "username": "Cl3tusTest",
-  //           "score": 83
-  //         },
-  //         {
-  //           "user": "4eFJewOCbFFmmLHbAAAF",
-  //           "username": "Cl3tus",
-  //           "score": 80
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "step": 1,
-  //       "scores": [
-  //         {
-  //           "user": "4eFJewOCbFFmmLHbAAAF",
-  //           "username": "Cl3tus",
-  //           "score": 0
-  //         },
-  //         {
-  //           "user": "lFLHphEXrJJ2nKckAAAP",
-  //           "username": "Cl3tusTest",
-  //           "score": 60
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "step": 2,
-  //       "scores": [
-  //         {
-  //           "user": "4eFJewOCbFFmmLHbAAAF",
-  //           "username": "Cl3tus",
-  //           "score": 83
-  //         },
-  //         {
-  //           "user": "lFLHphEXrJJ2nKckAAAP",
-  //           "username": "Cl3tusTest",
-  //           "score": 80
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "step": 3,
-  //       "scores": [
-  //         {
-  //           "user": "4eFJewOCbFFmmLHbAAAF",
-  //           "username": "Cl3tus",
-  //           "score": 83
-  //         },
-  //         {
-  //           "user": "lFLHphEXrJJ2nKckAAAP",
-  //           "username": "Cl3tusTest",
-  //           "score": 77
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "step": 4,
-  //       "scores": [
-  //         {
-  //           "user": "lFLHphEXrJJ2nKckAAAP",
-  //           "username": "Cl3tusTest",
-  //           "score": 0
-  //         },
-  //         {
-  //           "user": "4eFJewOCbFFmmLHbAAAF",
-  //           "username": "Cl3tus",
-  //           "score": 57
-  //         }
-  //       ]
-  //     }
-  //   ],
-  //   "users": [
-  //     {
-  //       "id": "lFLHphEXrJJ2nKckAAAP",
-  //       "username": "Cl3tusTest",
-  //       "room": "1878",
-  //       "isCreator": true,
-  //       "scores": []
-  //     },
-  //     {
-  //       "id": "4eFJewOCbFFmmLHbAAAF",
-  //       "username": "Cl3tus",
-  //       "room": "1878",
-  //       "isCreator": false,
-  //       "scores": []
-  //     }
-  //   ]
-  // });
   const [game, setGame] = useState({});
-  const [room, setRoom] = useState({});
+  const [, setRoom] = useState({});
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -124,15 +19,13 @@ function Results(props) {
     const roomId = searchParams.get('room');
 
     socket.emit('GET_GAME', ({ roomId }), ({ game, room }) => {
-      console.log('>>> game', game);
-      console.log('>>> room', room);
       if (!game || !game.id) {
         return navigate('/lobby');
       }
       setGame(game);
       setRoom(room);
     });
-  }, []);
+  }, [navigate, searchParams]);
 
   const usersScore = [];
 
@@ -146,10 +39,11 @@ function Results(props) {
           userScore = userScore + newScore.score;
         }
 
-
         return null;
       });
       usersScore.push({ username: user.username, score: userScore });
+
+      return null;
     });
   }
 

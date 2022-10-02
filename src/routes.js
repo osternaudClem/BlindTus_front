@@ -17,6 +17,7 @@ import {
   LobbyPage,
   PlayPage,
   ResultsPage,
+  UserSettingsPage,
 } from './pages';
 
 const darkTheme = createTheme({
@@ -29,6 +30,17 @@ const darkTheme = createTheme({
       main: '#af79ff',
     },
   },
+  typography: {
+    h1: {
+      fontSize: '4rem'
+    },
+    h2: {
+      fontSize: '3.2rem'
+    },
+    h3: {
+      fontSize: '2.6rem'
+    }
+  }
 });
 
 const RoutesUrl = () => (
@@ -41,6 +53,7 @@ const RoutesUrl = () => (
           <Route path="/end-game" element={<EndGamePage />} />
           <Route path="/today" element={<GameOfTheDayPage />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/settings" element={<UserSettingsPage />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/play" element={<PlayPage />} />

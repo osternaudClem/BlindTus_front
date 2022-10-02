@@ -1,95 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+
 import {
   CssBaseline,
-  TextField,
   Typography,
+  Box,
 } from '@mui/material';
 
-import { socket } from '../context/socket';
-import { useTextfield } from '../hooks/formHooks';
-import { Box } from '@mui/system';
-
-function Test(props) {
-  const [message, onChangeMessage] = useTextfield();
-  const [, setUsername] = useState('');
-  const [room, setRoom] = useState("");
-  const [users, setUsers] = useState('');
-  // const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    if (!props.user.username) {
-      return;
-    }
-
-    const name = props.user.username;
-    const roomCode = '1234';
-
-    setUsername(name);
-    setRoom(roomCode);
-
-    socket.emit('join', { username: name, room: roomCode }, (error) => {
-      if (error) {
-        alert(error);
-      }
-    })
-    return () => {
-      socket.emit('USER_DISCONNECT');
-      socket.off();
-      setUsers([]);
-    }
-
-  }, [props.user.username]);
-
-  useEffect(() => {
-    socket.on('message', (message) => {
-      setMessages([...messages, message]);
-    })
-
-    socket.on("roomData", ({ users }) => {
-      setUsers(users);
-    });
-  }, [messages, users])
-
-  const sendMessage = function(event) {
-    event.preventDefault();
-    if (message) {
-      socket.emit('sendMessage', message, () => onChangeMessage(''))
-    }
-  }
-
-
+function Test() {
+ 
   return (
-    <div>
+    <Box sx={{ width: '100%', maxWidth: 500 }}>
       <CssBaseline />
-      <Typography variant="h3">Page de test</Typography>
-      <Typography variant='body1'>The room is: {room}</Typography>
-      <Typography variant='h6'>Users</Typography>
-      <ul>
-        {users.length && users.map((user, index) => {
-          return <li key={index}>{user.username}</li>
-        })}
-      </ul>
-      <Box component="form" onSubmit={sendMessage}>
-        <TextField
-          onChange={onChangeMessage}
-        />
-      </Box>
-      <ul>
-        {messages.map((message, index) => {
-          return <li key={index}>{message.user}: {message.text}</li>;
-        })}
-      </ul>
-    </div>
+      <Typography variant="h1" gutterBottom>
+        h1. Heading
+      </Typography>
+      <Typography variant="h2" gutterBottom>
+        h2. Heading
+      </Typography>
+      <Typography variant="h3" gutterBottom>
+        h3. Heading
+      </Typography>
+      <Typography variant="h4" gutterBottom>
+        h4. Heading
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        h5. Heading
+      </Typography>
+      <Typography variant="h6" gutterBottom>
+        h6. Heading
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur
+      </Typography>
+      <Typography variant="subtitle2" gutterBottom>
+        subtitle2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+        neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+        quasi quidem quibusdam.
+      </Typography>
+      <Typography variant="body2" gutterBottom>
+        body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+        blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+        neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+        quasi quidem quibusdam.
+      </Typography>
+      <Typography variant="button" display="block" gutterBottom>
+        button text
+      </Typography>
+      <Typography variant="caption" display="block" gutterBottom>
+        caption text
+      </Typography>
+      <Typography variant="overline" display="block" gutterBottom>
+        overline text
+      </Typography>
+    </Box>
   )
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.users.me,
-  }
-}
-
-
-export default connect(mapStateToProps, null)(Test);
+export default Test;

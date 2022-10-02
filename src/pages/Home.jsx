@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { CircleButton } from '../components/Buttons';
 
-function Home(props) {
+function Home() {
   const navigate = useNavigate();
 
   const handleClickNewGame = function() {

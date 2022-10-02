@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
@@ -19,6 +19,8 @@ import {
   MenuItem,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { UserContext } from '../../contexts/userContext';
+
 import logo from '../../assets/logo_light.png';
 
 const pages = [
@@ -44,6 +46,7 @@ const settings = [
   {
     id: 'profile',
     label: 'Profile',
+    url: '/settings',
   },
   {
     id: 'history',
@@ -66,11 +69,13 @@ console.log('>>> svg', svg)
 const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
-
+  
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+  
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -92,6 +97,10 @@ const ResponsiveAppBar = (props) => {
 
   const onClickLogo = () => {
     navigate('/');
+  }
+
+  if (!props.user) {
+    return <div>Loading ...</div>
   }
 
   return (
@@ -150,7 +159,7 @@ const ResponsiveAppBar = (props) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={props.users.me.username} src={svg} />
+                <Avatar alt={props.user.username} src={user.avatar} sx={{ width: 50, height: 50 }} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -184,7 +193,7 @@ const ResponsiveAppBar = (props) => {
 
 function mapStateToProps(state) {
   return {
-    users: state.users,
+    user: state.users.me,
   }
 }
 

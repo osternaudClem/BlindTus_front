@@ -34,7 +34,7 @@ function Scores(props) {
           </Grid>
         </Grid>
         <List dense>
-          {props.scores.currentGame.map(score => (
+          {props.scores.currentGame.slice(0).reverse().map(score => (
             <div key={`${score.movie} - ${score.score}`}>
               <ListItem
                 key={score.movie}
