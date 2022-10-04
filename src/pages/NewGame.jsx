@@ -9,7 +9,6 @@ import {
   gamesActions,
   historyActions,
 } from '../actions';
-import ReactPlayer from 'react-player/youtube';
 import stringSimilarity from 'string-similarity';
 import {
   CssBaseline,
@@ -20,6 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 
+import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
@@ -269,17 +269,7 @@ function NewGame(props) {
     }
 
     return (
-      <div>
-        <ReactPlayer
-          url={props.games.currentGame.musics[musicNumber].video}
-          playing={true}
-          style={{
-            position: 'fixed',
-            top: '-1000px',
-            left: '-1000px'
-          }}
-        />
-      </div>
+      <Player url={props.games.currentGame.musics[musicNumber].video} />
     );
   }
 

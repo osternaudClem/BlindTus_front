@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 
 import { socket } from '../../context/socket';
+import { Player } from '../../components/Player';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
 import { useTextfield } from '../../hooks/formHooks';
@@ -248,17 +249,7 @@ function Play(props) {
     }
 
     return (
-      <div>
-        <ReactPlayer
-          url={musics[musicNumber].video}
-          playing={true}
-          style={{
-            position: 'fixed',
-            top: '-1000px',
-            left: '-1000px'
-          }}
-        />
-      </div>
+      <Player url={musics[musicNumber].video} />
     );
   }
 

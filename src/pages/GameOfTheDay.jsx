@@ -28,6 +28,7 @@ import {
   todayActions,
   historyTodayActions,
 } from '../actions';
+import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
 import { Steps } from '../components/Steps';
 import { CircleButton } from '../components/Buttons';
@@ -311,17 +312,7 @@ function GameOfTheDay(props) {
     }
 
     return (
-      <div>
-        <ReactPlayer
-          url={props.today.game.music.video}
-          playing={true}
-          style={{
-            position: 'fixed',
-            top: '-1000px',
-            left: '-1000px'
-          }}
-        />
-      </div>
+      <Player url={props.today.game.music.video} />
     );
   }
 
