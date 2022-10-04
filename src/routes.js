@@ -54,7 +54,6 @@ const RoutesUrl = () => (
           <Route path="/today" element={<GameOfTheDayPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/settings" element={<UserSettingsPage />} />
-          <Route path="/test" element={<TestPage />} />
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/multi/results" element={<ResultsPage />} />
@@ -64,6 +63,7 @@ const RoutesUrl = () => (
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/confirm" element={<ConfirmEmailPage />} />
         </Route>
+        <Route path="/test" element={<TestPage />} />
       </Routes>
     </BrowserRouter>
   </ThemeProvider>
