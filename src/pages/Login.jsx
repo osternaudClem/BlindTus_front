@@ -36,11 +36,14 @@ function Login(props) {
     }
 
     if (user.username) {
+      const isDev = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
       setUserToken(user._id, {
         days: 365,
         SameSite: 'Strict',
-        Secure: true,
+        Secure: isDev,
+        domain: isDev ? '' : '.cl3tus.com',
       });
+
       navigate('/');
     }
   };

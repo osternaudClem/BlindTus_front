@@ -81,7 +81,10 @@ const ResponsiveAppBar = (props) => {
 
   const handleCloseUserMenu = setting => {
     if (setting.id === 'logout') {
-      setCookie('user', '', { days: 0 });
+      setCookie('user', '', { 
+        days: 0,
+        domain: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? '' : '.cl3tus.com',
+     });
     }
     navigate(setting.url);
     setAnchorElUser(null);

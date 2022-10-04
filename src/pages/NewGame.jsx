@@ -44,6 +44,7 @@ function NewGame(props) {
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
+  const [gameWithCode, setGameWithCode] = useState(false);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
@@ -55,7 +56,15 @@ function NewGame(props) {
     props.scoresActions.reset();
     if (code) {
       (async function () {
-        await props.gamesActions.getGame(code);
+        try {
+          const game = await props.gamesActions.getGame(code);
+          if (game._id) {
+            return setGameWithCode(true);
+          }
+          navigate('/new-game');
+        } catch (error) {
+          navigate('/new-game')
+        }
       })();
     }
 
@@ -180,7 +189,7 @@ function NewGame(props) {
       return;
     }
 
-    if (code) {
+    if (gameWithCode) {
       return (
         <GameSettingsResume
           game={props.games.currentGame}
