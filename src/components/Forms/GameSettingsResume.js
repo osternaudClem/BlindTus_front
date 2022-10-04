@@ -29,6 +29,7 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
           <div>
             <ListItem
               secondaryAction={
+                game.created_by &&
                 <Stack direction="row" alignItems="center">
                   <Typography variant="body" marginRight={2}>{game.created_by.username}</Typography>
                   <Avatar src={game.created_by.avatar} alt={game.created_by.username} />
