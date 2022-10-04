@@ -6,8 +6,8 @@ import {
   Typography,
   Grid,
   Paper,
+  Divider,
 } from '@mui/material';
-
 
 function Results(props) {
   const [game, setGame] = useState({});
@@ -78,11 +78,12 @@ function Results(props) {
             <Paper level={2}>
               {game.movies && game.movies.map((movie, index) => {
                 return (
-                  <div key={movie}>
+                  <div key={movie} style={{ padding: '8px 16px' }}>
                     <div>{movie}</div>
                     {game.rounds[index].scores.map(score => {
                       return <div>{score.username}: {score.score}</div>
                     })}
+                    <Divider sx={{ marginTop: '8px' }} />
                   </div>
                 )
               })}
