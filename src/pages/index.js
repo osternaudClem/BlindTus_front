@@ -10,6 +10,7 @@ export { default as GameOfTheDayPage } from './GameOfTheDay';
 export { default as UserSettingsPage } from './UserSettings';
 
 // Multi
+export { default as MultiPage } from './Multi';
 export { default as LobbyPage } from './Multi/Lobby';
 export { default as PlayPage } from './Multi/Play';
 export { default as ResultsPage } from './Multi/Results';

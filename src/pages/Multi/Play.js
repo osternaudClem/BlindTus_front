@@ -5,82 +5,32 @@ import ReactPlayer from 'react-player/youtube';
 import stringSimilarity from 'string-similarity';
 import {
   Box,
-  CssBaseline,
-  Grid,
   TextField,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Paper,
-  Typography,
 } from '@mui/material';
 
 import { socket } from '../../context/socket';
+
 import { Player } from '../../components/Player';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
 import { useTextfield } from '../../hooks/formHooks';
-
 const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
-function Play(props) {
-  const [game, setGame] = useState({});
+function Play({ room, musics, onAnswer, onEndGame }) {
   const [answer, updateAnswer] = useTextfield();
   const [isCorrect, setIsCorrect] = useState(null);
-  const [room, setRoom] = useState(null);
-  const [musics, setMusics] = useState(null);
   const [musicNumber, setMusicsNumber] = useState(0);
   const [nextMusicNumber, setNextMusicNumber] = useState(0);
-  const [displayTimer, setDisplayTimer] = useState(false);
+  const [displayTimer, setDisplayTimer] = useState(true);
   const [timer, setTimer] = useState(TIMER_PENDING);
   const [timeLeft, setTimeLeft] = useState(TIMER_GAME);
   const [inputDisabled, setInputDisabled] = useState(true);
   const [displayGame, setDisplayGame] = useState(false);
   const [displayResult, setDisplayResult] = useState(false);
-  const [isEndGame, setEndGame] = useState(false);
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [isEndGame, setIsEndGame] = useState(false);
+  const [answerSent, setAnswerSent] = useState(false);
   const answerField = useRef(null);
-
-  useEffect(() => {
-    if (!props.user.username) {
-      return;
-    }
-
-    console.log('>>> Play')
-
-    const roomCode = searchParams.get('room');
-
-    socket.emit('JOIN_ROOM', { username: props.user.username, room: roomCode }, ({ error, code, user, room, game }) => {
-      if (error) {
-        switch (code) {
-          case 1:
-            return navigate('/lobby');
-
-          default:
-            return;
-        }
-      }
-      console.log('>>> game', game)
-      setRoom(room);
-      setMusics(room.musics);
-      setDisplayTimer(true);
-      setGame(game);
-    });
-  }, [props.user, navigate, searchParams]);
-
-  useEffect(() => {
-    socket.on('NEXT_ROUND', ({ step, game, isEndGame }) => {
-      setDisplayResult(true);
-      setDisplayGame(false);
-      setTimer(TIMER_PENDING);
-      setGame(game);
-      setNextMusicNumber(step);
-      setEndGame(isEndGame)
-    });
-  }, [musicNumber]);
 
   useEffect(() => {
     if (!inputDisabled) {
@@ -89,10 +39,14 @@ function Play(props) {
   }, [inputDisabled]);
 
   useEffect(() => {
-    socket.on('UPDATE_SCORES', ({ game }) => {
-      setGame(game);
+    socket.on('NEXT_ROUND', ({ step, game, isEndGame }) => {
+      setDisplayResult(true);
+      setDisplayGame(false);
+      setTimer(TIMER_PENDING);
+      setNextMusicNumber(step);
+      setIsEndGame(isEndGame);
     });
-  }, [navigate]);
+  }, [musicNumber]);
 
   const onTimerFinished = function (count, sending = true) {
     setTimeLeft(count);
@@ -100,15 +54,16 @@ function Play(props) {
     if (count === 0) {
       if (displayGame) {
         if (sending) {
-          onSendAnswer();
+          onSendAnswer(null, true);
         }
         setDisplayGame(false);
         setInputDisabled(true);
         updateAnswer('');
+        setAnswerSent(false);
       }
       else {
         if (isEndGame) {
-          return navigate(`/multi/results?room=${room.id}`);
+          onEndGame();
         }
         setMusicsNumber(parseInt(nextMusicNumber));
         setDisplayResult(false);
@@ -120,7 +75,7 @@ function Play(props) {
     }
   };
 
-  const onSendAnswer = event => {
+  const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
     const movie = musics[music].movie;
     let score = 0;
@@ -151,42 +106,28 @@ function Play(props) {
       return null;
     });
 
+    if (!isCorrect && !timeOut) {
+      updateAnswer('');
+      return;
+    }
+
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
       score = timeLeft * 100 / room.settings.timeLimit;
     }
 
-    socket.emit('ADD_SCORE', ({ score: Math.round(score), step: musicNumber }), ({ game }) => {
-      setGame(game);
-    });
-
+    onAnswer(score, musicNumber);
+    setAnswerSent(true);
     setDisplayResult(true);
-    setDisplayGame(false);
     setInputDisabled(true);
     updateAnswer('');
   }
 
   return (
-    <Grid container spacing={12} component="main" className="LoginPage">
-      <CssBaseline />
-      <Grid
-        item
-        xs={12}
-        sm={9}
-        md={8}
-      >
-        {renderGame()}
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        sm={3}
-        md={4}
-      >
-        {renderScore()}
-      </Grid>
-    </Grid>
+    <div>
+      {renderGame()}
+    </div>
 
   )
 
@@ -235,7 +176,7 @@ function Play(props) {
             }}
           />
         </Box>
-
+        {renderResult()}
         {renderPlayer()}
       </div>
     );
@@ -243,11 +184,6 @@ function Play(props) {
 
   function renderPlayer() {
     if (!displayGame) {
-      if (musicNumber >= 0 && displayResult) {
-        return (
-          <Result movie={musics[musicNumber].movie} music={musics[musicNumber]} />
-        )
-      }
       return;
     }
 
@@ -256,65 +192,16 @@ function Play(props) {
     );
   }
 
-  function renderScore() {
-    if (!game || !game.id) {
+  function renderResult() {
+    if (musicNumber < 0 || !displayResult) {
       return;
     }
 
     return (
-      <Paper elevation={2} className="Scores">
-        <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-          <Grid container alignItems="center">
-            <Grid item xs>
-              <Typography variant="h5">Score</Typography>
-            </Grid>
-            {/* <Grid item>
-              <Typography variant="h4">My points: 20</Typography>
-            </Grid> */}
-          </Grid>
-          <List dense>
-            {game.users.map(user => {
-              let userScore = 0;
-
-              game.rounds.map(round => {
-                const newScore = round.scores.find(s => s.username === user.username);
-                if (newScore) {
-                  userScore = userScore + newScore.score;
-                }
-
-                return null;
-              })
-
-
-              return (
-                <div key={`${user.id}`}>
-                  <ListItem
-                    secondaryAction={
-                      <Typography variant="body">{userScore}</Typography>
-                    }
-                  >
-                    <ListItemText
-                      primaryTypographyProps={{ noWrap: true }}
-                      primary={user.username}
-                    />
-
-                  </ListItem>
-                  <Divider variant="middle" />
-                </div>
-              )
-            })}
-          </List>
-        </Box>
-      </Paper>
+      <Result movie={musics[musicNumber].movie} music={musics[musicNumber]} />
     )
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.users.me,
-  }
-}
-
-export default connect(mapStateToProps, null)(Play);
+export default Play;
 
