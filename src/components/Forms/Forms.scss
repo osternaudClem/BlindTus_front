@@ -1,0 +1,15 @@
+.Input--shaking {
+  animation-name: shaking;
+  animation-duration: 0.05s;
+  animation-iteration-count: 4;
+  animation-direction: alternate;
+}
+
+@keyframes shaking {
+  from {
+    transform: rotate(-1deg);
+  }
+  to {
+    transform: rotate(1deg);
+  }
+}
