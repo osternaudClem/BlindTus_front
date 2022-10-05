@@ -11,6 +11,8 @@ import {
   TextField,
   Alert,
   IconButton,
+  Divider,
+  Stack,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -36,7 +38,7 @@ function Lobby(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.addEventListener('beforeunload', handleTabClose);
+    // window.addEventListener('beforeunload', handleTabClose);
 
     socket.on('MESSAGE', message => {
       setMessages(m => [...m, message]);
@@ -74,11 +76,11 @@ function Lobby(props) {
     });
 
     return () => {
-      window.removeEventListener('beforeunload', handleTabClose);
+      // window.removeEventListener('beforeunload', handleTabClose);
     };
   }, [navigate]);
 
-  const handleTabClose = function(event) {
+  const handleTabClose = function (event) {
     event.preventDefault();
 
     console.log('beforeunload event triggered');
@@ -96,7 +98,7 @@ function Lobby(props) {
         difficulty,
         totalMusics,
       },
-    }, (error) => {
+    }, ({error}) => {
       if (error) {
         return setError(error);
       }
@@ -158,9 +160,9 @@ function Lobby(props) {
         md={8}
       >
         <Typography component="h1" variant="h3" marginBottom={10}>
-          Multijoueur {room && `Room #${ room }`}
+          Multijoueur {room && `Room #${room}`}
         </Typography>
-        <Button onClick={handleClickLeave}>Quitter le groupe</Button>
+        {/* <Button onClick={handleClickLeave}>Quitter le groupe</Button> */}
         {renderCreateGame()}
         {renderGameSettings()}
       </Grid>
@@ -186,12 +188,18 @@ function Lobby(props) {
       <div>
         <div>
           <Button variant="contained" onClick={handleClickCreate}>Créer une partie</Button>
-          OR
+          <Divider textAlign="left" sx={{ margin: '12px 0' }}>Ou</Divider>
           <Box component="form" onSubmit={handleSubmitRoom}>
-            <TextField
-              label="Rejoindre une room"
-              onChange={updateCustomRoom}
-            />
+            <Stack
+              direction="row"
+              spacing={2}
+              >
+              <TextField
+                label="Rejoindre une room"
+                onChange={updateCustomRoom}
+              />
+              <Button variant="contained" onClick={handleClickCreate}>Rejoindre</Button>
+            </Stack>
           </Box>
 
           {open &&

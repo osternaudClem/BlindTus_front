@@ -65,7 +65,7 @@ function ConmfirmEmail(props) {
       {renderError()}
       <Typography component="p" variant="body1" className="ConfirmEmail__content">
         Un e-mail vient de vous etres envoyé !
-        Nous vous avons envoyez un lien pour confirmer votre compte a l'adresse: <b>osternaud.clement@gmail.com</b>
+        Nous vous avons envoyez un lien pour confirmer votre compte a l'adresse: <b>{props.users.me.email}</b>
       </Typography>
 
       <Typography component="p" variant="body2" className="ConfirmEmail__subcontent">
