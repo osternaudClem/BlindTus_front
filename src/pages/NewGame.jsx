@@ -2,6 +2,16 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import stringSimilarity from 'string-similarity';
+import {
+  CssBaseline,
+  Grid,
+  Box,
+  Paper,
+  Typography,
+} from '@mui/material';
+
 import {
   musicsActions,
   scoresActions,
@@ -9,21 +19,12 @@ import {
   gamesActions,
   historyActions,
 } from '../actions';
-import stringSimilarity from 'string-similarity';
-import {
-  CssBaseline,
-  TextField,
-  Grid,
-  Box,
-  Paper,
-  Typography,
-} from '@mui/material';
 
 import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
-import { GameSettings, GameSettingsResume, PlayerVolume } from '../components/Forms';
+import { GameSettings, GameSettingsResume, MovieTextField } from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
 import './Page.scss';
@@ -68,7 +69,7 @@ function NewGame(props) {
       })();
     }
 
-  }, [props.scoresActions, props.gamesActions, code]);
+  }, [props.scoresActions, props.gamesActions, code, navigate]);
 
   useEffect(() => {
     if (!inputDisabled) {
@@ -161,30 +162,35 @@ function NewGame(props) {
       titles = [...titles, ...movie.simple_title];
     }
 
-    let isCorrect = false;
+    let isAnswerCorrect = false;
 
     titles.map(title => {
       const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase(), answer.toLowerCase());
 
       if (similarity >= 0.8) {
-        isCorrect = true;
+        isAnswerCorrect = true;
       }
 
       return null;
     });
 
-    if (!isCorrect && !timeOut) {
+    setIsCorrect(isAnswerCorrect);
+
+    if (!isAnswerCorrect && !timeOut) {
+      // setIsCorrect(null);
+      window.setTimeout(() => {
+        setIsCorrect(null);
+      }, 500)
       return updateAnswer('');
     }
 
-    setIsCorrect(isCorrect);
-    if (isCorrect) {
+    if (isAnswerCorrect) {
       score = timeLeft * 100 / timeLimit;
     }
 
     props.scoresActions.addScore({
       movie: movie.title_fr,
-      isCorrect,
+      isCorrect: isAnswerCorrect,
       score: Math.round(score),
       playerAnswer: answer,
       movie_id: props.games.currentGame.musics[music].movie._id,
@@ -248,14 +254,6 @@ function NewGame(props) {
       return;
     }
 
-    let color = "primary";
-
-    if (isCorrect) {
-      color = "success";
-    } else if (isCorrect !== null) {
-      color = "error";
-    }
-
     return (
       <div>
         <div>{musicNumber} / {props.games.currentGame.musics.length}</div>
@@ -273,18 +271,12 @@ function NewGame(props) {
           autoComplete="off"
           onSubmit={event => onSendAnswer(event)}
         >
-          <TextField
+          <MovieTextField
             onChange={updateAnswer}
             value={answer}
-            placeholder="Tape le nom du film"
-            fullWidth
-            autoFocus
-            color={color}
             disabled={inputDisabled}
             inputRef={answerField}
-            InputProps={{
-              style: { height: '80px', fontSize: '24px' }
-            }}
+            isCorrect={isCorrect}
           />
         </Box>
 
@@ -314,7 +306,12 @@ function NewGame(props) {
     }
 
     return (
-      <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
+      <div>
+        <Typography>
+          {!displayGame ? 'Prochaine manche dans...' : 'Trouvez le nom du film...'}
+        </Typography>
+        <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
+      </div>
     );
   }
 }
