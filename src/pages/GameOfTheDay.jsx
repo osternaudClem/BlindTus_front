@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import stringSimilarity from 'string-similarity';
-import ReactPlayer from 'react-player/youtube';
+import { useCopyToClipboard } from 'usehooks-ts';
 import { getCookie } from 'react-use-cookie';
 import {
   Button,
@@ -56,6 +56,7 @@ function GameOfTheDay(props) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
+  const [, copyToClipBoard] = useCopyToClipboard();
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
 
@@ -177,30 +178,18 @@ function GameOfTheDay(props) {
     }
   }
 
-  const handleClickShareResult = function () {
+  const handleClickShareResult = async function () {
     let header = `BlindTus #001 - ${props.historyToday.today.isWin ? `${props.historyToday.today.attempts.length}/5` : 'Film non trouvé'}\n\n`;
-    header = header + `http://localhost:3000/today`;
+    header = header + `http://blindtus.cl3tus.com/today`;
 
-    new Promise((resolve, reject) => {
-      if (window.navigator.clipboard !== undefined) {
-        return resolve(window.navigator.clipboard.writeText(header));
-      }
-      return reject();
-    })
-      .catch(
-        () =>
-          new Promise((resolve, reject) => {
-            if (window.navigator.share !== undefined) return resolve(navigator.share({ text: header }));
+    const isCopied = await copyToClipBoard(header);
 
-            return reject();
-          })
-      )
-      .then(() => {
-        setAlertTitle('Résumé copié dans le presse-papier.')
-      })
-      .catch((error) => {
-        setAlertTitle('Votre navigateur n\'est pas compatible.');
-      });
+    if (isCopied) {
+      setAlertTitle('Résumé copié dans le presse-papier.')
+    }
+    else {
+      setAlertTitle('Votre navigateur n\'est pas compatible.');
+    }
 
     setIsAlertOpen(true);
   }
@@ -223,12 +212,14 @@ function GameOfTheDay(props) {
         sm={9}
         md={8}
       >
-        <Typography component="h1" variant="h3" align="center" marginBottom={10}>
+        <Typography component="h1" variant="h3" align="center" marginBottom={2}>
           Musique du jour
           <IconButton onClick={handleClickOpen}>
             <HelpIcon />
           </IconButton>
         </Typography>
+
+        <Typography component="p" variant="subtitle2" align="center" marginBottom={10}>Vous ne pouvez entrer le nom du film que pendant la lecture</Typography>
 
         {endedGame()}
         {renderGame()}

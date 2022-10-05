@@ -51,7 +51,6 @@ export function signup(user) {
       dispatch({ type: types.POST_USER_SUCCESS, user: success.data });
       return success.data;
     } catch (error) {
-      console.log(error.response.data)
       return error.response.data;
     }
   }

@@ -49,8 +49,6 @@ function Play(props) {
       return;
     }
 
-    console.log('>>> Play')
-
     const roomCode = searchParams.get('room');
 
     socket.emit('JOIN_ROOM', { username: props.user.username, room: roomCode }, ({ error, code, user, room, game }) => {
@@ -63,7 +61,7 @@ function Play(props) {
             return;
         }
       }
-      console.log('>>> game', game)
+
       setRoom(room);
       setMusics(room.musics);
       setDisplayTimer(true);

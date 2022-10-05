@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
+import { useLocalStorage } from 'usehooks-ts';
 
 import {
   AppBar,
@@ -19,6 +20,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { UserContext } from '../../contexts/userContext';
+import { PlayerVolume } from '../Forms';
 import logo from '../../assets/logo_light.png';
 
 const pages = [
@@ -33,10 +35,6 @@ const pages = [
   {
     label: 'Multijoueur',
     url: '/lobby',
-  },
-  {
-    label: 'Test',
-    url: '/test',
   },
 ];
 
@@ -53,7 +51,7 @@ const settings = [
   },
   {
     id: 'logout',
-    label: 'Logout',
+    label: 'Se déconnecter',
     url: '/login',
   },
 ];
@@ -61,13 +59,14 @@ const settings = [
 const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [volume, setVolume] = useLocalStorage('player_volume', 70);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -81,10 +80,10 @@ const ResponsiveAppBar = (props) => {
 
   const handleCloseUserMenu = setting => {
     if (setting.id === 'logout') {
-      setCookie('user', '', { 
+      setCookie('user', '', {
         days: 0,
         domain: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? '' : '.cl3tus.com',
-     });
+      });
     }
     navigate(setting.url);
     setAnchorElUser(null);
@@ -149,8 +148,12 @@ const ResponsiveAppBar = (props) => {
                 {page.label}
               </Button>
             ))}
-          </Box>
 
+
+          </Box>
+          <div style={{ marginRight: '16px' }}>
+            <PlayerVolume onChange={(event, newValue) => setVolume(newValue)} value={volume} />
+          </div>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -97,6 +97,9 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode 
                 }}
               />
             </FormControl>
+            <div style={{ marginTop: '16px' }}>
+              <Button variant="contained" onClick={handleClickSettings} type="submit" size="large">Lancer la partie</Button>
+            </div>
             <Divider textAlign="left" sx={{ marginTop: '24px' }}>Ou Créez votre partie sur mesure</Divider>
           </Grid>
         }

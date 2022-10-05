@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { scoresActions, musicsActions } from '../actions';
+import { useCopyToClipboard } from 'usehooks-ts';
 import {
   CssBaseline,
   Button,
@@ -11,9 +11,11 @@ import {
   Grid,
 } from '@mui/material';
 
+import { scoresActions, musicsActions } from '../actions';
 import { ScoresDetails } from '../components/Scores';
 
 function EndGame(props) {
+  const [, copyToClipBoard] = useCopyToClipboard();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
 
@@ -26,7 +28,7 @@ function EndGame(props) {
     setIsAlertOpen(false);
   }
 
-  const handleClickShareResults = function () {
+  const handleClickShareResults = async function () {
     const scores = props.scores.currentGame;
     const game = props.games.currentGame;
 
@@ -42,29 +44,16 @@ function EndGame(props) {
 
     header = header + resultsEmotes.join('\t') + '\n\n';
     header = header + `Score total: ${totalPoint}\n\n`;
-    header = header + `http://localhost:3000/new-game?code=${game.code}`;
+    header = header + `http://blindtus.cl3tus.com/new-game?code=${game.code}`;
 
-    new Promise((resolve, reject) => {
-      if (window.navigator.clipboard !== undefined) {
-        return resolve(window.navigator.clipboard.writeText(header));
-      }
+    const isCopied = await copyToClipBoard(header);
 
-      return reject();
-    })
-      .catch(
-        () =>
-          new Promise((resolve, reject) => {
-            if (window.navigator.share !== undefined) return resolve(navigator.share({ text: header }));
-
-            return reject();
-          })
-      )
-      .then(() => {
-        setAlertTitle('Résumé copié dans le presse-papier.')
-      })
-      .catch((error) => {
-        setAlertTitle('Votre navigateur n\'est pas compatible.');
-      });
+    if (isCopied) {
+      setAlertTitle('Résumé copié dans le presse-papier.')
+    }
+    else {
+      setAlertTitle('Votre navigateur n\'est pas compatible.');
+    }
 
     setIsAlertOpen(true);
   }

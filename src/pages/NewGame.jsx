@@ -23,7 +23,7 @@ import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
-import { GameSettings, GameSettingsResume } from '../components/Forms';
+import { GameSettings, GameSettingsResume, PlayerVolume } from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
 import './Page.scss';
@@ -111,7 +111,38 @@ function NewGame(props) {
     onStartGame(settings);
   }
 
-  const onSendAnswer = event => {
+  function onTimerFinished(count, sending = true) {
+    setTimeLeft(count);
+    if (count === 0) {
+      if (musicNumber >= totalMusics) {
+        props.historyActions.saveHistory({
+          scores: props.scores.currentGame,
+          user: user,
+          game: props.games.currentGame,
+        })
+        navigate('/end-game');
+        return;
+      }
+
+      if (displayGame) {
+        if (sending) {
+          onSendAnswer(null, true);
+        }
+        setTimer(TIMER_PENDING);
+        setDisplayGame(false);
+        setInputDisabled(true);
+        setMusicsNumber(musicNumber + 1);
+        updateAnswer('');
+      } else {
+        setInputDisabled(false);
+        setTimer(timeLimit);
+        setIsCorrect(null);
+        setDisplayGame(true);
+      }
+    }
+  };
+
+  const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
     const movie = props.games.currentGame.musics[music].movie;
     let score = 0;
@@ -141,6 +172,10 @@ function NewGame(props) {
 
       return null;
     });
+
+    if (!isCorrect && !timeOut) {
+      return updateAnswer('');
+    }
 
     setIsCorrect(isCorrect);
     if (isCorrect) {
@@ -282,37 +317,6 @@ function NewGame(props) {
       <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
     );
   }
-
-  function onTimerFinished(count, sending = true) {
-    setTimeLeft(count);
-    if (count === 0) {
-      if (musicNumber >= totalMusics) {
-        props.historyActions.saveHistory({
-          scores: props.scores.currentGame,
-          user: user,
-          game: props.games.currentGame,
-        })
-        navigate('/end-game');
-        return;
-      }
-
-      if (displayGame) {
-        if (sending) {
-          onSendAnswer();
-        }
-        setTimer(TIMER_PENDING);
-        setDisplayGame(false);
-        setInputDisabled(true);
-        setMusicsNumber(musicNumber + 1);
-        updateAnswer('');
-      } else {
-        setInputDisabled(false);
-        setTimer(timeLimit);
-        setIsCorrect(null);
-        setDisplayGame(true);
-      }
-    }
-  };
 }
 
 function mapStateToProps(state) {

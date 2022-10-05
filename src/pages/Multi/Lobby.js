@@ -137,7 +137,6 @@ function Lobby(props) {
   }
 
   const handleClickLeave = function () {
-    console.log('>>> disconnect')
     socket.emit('FORCE_DISCONNECT');
     navigate(0);
   }

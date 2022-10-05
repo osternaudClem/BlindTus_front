@@ -1,40 +1,59 @@
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { useCountdown } from 'usehooks-ts';
 import {
   CssBaseline,
-  Typography,
   Box,
+  Container,
+  Typography,
 } from '@mui/material';
-import ReactPlayer from 'react-player';
 
-function Test() {
-  const [playing, setPlaying] = useState(false);
+import { musicsActions } from '../actions';
 
-  const handleClick = function() {
-    setPlaying(true);
+import { Result } from '../components/Results';
+
+function Test(props) {
+  const [intervalValue, setIntervalValue] = useState(1000);
+
+  const [count, { startCountdown, stopCountdown, resetCountdown }] =
+    useCountdown({
+      countStart: 3,
+      intervalMs: intervalValue,
+    })
+
+  const handleChangeIntervalValue = (event) => {
+    setIntervalValue(Number(event.target.value))
   }
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 500 }}>
+    <Box>
       <CssBaseline />
-      <button onClick={handleClick}>Play</button>
-      <ReactPlayer
-        playing={playing}
-        // playsinline={true}
-        loop={true}
-        url="https://www.youtube.com/embed/NBE-uBgtINg"
+      <Typography variant="h3">Test</Typography>
+      <p>Count: {count}</p>
+
+      <input
+        type="number"
+        value={intervalValue}
+        onChange={handleChangeIntervalValue}
       />
-      {/* <iframe
-        width="400"
-        height="300"
-        src="https://www.youtube.com/embed/PqHPU1TXfEk"
-        title="YouTube video player"
-        frameBorder="0"
-        allow="autoplay; clipboard-write; encrypted-media;"
-        >
-        </iframe> */}
+      <button onClick={startCountdown}>start</button>
+      <button onClick={stopCountdown}>stop</button>
+      <button onClick={resetCountdown}>reset</button>
     </Box>
   )
 }
 
-export default Test;
+function mapStateToProps(state) {
+  return {
+    musics: state.musics,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    musicsActions: bindActionCreators(musicsActions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Test);
