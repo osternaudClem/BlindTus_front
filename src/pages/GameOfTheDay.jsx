@@ -56,7 +56,7 @@ function GameOfTheDay(props) {
   const [isCorrect, setIsCorrect] = useState(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
-  const [, copyToClipBoard] = useCopyToClipboard();
+  const [clipBoard, copyToClipBoard] = useCopyToClipboard();
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
   const answerField = useRef(null);
@@ -191,7 +191,7 @@ function GameOfTheDay(props) {
     const game = props.today.game;
     const history = props.historyToday.today;
 
-    let header = `BlindTus #${addLeadingZeros(game.totalTodays, 3)} - ${history.today.isWin ? `${history.today.attempts.length}/5` : 'Film non trouvé'}\n\n`;
+    let header = `🎬 BlindTus 🍿 #${addLeadingZeros(game.totalTodays, 3)}\n\n`;
 
     for (let i = 0; i < 5; i++) {
       // Wrong ❌
@@ -212,6 +212,8 @@ function GameOfTheDay(props) {
     header = header + `\n\nhttp://blindtus.cl3tus.com/today`;
 
     const isCopied = await copyToClipBoard(header);
+
+    console.log('>>> clipBoard', clipBoard)
 
     if (isCopied) {
       setAlertTitle('Résumé copié dans le presse-papier.')
