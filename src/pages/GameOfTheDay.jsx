@@ -68,11 +68,13 @@ function GameOfTheDay(props) {
   useEffect(() => {
     (async function () {
       if (!props.today.game) {
-        await props.todayActions.getMusic();
+        const music = await props.todayActions.getMusic();
+      console.log('>>> music', music);
       }
 
       if (!props.historyToday.today._id) {
         const game = await props.historyTodayActions.getTodayUser(userId);
+        console.log('>>> game', game)
 
         if (game) {
           setIsCorrect(game.isWin || null);
