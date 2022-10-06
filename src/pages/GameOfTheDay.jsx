@@ -305,11 +305,11 @@ function GameOfTheDay(props) {
   }
 
   function endedGame() {
-    if (!props.historyToday.today || !props.historyToday.today.isCompleted) {
+    if (!props.historyToday.today._id || !props.historyToday.today.isCompleted) {
       return;
     }
 
-    console.log('>>> props.today', props.today)
+    console.log('>>> props.today', props.today.game)
 
     return (
       <div>
