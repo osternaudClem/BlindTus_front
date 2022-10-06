@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material/';
 import { getCookie } from 'react-use-cookie';
-import { SocketContext, socket } from '../context/socket';
+import { SocketContext, socket } from '../contexts/socket';
 import { usersActions } from '../actions';
 import { Header } from '../components/Header';
 import { UserContext } from '../contexts/userContext';

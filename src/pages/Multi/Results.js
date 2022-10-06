@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { socket } from '../../context/socket';
+import { socket } from '../../contexts/socket';
 import {
   CssBaseline,
   Typography,

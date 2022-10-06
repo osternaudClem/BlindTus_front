@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ReactPlayer from 'react-player/youtube';
 import stringSimilarity from 'string-similarity';
 import {
   Box,
@@ -16,7 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { socket } from '../../context/socket';
+import { socket } from '../../contexts/socket';
 import { Player } from '../../components/Player';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';

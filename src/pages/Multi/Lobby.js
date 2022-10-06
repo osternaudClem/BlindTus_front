@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { socket } from '../../context/socket';
+import { socket } from '../../contexts/socket';
 import { useTextfield } from '../../hooks/formHooks';
 import { Chat } from '../../components/Chat';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';

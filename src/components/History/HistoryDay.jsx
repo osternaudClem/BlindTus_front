@@ -27,6 +27,9 @@ function HistoryDay(props) {
           <Grid item xs>
             <Typography variant="h5">Essaie</Typography>
           </Grid>
+          <Grid item>
+            <Typography variant="h6">{props.tries}/5</Typography>
+          </Grid>
         </Grid>
         <List dense>
           {props.historyToday.today && props.historyToday.today.attempts && props.historyToday.today.attempts.map((attempt, index) => (

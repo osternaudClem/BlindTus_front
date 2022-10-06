@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import stringSimilarity from 'string-similarity';
@@ -9,7 +9,6 @@ import {
   CssBaseline,
   Typography,
   Box,
-  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -36,9 +35,10 @@ import { HistoryDay } from '../components/History';
 import { Result } from '../components/Results';
 import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
+import { addLeadingZeros } from '../lib/number';
+import { MovieTextField } from '../components/Forms';
 
 const TIMERS = [5, 10, 15, 25, 60];
-// const TIMERS = [5, 4, 3, 4, 3];
 const STEPS = {
   BEGINING: 'begining',
   PLAYING: 'playing',
@@ -53,12 +53,13 @@ function GameOfTheDay(props) {
   const [inputDisabled, setInputDisabled] = useState(true);
   const [displayGame, setDisplayGame] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
   const [, copyToClipBoard] = useCopyToClipboard();
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
+  const answerField = useRef(null);
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
@@ -72,8 +73,9 @@ function GameOfTheDay(props) {
 
       if (!props.historyToday.today._id) {
         const game = await props.historyTodayActions.getTodayUser(userId);
+
         if (game) {
-          setIsCorrect(game.isWin);
+          setIsCorrect(game.isWin || null);
           setTries(game.attempts.length);
 
           if (game.attempts.length === 0) {
@@ -98,6 +100,12 @@ function GameOfTheDay(props) {
     })();
   }, [props.today.game, props.historyToday.today, userId, props.historyTodayActions, props.todayActions]);
 
+  useEffect(() => {
+    if (!inputDisabled) {
+      answerField.current.focus();
+    }
+  }, [inputDisabled])
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -112,6 +120,7 @@ function GameOfTheDay(props) {
     setDisplayGame(true);
     setDisplayTimer(true);
     setIsCorrect(null);
+    answerField.current.focus();
   }
 
   const saveHistory = async function (answer, isCorrect) {
@@ -152,7 +161,7 @@ function GameOfTheDay(props) {
     setInputDisabled(true);
 
     const titles = [movie.title, movie.title_fr, ...movie.simple_title];
-    
+
     let isCorrect = false;
 
     titles.map(title => {
@@ -179,8 +188,28 @@ function GameOfTheDay(props) {
   }
 
   const handleClickShareResult = async function () {
-    let header = `BlindTus #001 - ${props.historyToday.today.isWin ? `${props.historyToday.today.attempts.length}/5` : 'Film non trouvé'}\n\n`;
-    header = header + `http://blindtus.cl3tus.com/today`;
+    const game = props.today.game;
+    const history = props.historyToday.today;
+
+    let header = `BlindTus #${addLeadingZeros(game.totalTodays, 3)} - ${history.today.isWin ? `${history.today.attempts.length}/5` : 'Film non trouvé'}\n\n`;
+
+    for (let i = 0; i < 5; i++) {
+      // Wrong ❌
+      // Correct ✅
+      // Other tries ⬛
+      let emote = '⬛';
+
+      if (history.attempts.length === i + 1) {
+        emote = '✅';
+      }
+      else if (history.attempts.length > i + 1) {
+        emote = '❌';
+      }
+
+      header = header + `${emote}`;
+    }
+
+    header = header + `\n\nhttp://blindtus.cl3tus.com/today`;
 
     const isCopied = await copyToClipBoard(header);
 
@@ -192,14 +221,6 @@ function GameOfTheDay(props) {
     }
 
     setIsAlertOpen(true);
-  }
-
-  let color = "primary";
-
-  if (isCorrect) {
-    color = "success";
-  } else if (isCorrect !== null) {
-    color = "error";
   }
 
   return (
@@ -233,7 +254,7 @@ function GameOfTheDay(props) {
         sm={3}
         md={4}
       >
-        <HistoryDay />
+        <HistoryDay tries={tries} />
       </Grid>
     </Grid>
   )
@@ -260,17 +281,12 @@ function GameOfTheDay(props) {
           autoComplete="off"
           onSubmit={event => onSendAnswer(event)}
         >
-          <TextField
+          <MovieTextField
+            inputRef={answerField}
             onChange={updateAnswer}
             value={answer}
-            placeholder="Tape le nom du film"
-            fullWidth
-            autoFocus
-            color={color}
-            InputProps={{
-              disabled: inputDisabled,
-              style: { height: '80px', fontSize: '24px' }
-            }}
+            isCorrect={isCorrect}
+            disabled={inputDisabled}
           />
         </Box>
         {!displayGame &&
@@ -289,9 +305,10 @@ function GameOfTheDay(props) {
 
     return (
       <div>
-        <Typography>La partie est finie pour aujourd'hui. Revenez demain !</Typography>
-        <Button variant="contained" onClick={handleClickShareResult}>Partager le résultat</Button>
-
+        <Alert variant="outlined">La partie est finie pour aujourd'hui. Revenez demain !</Alert>
+        <Box sx={{ margin: '24px 0'}}>
+          <Button variant="contained" onClick={handleClickShareResult}>Partager le résultat</Button>
+        </Box>
         <Result movie={props.today.game.music.movie} music={props.today.game.music} />
       </div>
     )

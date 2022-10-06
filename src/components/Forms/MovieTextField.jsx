@@ -13,7 +13,6 @@ function MovieTextField({ onChange, placeholder, value, disabled, inputRef, isCo
       placeholder={placeholder}
       fullWidth
       autoFocus
-      // color={color}
       disabled={disabled}
       inputRef={inputRef}
       className={classnames({ 

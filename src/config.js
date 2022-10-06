@@ -6,7 +6,7 @@ module.exports = {
   },
   socketApi: {
     development: 'http://localhost:4001',
-    production: 'https://blindtus.cl3tus.com:4001',
+    production: 'https://blindtus.cl3tus.com',
   },
   tmdb: {
     image_path: 'https://image.tmdb.org/t/p/original',
