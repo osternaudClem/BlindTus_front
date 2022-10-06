@@ -149,7 +149,6 @@ const ResponsiveAppBar = (props) => {
               </Button>
             ))}
 
-
           </Box>
           <div style={{ marginRight: '16px' }}>
             <PlayerVolume onChange={(event, newValue) => setVolume(newValue)} value={volume} />
