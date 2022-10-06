@@ -223,6 +223,10 @@ function GameOfTheDay(props) {
     setIsAlertOpen(true);
   }
 
+  if (!props.today.game || !props.historyToday.today._id) {
+    return <div>Chargement...</div>
+  }
+
   return (
     <Grid container spacing={12} component="main" className="LoginPage">
       <CssBaseline />
@@ -302,6 +306,8 @@ function GameOfTheDay(props) {
     if (!props.historyToday.today || !props.historyToday.today.isCompleted) {
       return;
     }
+
+    console.log('>>> props.today', props.today)
 
     return (
       <div>
