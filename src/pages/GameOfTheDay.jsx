@@ -56,7 +56,7 @@ function GameOfTheDay(props) {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
-  const [clipBoard, copyToClipBoard] = useCopyToClipboard();
+  const [, copyToClipBoard] = useCopyToClipboard();
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
 
@@ -183,9 +183,6 @@ function GameOfTheDay(props) {
     header = header + `http://blindtus.cl3tus.com/today`;
 
     const isCopied = await copyToClipBoard(header);
-
-    console.log('>>> isCopied', isCopied);
-    console.log('>>> clipBoard', clipBoard)
 
     if (isCopied) {
       setAlertTitle('Résumé copié dans le presse-papier.')

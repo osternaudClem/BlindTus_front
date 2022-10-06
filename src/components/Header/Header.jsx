@@ -36,6 +36,11 @@ const pages = [
     label: 'Multijoueur',
     url: '/lobby',
   },
+  {
+    label: 'Suggérer un film',
+    url: '/suggest-movie',
+    color: '#af79ff'
+  }
 ];
 
 const settings = [
@@ -143,7 +148,7 @@ const ResponsiveAppBar = (props) => {
               <Button
                 key={page.label}
                 onClick={() => handleCloseNavMenu(page)}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, color: page.color || 'white', display: 'block' }}
               >
                 {page.label}
               </Button>

@@ -18,7 +18,9 @@ import {
   PlayPage,
   ResultsPage,
   UserSettingsPage,
+  SuggestMoviePage,
 } from './pages';
+import { CssBaseline } from '@mui/material';
 
 const darkTheme = createTheme({
   palette: {
@@ -45,6 +47,7 @@ const darkTheme = createTheme({
 
 const RoutesUrl = () => (
   <ThemeProvider theme={darkTheme}>
+    <CssBaseline />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
@@ -57,6 +60,9 @@ const RoutesUrl = () => (
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/multi/results" element={<ResultsPage />} />
+          <Route path="/suggest-movie" element={<SuggestMoviePage />} />
+          <Route path="/suggest-movie/:movie_query" element={<SuggestMoviePage />} />
+          <Route path="/suggest-movie/:movie_query/:movie_id" element={<SuggestMoviePage />} />
         </Route>
         <Route path="/" element={<NotConnected />}>
           <Route path="/login" element={<LoginPage />} />
