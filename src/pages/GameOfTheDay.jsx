@@ -69,12 +69,10 @@ function GameOfTheDay(props) {
     (async function () {
       if (!props.today.game) {
         const music = await props.todayActions.getMusic();
-      console.log('>>> music', music);
       }
 
       if (!props.historyToday.today._id) {
         const game = await props.historyTodayActions.getTodayUser(userId);
-        console.log('>>> game', game)
 
         if (game) {
           setIsCorrect(game.isWin || null);
@@ -308,8 +306,6 @@ function GameOfTheDay(props) {
     if (!props.historyToday.today._id || !props.historyToday.today.isCompleted) {
       return;
     }
-
-    console.log('>>> props.today', props.today.game)
 
     return (
       <div>
