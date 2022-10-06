@@ -40,7 +40,7 @@ function Login(props) {
       setUserToken(user._id, {
         days: 365,
         SameSite: 'Strict',
-        Secure: isDev,
+        Secure: true,
         domain: isDev ? '' : '.cl3tus.com',
       });
 
