@@ -243,7 +243,7 @@ function NewGame(props) {
 
     return (
       <Paper elevation={2} sx={{ padding: '2rem' }}>
-        <Typography component="h2" variant="h3" gutterBottom>Nouvelle partie</Typography>
+        <Typography component="h2" variant="h3" marginBottom={4}>Nouvelle partie</Typography>
         <GameSettings onSettingsSaved={onSettingsSaved} redirect="new-game" />
       </Paper>
     );

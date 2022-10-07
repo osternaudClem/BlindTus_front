@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState} from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -12,6 +12,9 @@ import {
   Typography,
   IconButton,
   InputAdornment,
+  Fade,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
@@ -25,14 +28,20 @@ function Login(props) {
   const [showPassword, updateShowPassword] = useToggle();
   const [email, updateEmail] = useTextfield();
   const [password, updatePassword] = useTextfield();
+  const [ serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async function (event) {
     event.preventDefault();
+    setServerErrors(null);
+
     const user = await props.usersActions.login(email, password);
 
     if (user.error && user.error === 'notConfirmed') {
       return navigate('/confirm');
+    }
+    else if (user.error) {
+      return setServerErrors(user.error);
     }
 
     if (user.username) {
@@ -65,6 +74,7 @@ function Login(props) {
         Sign in
       </Typography>
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        {renderError()}
         <TextField
           margin="normal"
           required
@@ -125,6 +135,21 @@ function Login(props) {
       </Box>
     </Box>
   );
+
+  function renderError() {
+    if (!serverErrors) {
+      return;
+    }
+
+    return (
+      <Fade in timeout={{ enter: 500 }}>
+        <Alert severity="error" sx={{ marginBottom: '24px' }}>
+          <AlertTitle>Error</AlertTitle>
+          {serverErrors}
+        </Alert>
+      </Fade>
+    )
+  }
 }
 
 function mapStateToProps(state) {

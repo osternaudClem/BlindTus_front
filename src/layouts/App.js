@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material/';
 import { getCookie } from 'react-use-cookie';
 import { SocketContext, socket } from '../contexts/socket';

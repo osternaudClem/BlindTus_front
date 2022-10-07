@@ -1,6 +1,8 @@
-import React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   Box,
   Slider,
@@ -15,10 +17,13 @@ import {
   Divider,
   InputAdornment,
   IconButton,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
 import { useSlider, useTextfield } from '../../hooks/formHooks';
+import { gamesActions } from '../../actions';
 
 const MOVIE_MIN = 5;
 const MOVIE_MAX = 100;
@@ -27,17 +32,24 @@ function valuetext(value) {
   return `${value} secondes`;
 }
 
-function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode }) {
+function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode, ...props }) {
+  const [errorCode, setErrorCode] = useState(null);
   const [time, updateTime] = useSlider(30);
   const [movieNumber, updateMovieNumber] = useTextfield(5);
   const [difficulty, updateDifficulty] = useTextfield('easy');
   const [code, updateCode] = useTextfield('');
   const navigate = useNavigate();
 
-  const handleClickSettings = function (event) {
+  const handleClickSettings = async function (event) {
     event.preventDefault();
 
+    setErrorCode(null);
+
     if (code && code !== '' && redirect) {
+      const game = await props.gamesActions.getGame(code);
+      if (!game.id_) {
+        return setErrorCode('La partie correspondante à ce code n\'existe pas');
+      }
       return navigate(`/${redirect}?code=${code}`);
     }
 
@@ -78,6 +90,12 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode 
       <Grid container spacing={3}>
         {!noGameCode &&
           <Grid item xs={12}>
+            {errorCode && (
+              <Alert severity="error" sx={{ marginBottom: '24px' }}>
+                <AlertTitle>Erreur</AlertTitle>
+                {errorCode}
+              </Alert>
+            )}
             <FormControl>
               <TextField
                 label="Code de la partie"
@@ -175,4 +193,10 @@ GameSettings.defaultProps = {
   redirect: null,
 };
 
-export default GameSettings;
+function mapDispatchToProps(dispatch) {
+  return {
+    gamesActions: bindActionCreators(gamesActions, dispatch),
+  };
+}
+
+export default connect(null, mapDispatchToProps)(GameSettings);
