@@ -68,7 +68,7 @@ function GameOfTheDay(props) {
   useEffect(() => {
     (async function () {
       if (!props.today.game) {
-        const music = await props.todayActions.getMusic();
+        await props.todayActions.getMusic();
       }
 
       if (!props.historyToday.today._id) {

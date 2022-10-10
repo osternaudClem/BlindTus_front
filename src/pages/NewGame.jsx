@@ -10,6 +10,8 @@ import {
   Box,
   Paper,
   Typography,
+  Button,
+  Stack,
 } from '@mui/material';
 
 import {
@@ -19,6 +21,8 @@ import {
   gamesActions,
   historyActions,
 } from '../actions';
+
+import { shuffle } from '../lib/array';
 
 import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
@@ -46,6 +50,7 @@ function NewGame(props) {
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
   const [gameWithCode, setGameWithCode] = useState(false);
+  const [proposals, setProposals] = useState([]);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
@@ -72,7 +77,7 @@ function NewGame(props) {
   }, [props.scoresActions, props.gamesActions, code, navigate]);
 
   useEffect(() => {
-    if (!inputDisabled) {
+    if (!inputDisabled && answerField.current) {
       answerField.current.focus();
     }
   }, [inputDisabled])
@@ -82,8 +87,18 @@ function NewGame(props) {
       return;
     }
 
-    return await props.musicsActions.getMusics(limit);
+    const allMusics = await props.musicsActions.getMusics(limit);
+
+    return allMusics;
   }
+
+  useEffect(() => {
+    const currentGame = props.games.currentGame;
+
+    if (currentGame.proposals && musicNumber < totalMusics) {
+      setProposals(shuffle([currentGame.musics[musicNumber].movie.title_fr, ...currentGame.proposals[musicNumber].slice(0, 7)]));
+    }
+  }, [musicNumber, props.games.currentGame, totalMusics]);
 
   const onStartGame = async function ({ time, movieNumber, difficulty }) {
     const musics = await getMusics(movieNumber);
@@ -143,6 +158,36 @@ function NewGame(props) {
     }
   };
 
+  const handleClickHanswer = function (event, answer) {
+    const music = musicNumber;
+    const movie = props.games.currentGame.musics[music].movie;
+    let score = 0;
+
+    let isAnswerCorrect = false;
+
+    if (answer === movie.title_fr) {
+      isAnswerCorrect = true;
+    }
+
+    setIsCorrect(isAnswerCorrect);
+
+    if (isAnswerCorrect) {
+      score = timeLeft * 100 / timeLimit;
+    }
+
+    props.scoresActions.addScore({
+      movie: movie.title_fr,
+      isCorrect: isAnswerCorrect,
+      score: Math.round(score),
+      playerAnswer: answer,
+      movie_id: props.games.currentGame.musics[music].movie._id,
+      music_id: props.games.currentGame.musics[music]._id,
+    });
+
+    onTimerFinished(0, false);
+
+  }
+
   const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
     const movie = props.games.currentGame.musics[music].movie;
@@ -156,16 +201,12 @@ function NewGame(props) {
       return;
     }
 
-    let titles = [movie.title, movie.title_fr];
-
-    if (difficulty === 'easy') {
-      titles = [...titles, ...movie.simple_title];
-    }
+    let titles = [movie.title, movie.title_fr, ...movie.simple_title];
 
     let isAnswerCorrect = false;
 
     titles.map(title => {
-      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase(), answer.toLowerCase());
+      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
 
       if (similarity >= 0.8) {
         isAnswerCorrect = true;
@@ -260,29 +301,79 @@ function NewGame(props) {
 
         {renderTimer()}
 
-        <Box
-          sx={{
-            width: '100%',
-            maxWidth: '100%',
-          }}
-          mb={4}
-          component="form"
-          noValidate
-          autoComplete="off"
-          onSubmit={event => onSendAnswer(event)}
-        >
-          <MovieTextField
-            onChange={updateAnswer}
-            value={answer}
-            disabled={inputDisabled}
-            inputRef={answerField}
-            isCorrect={isCorrect}
-          />
-        </Box>
+        {difficulty === 'difficult'
+          ? (
+
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '100%',
+              }}
+              mb={4}
+              component="form"
+              noValidate
+              autoComplete="off"
+              onSubmit={event => onSendAnswer(event)}
+            >
+              <MovieTextField
+                onChange={updateAnswer}
+                value={answer}
+                disabled={inputDisabled}
+                inputRef={answerField}
+                isCorrect={isCorrect}
+              />
+            </Box>
+          )
+          : (
+            <div>
+              {renderProposals()}
+            </div>
+          )
+        }
 
         {renderPlayer()}
       </div>
     );
+  }
+
+  function renderProposals() {
+    if (!displayGame) {
+      return;
+    }
+
+    return (
+      <Box sx={{ '& button': { m: 1 } }}>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(0)}
+        </Stack>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(2)}
+        </Stack>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(4)}
+        </Stack>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(6)}
+        </Stack>
+      </Box>
+    )
+  }
+
+  function renderProposalsButton(index) {
+    return (
+      <React.Fragment>
+        <Button variant="outlined" sx={{ flex: 1 }} size="large" onClick={(event) => handleClickHanswer(event, proposals[index])}>{proposals[index]}</Button>
+        <Button variant="outlined" sx={{ flex: 1 }} size="large" onClick={(event) => handleClickHanswer(event, proposals[index + 1])}>{proposals[index + 1]}</Button>
+      </React.Fragment>
+    )
   }
 
   function renderPlayer() {

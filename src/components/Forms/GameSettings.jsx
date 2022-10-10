@@ -47,7 +47,7 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
 
     if (code && code !== '' && redirect) {
       const game = await props.gamesActions.getGame(code);
-      if (!game.id_) {
+      if (!game._id) {
         return setErrorCode('La partie correspondante à ce code n\'existe pas');
       }
       return navigate(`/${redirect}?code=${code}`);
@@ -159,15 +159,13 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
               Difficulté de la partie
             </Typography>
             <RadioGroup
-              row
-              aria-labelledby="choix-de-la-difficulte"
-              name="row-radio-buttons-group"
               defaultValue={difficulty}
               value={difficulty}
               onChange={onDifficultyChange}
             >
-              <FormControlLabel value="easy" control={<Radio />} label="Facile" />
-              <FormControlLabel value="difficult" control={<Radio />} label="Difficile" />
+              <FormControlLabel value="easy" control={<Radio />} label="Facile (réponse parmis plusieurs)" />
+              <FormControlLabel value="difficult" control={<Radio />} label="Difficile (tapez la bonne réponse)" />
+              <Typography variant="subtitle1"></Typography>
             </RadioGroup>
           </FormControl>
         </Grid>
