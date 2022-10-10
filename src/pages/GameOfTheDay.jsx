@@ -38,7 +38,7 @@ import { UserContext } from '../contexts/userContext';
 import { addLeadingZeros } from '../lib/number';
 import { MovieTextField } from '../components/Forms';
 
-const TIMERS = [5, 10, 15, 25, 60];
+const TIMERS = [10, 25, 40, 70, 120];
 const STEPS = {
   BEGINING: 'begining',
   PLAYING: 'playing',
@@ -374,11 +374,11 @@ function GameOfTheDay(props) {
             À chaque étape, vous avez du temps supplémentaires:
           </DialogContentText>
           <ol>
-            <li>5 secondes</li>
-            <li>10 secondes</li>
-            <li>15 secondes</li>
-            <li>25 secondes</li>
-            <li>60 secondes</li>
+            <li>{TIMERS[0]} secondes</li>
+            <li>{TIMERS[1]} secondes</li>
+            <li>{TIMERS[2]} secondes</li>
+            <li>{TIMERS[3]} secondes</li>
+            <li>{TIMERS[4]} secondes</li>
           </ol>
         </DialogContent>
         <Divider />
