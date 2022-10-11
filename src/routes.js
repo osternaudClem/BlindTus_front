@@ -14,6 +14,7 @@ import {
   HistoryPage,
   ConfirmEmailPage,
   GameOfTheDayPage,
+  TodayPage,
   LobbyPage,
   PlayPage,
   ResultsPage,
@@ -54,7 +55,7 @@ const RoutesUrl = () => (
           <Route path="" element={<HomePage />} />
           <Route path="/new-game" element={<NewGamePage />} />
           <Route path="/end-game" element={<EndGamePage />} />
-          <Route path="/today" element={<GameOfTheDayPage />} />
+          <Route path="/playtoday" element={<GameOfTheDayPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/settings" element={<UserSettingsPage />} />
           <Route path="/lobby" element={<LobbyPage />} />
@@ -69,6 +70,7 @@ const RoutesUrl = () => (
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/confirm" element={<ConfirmEmailPage />} />
         </Route>
+        <Route path="/today" element={<TodayPage />} />
         <Route path="/test" element={<TestPage />} />
       </Routes>
     </BrowserRouter>

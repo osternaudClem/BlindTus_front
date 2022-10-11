@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 import { SemiBackground } from '../components/Background';
+import { HeaderNotLogged } from '../components/Header';
 
 function NotConnected(props) {
   const navigate = useNavigate();
@@ -24,23 +25,26 @@ function NotConnected(props) {
 
 
   return (
-    <Grid container component="main" sx={{ height: '100vh' }} className="LoginPage">
+    <div>
       <CssBaseline />
-      <SemiBackground />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <Box
-          sx={{
-            my: 8,
-            mx: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Outlet {...props} />
-        </Box>
+      <HeaderNotLogged />
+      <Grid container component="main" sx={{ height: '100vh' }} className="LoginPage">
+        <SemiBackground />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Outlet {...props} />
+          </Box>
+        </Grid>
       </Grid>
-    </Grid>
+    </div>
   );
 }
 

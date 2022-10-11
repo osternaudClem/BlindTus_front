@@ -11,4 +11,7 @@ module.exports = {
   tmdb: {
     image_path: 'https://image.tmdb.org/t/p/original',
   },
+  crypt: {
+    secret: 'YI3MJitbbj',
+  },
 };

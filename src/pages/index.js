@@ -7,6 +7,7 @@ export { default as SignupPage } from './Signup';
 export { default as HistoryPage } from './History';
 export { default as ConfirmEmailPage } from './ConfirmEmail';
 export { default as GameOfTheDayPage } from './GameOfTheDay';
+export { default as TodayPage } from './Today';
 export { default as UserSettingsPage } from './UserSettings';
 export { default as SuggestMoviePage } from './SuggestMovie';
 
