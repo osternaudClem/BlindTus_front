@@ -2,6 +2,18 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import stringSimilarity from 'string-similarity';
+import {
+  CssBaseline,
+  Grid,
+  Box,
+  Paper,
+  Typography,
+  Button,
+  Stack,
+} from '@mui/material';
+
 import {
   musicsActions,
   scoresActions,
@@ -9,21 +21,14 @@ import {
   gamesActions,
   historyActions,
 } from '../actions';
-import stringSimilarity from 'string-similarity';
-import {
-  CssBaseline,
-  TextField,
-  Grid,
-  Box,
-  Paper,
-  Typography,
-} from '@mui/material';
+
+import { shuffle } from '../lib/array';
 
 import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
-import { GameSettings, GameSettingsResume } from '../components/Forms';
+import { GameSettings, GameSettingsResume, MovieTextField } from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
 import './Page.scss';
@@ -45,6 +50,7 @@ function NewGame(props) {
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
   const [gameWithCode, setGameWithCode] = useState(false);
+  const [proposals, setProposals] = useState([]);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
@@ -68,10 +74,10 @@ function NewGame(props) {
       })();
     }
 
-  }, [props.scoresActions, props.gamesActions, code]);
+  }, [props.scoresActions, props.gamesActions, code, navigate]);
 
   useEffect(() => {
-    if (!inputDisabled) {
+    if (!inputDisabled && answerField.current) {
       answerField.current.focus();
     }
   }, [inputDisabled])
@@ -81,8 +87,18 @@ function NewGame(props) {
       return;
     }
 
-    return await props.musicsActions.getMusics(limit);
+    const allMusics = await props.musicsActions.getMusics(limit);
+
+    return allMusics;
   }
+
+  useEffect(() => {
+    const currentGame = props.games.currentGame;
+
+    if (currentGame.proposals && musicNumber < totalMusics) {
+      setProposals(shuffle([currentGame.musics[musicNumber].movie.title_fr, ...currentGame.proposals[musicNumber].slice(0, 7)]));
+    }
+  }, [musicNumber, props.games.currentGame, totalMusics]);
 
   const onStartGame = async function ({ time, movieNumber, difficulty }) {
     const musics = await getMusics(movieNumber);
@@ -111,7 +127,68 @@ function NewGame(props) {
     onStartGame(settings);
   }
 
-  const onSendAnswer = event => {
+  function onTimerFinished(count, sending = true) {
+    setTimeLeft(count);
+    if (count === 0) {
+      if (musicNumber >= totalMusics) {
+        props.historyActions.saveHistory({
+          scores: props.scores.currentGame,
+          user: user,
+          game: props.games.currentGame,
+        })
+        navigate('/end-game');
+        return;
+      }
+
+      if (displayGame) {
+        if (sending) {
+          onSendAnswer(null, true);
+        }
+        setTimer(TIMER_PENDING);
+        setDisplayGame(false);
+        setInputDisabled(true);
+        setMusicsNumber(musicNumber + 1);
+        updateAnswer('');
+      } else {
+        setInputDisabled(false);
+        setTimer(timeLimit);
+        setIsCorrect(null);
+        setDisplayGame(true);
+      }
+    }
+  };
+
+  const handleClickHanswer = function (event, answer) {
+    const music = musicNumber;
+    const movie = props.games.currentGame.musics[music].movie;
+    let score = 0;
+
+    let isAnswerCorrect = false;
+
+    if (answer === movie.title_fr) {
+      isAnswerCorrect = true;
+    }
+
+    setIsCorrect(isAnswerCorrect);
+
+    if (isAnswerCorrect) {
+      score = timeLeft * 100 / timeLimit;
+    }
+
+    props.scoresActions.addScore({
+      movie: movie.title_fr,
+      isCorrect: isAnswerCorrect,
+      score: Math.round(score),
+      playerAnswer: answer,
+      movie_id: props.games.currentGame.musics[music].movie._id,
+      music_id: props.games.currentGame.musics[music]._id,
+    });
+
+    onTimerFinished(0, false);
+
+  }
+
+  const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
     const movie = props.games.currentGame.musics[music].movie;
     let score = 0;
@@ -124,32 +201,37 @@ function NewGame(props) {
       return;
     }
 
-    let titles = [movie.title, movie.title_fr];
+    let titles = [movie.title, movie.title_fr, ...movie.simple_title];
 
-    if (difficulty === 'easy') {
-      titles = [...titles, ...movie.simple_title];
-    }
-
-    let isCorrect = false;
+    let isAnswerCorrect = false;
 
     titles.map(title => {
-      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase(), answer.toLowerCase());
+      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
 
       if (similarity >= 0.8) {
-        isCorrect = true;
+        isAnswerCorrect = true;
       }
 
       return null;
     });
 
-    setIsCorrect(isCorrect);
-    if (isCorrect) {
+    setIsCorrect(isAnswerCorrect);
+
+    if (!isAnswerCorrect && !timeOut) {
+      // setIsCorrect(null);
+      window.setTimeout(() => {
+        setIsCorrect(null);
+      }, 500)
+      return updateAnswer('');
+    }
+
+    if (isAnswerCorrect) {
       score = timeLeft * 100 / timeLimit;
     }
 
     props.scoresActions.addScore({
       movie: movie.title_fr,
-      isCorrect,
+      isCorrect: isAnswerCorrect,
       score: Math.round(score),
       playerAnswer: answer,
       movie_id: props.games.currentGame.musics[music].movie._id,
@@ -202,7 +284,7 @@ function NewGame(props) {
 
     return (
       <Paper elevation={2} sx={{ padding: '2rem' }}>
-        <Typography component="h2" variant="h3" gutterBottom>Nouvelle partie</Typography>
+        <Typography component="h2" variant="h3" marginBottom={4}>Nouvelle partie</Typography>
         <GameSettings onSettingsSaved={onSettingsSaved} redirect="new-game" />
       </Paper>
     );
@@ -213,49 +295,85 @@ function NewGame(props) {
       return;
     }
 
-    let color = "primary";
-
-    if (isCorrect) {
-      color = "success";
-    } else if (isCorrect !== null) {
-      color = "error";
-    }
-
     return (
       <div>
         <div>{musicNumber} / {props.games.currentGame.musics.length}</div>
 
         {renderTimer()}
 
-        <Box
-          sx={{
-            width: '100%',
-            maxWidth: '100%',
-          }}
-          mb={4}
-          component="form"
-          noValidate
-          autoComplete="off"
-          onSubmit={event => onSendAnswer(event)}
-        >
-          <TextField
-            onChange={updateAnswer}
-            value={answer}
-            placeholder="Tape le nom du film"
-            fullWidth
-            autoFocus
-            color={color}
-            disabled={inputDisabled}
-            inputRef={answerField}
-            InputProps={{
-              style: { height: '80px', fontSize: '24px' }
-            }}
-          />
-        </Box>
+        {difficulty === 'difficult'
+          ? (
+
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '100%',
+              }}
+              mb={4}
+              component="form"
+              noValidate
+              autoComplete="off"
+              onSubmit={event => onSendAnswer(event)}
+            >
+              <MovieTextField
+                onChange={updateAnswer}
+                value={answer}
+                disabled={inputDisabled}
+                inputRef={answerField}
+                isCorrect={isCorrect}
+              />
+            </Box>
+          )
+          : (
+            <div>
+              {renderProposals()}
+            </div>
+          )
+        }
 
         {renderPlayer()}
       </div>
     );
+  }
+
+  function renderProposals() {
+    if (!displayGame) {
+      return;
+    }
+
+    return (
+      <Box sx={{ '& button': { m: 1 } }}>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(0)}
+        </Stack>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(2)}
+        </Stack>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(4)}
+        </Stack>
+        <Stack
+          direction="row"
+        >
+          {renderProposalsButton(6)}
+        </Stack>
+      </Box>
+    )
+  }
+
+  function renderProposalsButton(index) {
+    return (
+      <React.Fragment>
+        <Button variant="outlined" sx={{ flex: 1 }} size="large" onClick={(event) => handleClickHanswer(event, proposals[index])}>{proposals[index]}</Button>
+        <Button variant="outlined" sx={{ flex: 1 }} size="large" onClick={(event) => handleClickHanswer(event, proposals[index + 1])}>{proposals[index + 1]}</Button>
+      </React.Fragment>
+    )
   }
 
   function renderPlayer() {
@@ -279,40 +397,14 @@ function NewGame(props) {
     }
 
     return (
-      <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
+      <div>
+        <Typography>
+          {!displayGame ? 'Prochaine manche dans...' : 'Trouvez le nom du film...'}
+        </Typography>
+        <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
+      </div>
     );
   }
-
-  function onTimerFinished(count, sending = true) {
-    setTimeLeft(count);
-    if (count === 0) {
-      if (musicNumber >= totalMusics) {
-        props.historyActions.saveHistory({
-          scores: props.scores.currentGame,
-          user: user,
-          game: props.games.currentGame,
-        })
-        navigate('/end-game');
-        return;
-      }
-
-      if (displayGame) {
-        if (sending) {
-          onSendAnswer();
-        }
-        setTimer(TIMER_PENDING);
-        setDisplayGame(false);
-        setInputDisabled(true);
-        setMusicsNumber(musicNumber + 1);
-        updateAnswer('');
-      } else {
-        setInputDisabled(false);
-        setTimer(timeLimit);
-        setIsCorrect(null);
-        setDisplayGame(true);
-      }
-    }
-  };
 }
 
 function mapStateToProps(state) {

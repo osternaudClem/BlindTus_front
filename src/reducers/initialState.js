@@ -10,6 +10,9 @@ const state = Object.freeze({
     me: {},
   },
   movies: {
+    all: [],
+    search: [],
+    selected: {},
     cover: null,
   },
   scores: {

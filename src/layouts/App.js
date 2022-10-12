@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material/';
 import { getCookie } from 'react-use-cookie';
-import { SocketContext, socket } from '../context/socket';
+import { SocketContext, socket } from '../contexts/socket';
 import { usersActions } from '../actions';
 import { Header } from '../components/Header';
 import { UserContext } from '../contexts/userContext';
@@ -21,19 +20,19 @@ function App(props) {
       navigate('/login');
     } else {
       (async function () {
-        if (!props.users.me.username) {
+        if (!props.users.me.username || !user._id) {
           const userLoaded = await props.usersActions.getUserById(userId);
-          setUser(userLoaded)
+          setUser(userLoaded);
         }
       })();
     }
-  }, [navigate, props.users.me.username, props.usersActions]);
+  }, [navigate, props.users.me.username, props.usersActions, user]);
 
   const updateUser = function (user) {
     setUser(user);
   };
 
-  if (!props.users.me._id) {
+  if (!user._id) {
     return <div>Loading ...</div>
   }
 

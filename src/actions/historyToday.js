@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { api } from '../config';
+import { api, requestHeader } from '../config';
 import * as types from '../datas/actionTypes';
 const API = api[process.env.NODE_ENV];
 
@@ -15,7 +15,7 @@ export function getFullHistory() {
     }
 
     try {
-      const success = await axios.get(`${API}/historytoday`);
+      const success = await axios.get(`${API}/historytoday`, requestHeader);
       return onSuccess(success);
     } catch (error) {
       return onError(error);
@@ -35,7 +35,7 @@ export function getHistory(historyId) {
     }
 
     try {
-      const success = await axios.get(`${API}/historytoday/${historyId}`);
+      const success = await axios.get(`${API}/historytoday/${historyId}`, requestHeader);
       return onSuccess(success);
     } catch (error) {
       return onError(error);
@@ -55,7 +55,7 @@ export function getTodayUser(userId) {
     }
 
     try {
-      const success = await axios.get(`${API}/historytoday/user/${userId}`);
+      const success = await axios.get(`${API}/historytoday/user/${userId}`, requestHeader);
       return onSuccess(success);
     } catch (error) {
       return onError(error);
@@ -68,7 +68,7 @@ export function saveHistory(history) {
     try {
       const success = await axios.post(`${API}/historytoday`, {
         ...history
-      });
+      }, requestHeader);
 
       dispatch({ type: types.SAVE_HISTORY_TODAY_SUCCESS, history: success.data });
 

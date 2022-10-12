@@ -33,10 +33,12 @@ function ConmfirmEmail(props) {
           setError(request.messages);
         }
         else {
+          const isDev = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
           setUserToken(request._id, {
             days: 365,
             SameSite: 'Strict',
             Secure: true,
+            domain: isDev ? '' : '.cl3tus.com',
           });
           navigate('/');
         }

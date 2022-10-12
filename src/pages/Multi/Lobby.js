@@ -12,7 +12,7 @@ import {
   Stack,
 } from '@mui/material';
 
-import { socket } from '../../context/socket';
+import { socket } from '../../contexts/socket';
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 

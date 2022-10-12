@@ -17,3 +17,30 @@
 .NewGame__timer {
   margin-bottom: 24px;
 }
+
+.MovieCard {
+  position: relative;
+
+  &--exist {
+    &::before {
+      background: #000;
+      bottom: 0;
+      content: '';
+      left: 0;
+      opacity: 0.7;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 1;
+    }
+  }
+
+  &__info {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    z-index: 2;
+  }
+}

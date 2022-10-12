@@ -76,7 +76,6 @@ function Signup(props) {
   };
 
   return (
-
     <Box
       sx={{
         my: 8,

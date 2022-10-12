@@ -1,0 +1,15 @@
+.AnswerType {
+  background: rgba(0, 0, 0, .4);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+
+  &__content {
+    left: 50%;
+    position: fixed;
+    top: 50%;
+    color: blue;
+  }
+}

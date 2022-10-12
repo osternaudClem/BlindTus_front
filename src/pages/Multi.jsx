@@ -19,7 +19,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { api } from '../config';
 
-import { socket } from '../context/socket';
+import { socket } from '../contexts/socket';
 import Lobby from './Multi/Lobby';
 import Play from './Multi/Play';
 import Results from './Multi/Results';
@@ -105,6 +105,7 @@ function Multi(props) {
   }
 
   const onCreateGame = function (code) {
+    console.log('>>> create room')
     socket.emit('CREATE_ROOM', {
       username: props.user.username,
       room: code,
@@ -273,8 +274,6 @@ function Multi(props) {
         return null;
       });
       usersScore.push({ username: user.username, score: userScore });
-      console.log('>>> usersScore', usersScore)
-
 
       return null;
     });
