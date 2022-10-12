@@ -9,6 +9,8 @@ import {
   Box,
   Paper,
   Typography,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 
 import {
@@ -50,6 +52,7 @@ function NewGame(props) {
   const [totalMusics, setTotalMusics] = useState(5);
   const [gameWithCode, setGameWithCode] = useState(false);
   const [proposals, setProposals] = useState([]);
+  const [score, setScore] = useState(0);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
@@ -174,6 +177,8 @@ function NewGame(props) {
       score = timeLeft * 100 / timeLimit;
     }
 
+    setScore(score);
+
     props.scoresActions.addScore({
       movie: movie.title_fr,
       isCorrect: isAnswerCorrect,
@@ -217,6 +222,8 @@ function NewGame(props) {
     if (isAnswerCorrect) {
       score = timeLeft * 100 / timeLimit;
     }
+
+    setScore(score);
 
     props.scoresActions.addScore({
       movie: movie.title_fr,
@@ -338,7 +345,14 @@ function NewGame(props) {
     if (!displayGame) {
       if (musicNumber > 0) {
         return (
-          <Result movie={props.games.currentGame.musics[musicNumber - 1].movie} music={props.games.currentGame.musics[musicNumber - 1]} />
+          <React.Fragment>
+            <Alert variant="outlined" icon={false} severity={isCorrect ? 'success' : 'error'} sx={{ marginBottom: '16px' }}>
+              <AlertTitle>Réponse {isCorrect ? 'correct' : 'fausse'} !</AlertTitle>
+              + {Math.round(score)} points !
+            </Alert>
+
+            <Result movie={props.games.currentGame.musics[musicNumber - 1].movie} music={props.games.currentGame.musics[musicNumber - 1]} />
+          </React.Fragment>
         )
       }
       return;
