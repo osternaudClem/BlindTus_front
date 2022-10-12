@@ -3,8 +3,6 @@ import { api, requestHeader} from '../config';
 import * as types from '../datas/actionTypes';
 const API = api[process.env.NODE_ENV];
 
-console.log('>>> requestHeader', process.env)
-
 export function login(email, password) {
   return async function (dispatch) {
     try {
