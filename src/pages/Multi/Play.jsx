@@ -1,6 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 
 import { useTextfield } from '../../hooks/formHooks';
@@ -17,6 +19,7 @@ const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
 function Play({ socket, room, musics, onAnswer, onEndGame }) {
+  const [score, setScore] = useState(0);
   const [answer, updateAnswer] = useTextfield();
   const [isCorrect, setIsCorrect] = useState(null);
   const [musicNumber, setMusicsNumber] = useState(0);
@@ -109,6 +112,8 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
       score = timeLeft * 100 / room.settings.timeLimit;
     }
 
+    setScore(score);
+
     onAnswer(score, musicNumber);
     setAnswerSent(true);
     setDisplayResult(true);
@@ -132,6 +137,7 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
       score = timeLeft * 100 / room.settings.timeLimit;
     }
 
+    setScore(score);
     onAnswer(score, musicNumber);
     setAnswerSent(true);
     setDisplayResult(true);
@@ -180,7 +186,6 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
           )
           : renderProposals()
         }
-
         {renderResult()}
         {renderPlayer()}
       </div>
@@ -211,7 +216,14 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
     }
 
     return (
-      <Result movie={musics[musicNumber].movie} music={musics[musicNumber]} />
+      <React.Fragment>
+        <Alert variant="outlined" icon={false} severity={isCorrect ? 'success' : 'error'} sx={{ marginBottom: '16px' }}>
+          <AlertTitle>Réponse {isCorrect ? 'correct' : 'fausse'} !</AlertTitle>
+          + {Math.round(score)} points !
+        </Alert>
+
+        <Result movie={musics[musicNumber].movie} music={musics[musicNumber]} />
+      </React.Fragment>
     )
   }
 

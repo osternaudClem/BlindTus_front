@@ -148,7 +148,6 @@ function Multi(props) {
   }
 
   const onAnswer = function (score, step) {
-    console.log('>>> ON ANSWER')
     socket.emit('ADD_SCORE', ({ score: Math.round(score), step }), ({ game }) => {
       console.log('>>> game', game);
       setGame(game);
