@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Container } from '@mui/material/';
 import { getCookie } from 'react-use-cookie';
+import { SocketContext, socket } from '../contexts/sockets';
 import { usersActions } from '../actions';
 import { Header } from '../components/Header';
 import { UserContext } from '../contexts/userContext';
@@ -36,12 +37,14 @@ function App(props) {
   }
 
   return (
-    <UserContext.Provider value={{ user, updateUser }} >
-      <Header user={user} />
-      <Container maxWidth="xl" className="Page">
-        <Outlet />
-      </Container>
-    </ UserContext.Provider>
+    <SocketContext.Provider value={socket}>
+      <UserContext.Provider value={{ user, updateUser }} >
+        <Header user={user} />
+        <Container maxWidth="xl" className="Page">
+          <Outlet />
+        </Container>
+      </ UserContext.Provider>
+    </SocketContext.Provider>
   );
 }
 

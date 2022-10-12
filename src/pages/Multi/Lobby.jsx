@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { useCopyToClipboard } from 'usehooks-ts';
 
 import {
   Button,
@@ -8,13 +10,26 @@ import {
   TextField,
   Divider,
   Stack,
+  InputAdornment,
+  Snackbar,
+  Alert,
 } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 
+const URL = 'https://blindtus.cl3tus.com';
+
 function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator, code, settings, ...props }) {
+  const [, copyToClipBoard] = useCopyToClipboard();
   const [customRoom, updateCustomRoom] = useTextfield();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+
+  const handleCloseAlert = function () {
+    setIsAlertOpen(false);
+  }
 
   const handleClickCreate = function () {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
@@ -38,11 +53,46 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
     socket.emit('INIT_GAME');
   }
 
+  const handleClickCopyUrl = async function (event) {
+    const isCopied = await copyToClipBoard(`${URL}/lobby?code=${code}`);
+
+    if (isCopied) {
+      setAlertTitle('Lien copié dans le presse-papier.')
+    }
+    else {
+      setAlertTitle('Votre navigateur n\'est pas compatible.');
+    }
+
+    setIsAlertOpen(true);
+  }
+
   return (
     <div>
-      <Typography component="h1" variant="h3" marginBottom={10}>
+      {renderAlert()}
+      <Typography component="h1" variant="h3" marginBottom={6}>
         Multijoueur {code && `Room #${code}`}
       </Typography>
+      {code && (
+        <Box marginBottom={4}>
+          <TextField
+            defaultValue={`${URL}/lobby?code=${code}`}
+            disabled
+            fullWidth
+            InputProps={{
+              endAdornment:
+                <InputAdornment position="end" >
+                  <Button
+                    color="inherit"
+                    onClick={handleClickCopyUrl}
+                    startIcon={<ContentCopyIcon />}
+                  >
+                    Copy
+                  </Button>
+                </InputAdornment>
+            }}
+          />
+        </Box>
+      )}
       {renderCreateGame()}
       {renderGameSettings()}
     </div>
@@ -95,6 +145,21 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
             />
         }
       </div>
+    )
+  }
+
+  function renderAlert() {
+    return (
+      <Snackbar
+        autoHideDuration={4000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={isAlertOpen}
+        onClose={handleCloseAlert}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {alertTitle}
+        </Alert>
+      </Snackbar>
     )
   }
 }

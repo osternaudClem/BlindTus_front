@@ -3,7 +3,11 @@ import {
   Box,
   Alert,
   AlertTitle,
+  Button,
 } from '@mui/material';
+
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { checkSimilarity } from '../../lib/check';
@@ -15,16 +19,15 @@ import { Result } from '../../components/Results';
 import { MovieTextField } from '../../components/Forms';
 import { GameProposals } from '../../components/Game';
 
-const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
-function Play({ socket, room, musics, onAnswer, onEndGame }) {
+function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
   const [score, setScore] = useState(0);
   const [answer, updateAnswer] = useTextfield();
   const [isCorrect, setIsCorrect] = useState(null);
   const [musicNumber, setMusicsNumber] = useState(0);
   const [nextMusicNumber, setNextMusicNumber] = useState(0);
-  const [timer, setTimer] = useState(TIMER_PENDING);
+  const [timer, setTimer] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIMER_GAME);
   const [inputDisabled, setInputDisabled] = useState(true);
   const [displayGame, setDisplayGame] = useState(false);
@@ -42,14 +45,26 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
 
   useEffect(() => {
     socket.on('NEXT_ROUND', ({ step, isEndGame }) => {
-      setDisplayResult(true);
       setDisplayGame(false);
       setAnswerSent(false);
-      setTimer(TIMER_PENDING);
+      setTimer(0);
       setNextMusicNumber(step);
       setIsEndGame(isEndGame);
     });
-  }, [musicNumber, socket]);
+
+    socket.on('START_MUSIC', () => {
+      if (isEndGame) {
+        onEndGame();
+      }
+
+      setMusicsNumber(parseInt(nextMusicNumber));
+      setDisplayResult(false);
+      setInputDisabled(false);
+      setTimer(room.settings.timeLimit);
+      setIsCorrect(null);
+      setDisplayGame(true);
+    });
+  }, [musicNumber, socket, isEndGame, nextMusicNumber, onEndGame, room.settings]);
 
   useEffect(() => {
     if (musics[musicNumber].proposals && musicNumber < musics.length) {
@@ -60,29 +75,23 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
   const onTimerFinished = function (count, sending = true) {
     setTimeLeft(count);
 
-    if (count === 0) {
-      if (displayGame) {
-        if (sending) {
-          onSendAnswer(null, true);
-        }
-        setDisplayGame(false);
-        setInputDisabled(true);
-        updateAnswer('');
-        setAnswerSent(false);
+    if (count === 0 && displayGame) {
+      if (sending) {
+        onSendAnswer(null, true);
       }
-      else {
-        if (isEndGame) {
-          onEndGame();
-        }
-        setMusicsNumber(parseInt(nextMusicNumber));
-        setDisplayResult(false);
-        setInputDisabled(false);
-        setTimer(room.settings.timeLimit);
-        setIsCorrect(null);
-        setDisplayGame(true);
-      }
+      setDisplayGame(false);
+      setInputDisabled(true);
+      updateAnswer('');
+      setAnswerSent(false);
     }
+
   };
+
+  const handleClickStartMusic = function () {
+    socket.emit('START_MUSIC');
+
+
+  }
 
   const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
@@ -186,10 +195,40 @@ function Play({ socket, room, musics, onAnswer, onEndGame }) {
           )
           : renderProposals()
         }
+        {renderStart()}
         {renderResult()}
         {renderPlayer()}
       </div>
     );
+  }
+
+  function renderStart() {
+    if (displayGame) {
+      return;
+    }
+
+    if (!isCreator) {
+      return (
+        <Alert variant="outlined" severity="info" icon={false} sx={{ marginBottom: '16px' }}>
+          En attente du Maître du jeu...
+        </Alert>
+      )
+    }
+
+    return (
+      <Button
+        onClick={handleClickStartMusic}
+        variant="contained"
+        size="large"
+        startIcon={isEndGame
+          ? <SportsScoreIcon />
+          : <PlayArrowIcon />
+        }
+        sx={{ marginBottom: '16px' }}
+      >
+        {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
+      </ Button>
+    )
   }
 
   function renderProposals() {
