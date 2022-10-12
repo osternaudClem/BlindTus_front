@@ -3,15 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import stringSimilarity from 'string-similarity';
 import {
   CssBaseline,
   Grid,
   Box,
   Paper,
   Typography,
-  Button,
-  Stack,
 } from '@mui/material';
 
 import {
@@ -23,11 +20,13 @@ import {
 } from '../actions';
 
 import { shuffle } from '../lib/array';
+import { checkSimilarity } from '../lib/check';
 
 import { Player } from '../components/Player';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
+import { GameProposals } from '../components/Game';
 import { GameSettings, GameSettingsResume, MovieTextField } from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
@@ -158,7 +157,7 @@ function NewGame(props) {
     }
   };
 
-  const handleClickHanswer = function (event, answer) {
+  const handleClickAnswer = function (answer) {
     const music = musicNumber;
     const movie = props.games.currentGame.musics[music].movie;
     let score = 0;
@@ -203,17 +202,7 @@ function NewGame(props) {
 
     let titles = [movie.title, movie.title_fr, ...movie.simple_title];
 
-    let isAnswerCorrect = false;
-
-    titles.map(title => {
-      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
-
-      if (similarity >= 0.8) {
-        isAnswerCorrect = true;
-      }
-
-      return null;
-    });
+    const isAnswerCorrect = checkSimilarity(answer, titles);
 
     setIsCorrect(isAnswerCorrect);
 
@@ -324,11 +313,7 @@ function NewGame(props) {
               />
             </Box>
           )
-          : (
-            <div>
-              {renderProposals()}
-            </div>
-          )
+          : renderProposals()
         }
 
         {renderPlayer()}
@@ -342,37 +327,10 @@ function NewGame(props) {
     }
 
     return (
-      <Box sx={{ '& button': { m: 1 } }}>
-        <Stack
-          direction="row"
-        >
-          {renderProposalsButton(0)}
-        </Stack>
-        <Stack
-          direction="row"
-        >
-          {renderProposalsButton(2)}
-        </Stack>
-        <Stack
-          direction="row"
-        >
-          {renderProposalsButton(4)}
-        </Stack>
-        <Stack
-          direction="row"
-        >
-          {renderProposalsButton(6)}
-        </Stack>
-      </Box>
-    )
-  }
-
-  function renderProposalsButton(index) {
-    return (
-      <React.Fragment>
-        <Button variant="outlined" sx={{ flex: 1 }} size="large" onClick={(event) => handleClickHanswer(event, proposals[index])}>{proposals[index]}</Button>
-        <Button variant="outlined" sx={{ flex: 1 }} size="large" onClick={(event) => handleClickHanswer(event, proposals[index + 1])}>{proposals[index + 1]}</Button>
-      </React.Fragment>
+      <GameProposals
+        proposals={proposals}
+        onClick={handleClickAnswer}
+      />
     )
   }
 

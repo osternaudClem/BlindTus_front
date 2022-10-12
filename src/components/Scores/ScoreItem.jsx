@@ -15,7 +15,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { MovieMusicCard } from '../Cards';
 
 import { useToggle } from '../../hooks/formHooks';
-import { api } from '../../config';
+import { api, requestHeader } from '../../config';
 const API = api[process.env.NODE_ENV];
 
 function ScoreItem({ score }) {
@@ -26,8 +26,8 @@ function ScoreItem({ score }) {
   useEffect(() => {
     if (!movie) {
       (async function () {
-        const movie = await axios.get(`${API}/movies/${score.movie_id}`);
-        const music = await axios.get(`${API}/musics/${score.music_id}`);
+        const movie = await axios.get(`${API}/movies/${score.movie_id}`, requestHeader);
+        const music = await axios.get(`${API}/musics/${score.music_id}`, requestHeader);
         setMovie(movie.data);
         setMusic(music.data);
       })();

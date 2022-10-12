@@ -1,0 +1,1 @@
+export { default as GameProposals } from './GameProposals'

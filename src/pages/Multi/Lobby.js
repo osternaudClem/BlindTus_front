@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import {
@@ -12,13 +10,10 @@ import {
   Stack,
 } from '@mui/material';
 
-import { socket } from '../../contexts/socket';
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 
-const TIMER_GAME = 30;
-
-function Lobby({ onCreate, onJoin, onUpdateSettings, players, isCreator, code, settings, ...props }) {
+function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator, code, settings, ...props }) {
   const [customRoom, updateCustomRoom] = useTextfield();
 
   const handleClickCreate = function () {

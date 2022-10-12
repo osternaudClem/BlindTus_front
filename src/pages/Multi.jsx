@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import socketio from 'socket.io-client';
 
 import {
   CssBaseline,
@@ -12,14 +13,12 @@ import {
   Box,
   List,
   ListItem,
-  ListItemText,
   Divider,
   Stack,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { api } from '../config';
+import { api, requestHeader, socketApi } from '../config';
 
-import { socket } from '../contexts/socket';
 import Lobby from './Multi/Lobby';
 import Play from './Multi/Play';
 import Results from './Multi/Results';
@@ -29,6 +28,7 @@ const API = api[process.env.NODE_ENV];
 const TIMER_GAME = 30;
 
 function Multi(props) {
+  const [socket, setSocket] = useState(null);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
   const [code, setCode] = useState(null);
@@ -47,20 +47,25 @@ function Multi(props) {
   useEffect(() => {
     // window.addEventListener('beforeunload', handleTabClose);
 
+    if (!socket) {
+      setSocket(socketio.connect(socketApi[process.env.NODE_ENV], { path: '/ws', secure: true }));
+      return;
+    }
+
     socket.on('ERROR', error => {
       setOpen(true);
       setError(error);
     });
 
     socket.on('ROOM_USERS', async users => {
-      const response = await axios.get(`${API}/users?usernames=${users.map(user => user.username)}`);
+      const response = await axios.get(`${API}/users?usernames=${users.map(user => user.username)}`, requestHeader);
       users.map((user, index) => user.info = response.data[index]);
       console.log('>>> users', users)
       setPlayers(users);
     });
 
-    socket.on('PLAYER_DISCONNECTED', player => {
-      console.log('>>> player disconnected', player);
+    socket.on('PLAYER_DISCONNECTED', (player, game) => {
+      setGame(game);
     })
 
     socket.on('SETTINGS_UPDATED', settings => {
@@ -78,7 +83,6 @@ function Multi(props) {
       setMusics(musics);
       setRoom(room);
       setIsStarted(true);
-      // navigate(`/play?room=${room}`);
     });
 
     socket.on('UPDATE_SCORES', ({ game }) => {
@@ -97,7 +101,7 @@ function Multi(props) {
     return () => {
       // window.removeEventListener('beforeunload', handleTabClose);
     };
-  }, [navigate]);
+  }, [navigate, socket]);
 
   const handleClickError = function () {
     setError(null);
@@ -105,7 +109,6 @@ function Multi(props) {
   }
 
   const onCreateGame = function (code) {
-    console.log('>>> create room')
     socket.emit('CREATE_ROOM', {
       username: props.user.username,
       room: code,
@@ -132,8 +135,6 @@ function Multi(props) {
         return setError(error);
       }
 
-      console.log('>>> room', room);
-
       setIsCreator(user.isCreator);
       setCode(customRoom);
       setTimeLimit(room.settings.timeLimit);
@@ -159,7 +160,7 @@ function Multi(props) {
   }
 
   const onNewGame = function () {
-    socket.emit('ASK_NEW_GAME', ({ user}) => {
+    socket.emit('ASK_NEW_GAME', ({ user }) => {
       setIsStarted(false);
       setIsEndGame(false);
     });
@@ -211,6 +212,7 @@ function Multi(props) {
     if (!isStarted) {
       return (
         <Lobby
+          socket={socket}
           onCreate={onCreateGame}
           onJoin={onJoinGame}
           onUpdateSettings={onUpdateSettings}
@@ -229,6 +231,7 @@ function Multi(props) {
     if (!isEndGame) {
       return (
         <Play
+          socket={socket}
           musics={musics}
           room={room}
           onAnswer={onAnswer}
@@ -301,7 +304,7 @@ function Multi(props) {
     if (!game || !game.id) {
       return;
     }
-
+    
     return (
       <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
