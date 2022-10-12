@@ -12,6 +12,7 @@ export { default as UserSettingsPage } from './UserSettings';
 export { default as SuggestMoviePage } from './SuggestMovie';
 
 // Multi
+export { default as MultiPage } from './Multi';
 export { default as LobbyPage } from './Multi/Lobby';
 export { default as PlayPage } from './Multi/Play';
 export { default as ResultsPage } from './Multi/Results';

@@ -69,7 +69,6 @@ const ResponsiveAppBar = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('>>> redresh header', user)
   }, [user]);
 
   const handleOpenNavMenu = (event) => {

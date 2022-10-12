@@ -25,7 +25,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useSlider, useTextfield } from '../../hooks/formHooks';
 import { gamesActions } from '../../actions';
 
-const MOVIE_MIN = 5;
+const MOVIE_MIN = 3;
 const MOVIE_MAX = 100;
 
 function valuetext(value) {

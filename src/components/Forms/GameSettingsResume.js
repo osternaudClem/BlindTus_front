@@ -27,20 +27,24 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
         </Grid>
         <List>
           <div>
-            <ListItem
-              secondaryAction={
-                game.created_by &&
-                <Stack direction="row" alignItems="center">
-                  <Typography variant="body" marginRight={2}>{game.created_by.username}</Typography>
-                  <Avatar src={game.created_by.avatar} alt={game.created_by.username} />
-                </Stack>
-              }
-            >
-              <ListItemText
-                primaryTypographyProps={{ noWrap: true }}
-                primary="Généré par"
-              />
-            </ListItem>
+            {game.created_by && (
+              <ListItem
+                secondaryAction={
+                  <div>
+                    <Stack direction="row" alignItems="center">
+                      <Typography variant="body" marginRight={2}>{game.created_by.username}</Typography>
+                      <Avatar src={game.created_by.avatar} alt={game.created_by.username} />
+                    </Stack>
+
+                    <ListItemText
+                      primaryTypographyProps={{ noWrap: true }}
+                      primary="Généré par"
+                    />
+                  </div>
+                }
+              >
+              </ListItem>
+            )}
             <Divider variant="middle" />
           </div>
           <div>
@@ -89,7 +93,7 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
           <Button onClick={onClickStart} variant="contained" sx={{ marginTop: '24px' }}>Lancer la partie</Button>
         }
       </Box>
-    </Paper>
+    </Paper >
   )
 }
 

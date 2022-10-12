@@ -19,6 +19,7 @@ import {
   PlayPage,
   ResultsPage,
   UserSettingsPage,
+  MultiPage,
   SuggestMoviePage,
 } from './pages';
 import { CssBaseline } from '@mui/material';
@@ -58,9 +59,9 @@ const RoutesUrl = () => (
           <Route path="/playtoday" element={<GameOfTheDayPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/settings" element={<UserSettingsPage />} />
-          <Route path="/lobby" element={<LobbyPage />} />
-          <Route path="/play" element={<PlayPage />} />
-          <Route path="/multi/results" element={<ResultsPage />} />
+          <Route path="/lobby" element={<MultiPage />} />
+          {/* <Route path="/play" element={<PlayPage />} />
+          <Route path="/multi/results" element={<ResultsPage />} /> */}
           <Route path="/suggest-movie" element={<SuggestMoviePage />} />
           <Route path="/suggest-movie/:movie_query" element={<SuggestMoviePage />} />
           <Route path="/suggest-movie/:movie_query/:movie_id" element={<SuggestMoviePage />} />

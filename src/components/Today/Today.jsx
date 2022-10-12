@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import stringSimilarity from 'string-similarity';
 import { useCopyToClipboard } from 'usehooks-ts';
 import {
   Button,
@@ -31,6 +30,7 @@ import { HistoryDay } from '../History';
 import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
 import { addLeadingZeros } from '../../lib/number';
+import { checkSimilarity } from '../../lib/check';
 import { MovieTextField } from '../Forms';
 
 const TIMERS = [10, 25, 40, 70, 120];
@@ -113,17 +113,7 @@ function Today({ onSaveHistory, game, history }) {
 
     const titles = [movie.title, movie.title_fr, ...movie.simple_title];
 
-    let isCorrect = false;
-
-    titles.map(title => {
-      const similarity = stringSimilarity.compareTwoStrings(title.toLowerCase(), answer.toLowerCase());
-
-      if (similarity >= 0.8) {
-        isCorrect = true;
-      }
-
-      return null;
-    });
+    let isCorrect = checkSimilarity(answer, titles);
 
     setIsCorrect(isCorrect);
 
