@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { api } from '../config';
+import { api, requestHeader } from '../config';
 import * as types from '../datas/actionTypes';
 const API = api[process.env.NODE_ENV];
 
@@ -8,7 +8,7 @@ export function saveGame(game) {
     try {
       const success = await axios.post(`${API}/games`, {
         ...game
-      });
+      }, requestHeader);
       dispatch({ type: types.ADD_GAME_SUCCESS, game: success.data });
       return success.data;
     } catch (error) {
@@ -20,7 +20,7 @@ export function saveGame(game) {
 export function getGame(gameId) {
   return async function (dispatch) {
     try {
-      const success = await axios.get(`${API}/games/${gameId}`);
+      const success = await axios.get(`${API}/games/${gameId}`, requestHeader);
       dispatch({ type: types.GET_GAME_SUCCESS, game: success.data});
       return success.data;
     } catch (error) {
@@ -32,7 +32,7 @@ export function getGame(gameId) {
 export function loadGame(gameId) {
   return async function (dispatch) {
     try {
-      const success = await axios.get(`${API}/games/${gameId}`);
+      const success = await axios.get(`${API}/games/${gameId}`, requestHeader);
       dispatch({ type: types.LOAD_GAME_SUCCESS, game: success.data});
       return success.data;
     } catch (error) {

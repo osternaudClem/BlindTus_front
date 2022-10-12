@@ -31,8 +31,8 @@ import { useTextfield } from '../../hooks/formHooks';
 import { addLeadingZeros } from '../../lib/number';
 import { MovieTextField } from '../Forms';
 
-// const TIMERS = [10, 25, 40, 70, 120];
-const TIMERS = [3, 3, 3, 3, 3];
+const TIMERS = [10, 25, 40, 70, 120];
+// const TIMERS = [3, 3, 3, 3, 3];
 
 const STEPS = {
   BEGINING: 'begining',

@@ -1,11 +1,12 @@
 import CryptoJS from 'crypto-js';
-import { crypt } from '../config';
+
+const secret = process.env.REACT_APP_CRYPT_SECRET;
 
 export function encrypt(content) {
-  return CryptoJS.AES.encrypt(JSON.stringify(content), crypt.secret).toString();
+  return CryptoJS.AES.encrypt(JSON.stringify(content), secret).toString();
 }
 
 export function decrypt(content) {
-  const bytes = CryptoJS.AES.decrypt(content, crypt.secret);
+  const bytes = CryptoJS.AES.decrypt(content, secret);
   return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 }
