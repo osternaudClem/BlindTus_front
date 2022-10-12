@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getCookie } from 'react-use-cookie';
@@ -11,12 +11,6 @@ import {
 import { UserContext } from '../contexts/userContext';
 
 import { Today } from '../components/Today';
-
-const STEPS = {
-  BEGINING: 'begining',
-  PLAYING: 'playing',
-  ENDED: 'ended',
-};
 
 function GameOfTheDay(props) {
   const { user } = useContext(UserContext);
