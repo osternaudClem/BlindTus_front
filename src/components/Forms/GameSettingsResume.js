@@ -35,14 +35,13 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
                       <Typography variant="body" marginRight={2}>{game.created_by.username}</Typography>
                       <Avatar src={game.created_by.avatar} alt={game.created_by.username} />
                     </Stack>
-
-                    <ListItemText
-                      primaryTypographyProps={{ noWrap: true }}
-                      primary="Généré par"
-                    />
                   </div>
                 }
               >
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true }}
+                  primary="Généré par"
+                />
               </ListItem>
             )}
             <Divider variant="middle" />

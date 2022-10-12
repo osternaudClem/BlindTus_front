@@ -15,9 +15,6 @@ import {
   ConfirmEmailPage,
   GameOfTheDayPage,
   TodayPage,
-  LobbyPage,
-  PlayPage,
-  ResultsPage,
   UserSettingsPage,
   MultiPage,
   SuggestMoviePage,
@@ -60,8 +57,6 @@ const RoutesUrl = () => (
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/settings" element={<UserSettingsPage />} />
           <Route path="/lobby" element={<MultiPage />} />
-          {/* <Route path="/play" element={<PlayPage />} />
-          <Route path="/multi/results" element={<ResultsPage />} /> */}
           <Route path="/suggest-movie" element={<SuggestMoviePage />} />
           <Route path="/suggest-movie/:movie_query" element={<SuggestMoviePage />} />
           <Route path="/suggest-movie/:movie_query/:movie_id" element={<SuggestMoviePage />} />

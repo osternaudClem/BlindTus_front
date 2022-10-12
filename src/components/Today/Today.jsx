@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { Player } from '../Player';
 import { Timer } from '../Timer';
@@ -234,7 +235,15 @@ function Today({ onSaveHistory, game, history }) {
         </Box>
         {!displayGame &&
           <Box align="center">
-            <CircleButton onClick={handleClickNext} />
+            <Button
+              onClick={handleClickNext}
+              variant="contained"
+              size="large"
+              startIcon={<PlayArrowIcon />}
+              sx={{ marginBottom: '16px' }}
+            >
+              Lancer la musique
+            </ Button>
           </Box>
         }
         {renderClues()}

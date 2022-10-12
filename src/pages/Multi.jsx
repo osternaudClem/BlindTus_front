@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import socketio from 'socket.io-client';
 
 import {
   CssBaseline,
@@ -17,8 +16,9 @@ import {
   Stack,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { api, requestHeader, socketApi } from '../config';
+import { api, requestHeader } from '../config';
 
+import { SocketContext } from '../contexts/sockets';
 import Lobby from './Multi/Lobby';
 import Play from './Multi/Play';
 import Results from './Multi/Results';
@@ -28,7 +28,6 @@ const API = api[process.env.NODE_ENV];
 const TIMER_GAME = 30;
 
 function Multi(props) {
-  const [socket, setSocket] = useState(null);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
   const [code, setCode] = useState(null);
@@ -43,14 +42,29 @@ function Multi(props) {
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
   const navigate = useNavigate();
+  const socket = useContext(SocketContext);
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const roomCode = urlParams.get('code');
+
+  const onJoinGame = useCallback((customRoom) => {
+    socket.emit('JOIN_ROOM', { username: props.user.username, room: customRoom }, ({ error, user, room }) => {
+      if (error) {
+        console.log('>>> error', error);
+        setOpen(true);
+        return setError(error);
+      }
+
+      setIsCreator(user.isCreator);
+      setCode(customRoom);
+      setTimeLimit(room.settings.timeLimit);
+      setDifficulty(room.settings.difficulty);
+      setTotalMusics(room.settings.totalMusics);
+    });
+  }, [props.user, socket]);
 
   useEffect(() => {
     // window.addEventListener('beforeunload', handleTabClose);
-
-    if (!socket) {
-      setSocket(socketio.connect(socketApi[process.env.NODE_ENV], { path: '/ws', secure: true }));
-      return;
-    }
 
     socket.on('ERROR', error => {
       setOpen(true);
@@ -60,7 +74,6 @@ function Multi(props) {
     socket.on('ROOM_USERS', async users => {
       const response = await axios.get(`${API}/users?usernames=${users.map(user => user.username)}`, requestHeader);
       users.map((user, index) => user.info = response.data[index]);
-      console.log('>>> users', users)
       setPlayers(users);
     });
 
@@ -98,10 +111,23 @@ function Multi(props) {
       console.log('>>> reason', reason);
     });
 
+
+    if (roomCode) {
+      onJoinGame(roomCode);
+    }
+
     return () => {
       // window.removeEventListener('beforeunload', handleTabClose);
     };
-  }, [navigate, socket]);
+  }, [navigate, socket, roomCode, onJoinGame]);
+
+  const handleTabClose = function (event) {
+    event.preventDefault();
+
+    const message = 'Etes-vous sur de vouloir quitter la page ?';
+    event.returnValue = message;
+    return message;
+  };
 
   const handleClickError = function () {
     setError(null);
@@ -121,25 +147,8 @@ function Multi(props) {
       if (error) {
         return setError(error);
       }
-      console.log('>>> user', user);
       setCode(code);
       setIsCreator(true);
-    });
-  }
-
-  const onJoinGame = function (customRoom) {
-    socket.emit('JOIN_ROOM', { username: props.user.username, room: customRoom }, ({ error, user, room }) => {
-      if (error) {
-        console.log('>>> error', error);
-        setOpen(true);
-        return setError(error);
-      }
-
-      setIsCreator(user.isCreator);
-      setCode(customRoom);
-      setTimeLimit(room.settings.timeLimit);
-      setDifficulty(room.settings.difficulty);
-      setTotalMusics(room.settings.totalMusics);
     });
   }
 
@@ -149,7 +158,6 @@ function Multi(props) {
 
   const onAnswer = function (score, step) {
     socket.emit('ADD_SCORE', ({ score: Math.round(score), step }), ({ game }) => {
-      console.log('>>> game', game);
       setGame(game);
     });
   }
@@ -233,6 +241,7 @@ function Multi(props) {
           socket={socket}
           musics={musics}
           room={room}
+          isCreator={isCreator}
           onAnswer={onAnswer}
           onEndGame={onEndGame}
         />
@@ -303,7 +312,7 @@ function Multi(props) {
     if (!game || !game.id) {
       return;
     }
-    
+
     return (
       <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
@@ -314,6 +323,7 @@ function Multi(props) {
         <List dense>
           {game.users.map((user, index) => {
             let userScore = 0;
+            console.log('>>> index', index)
 
             game.rounds.map(round => {
               const newScore = round.scores.find(s => s.username === user.username);

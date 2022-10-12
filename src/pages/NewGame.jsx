@@ -11,7 +11,10 @@ import {
   Typography,
   Alert,
   AlertTitle,
+  Button,
 } from '@mui/material';
+
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import {
   musicsActions,
@@ -34,7 +37,7 @@ import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
 import './Page.scss';
 
-const TIMER_PENDING = 5;
+// const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
 function NewGame(props) {
@@ -44,7 +47,7 @@ function NewGame(props) {
   const [isCorrect, setIsCorrect] = useState(null);
   const [displayGame, setDisplayGame] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(false);
-  const [timer, setTimer] = useState(TIMER_PENDING);
+  const [timer, setTimer] = useState(0);
   const [inputDisabled, setInputDisabled] = useState(true);
   const [timeLeft, setTimeLeft] = useState(TIMER_GAME);
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
@@ -131,7 +134,7 @@ function NewGame(props) {
 
   function onTimerFinished(count, sending = true) {
     setTimeLeft(count);
-    if (count === 0) {
+    if (count === 0 && displayGame) {
       if (musicNumber >= totalMusics) {
         props.historyActions.saveHistory({
           scores: props.scores.currentGame,
@@ -142,23 +145,24 @@ function NewGame(props) {
         return;
       }
 
-      if (displayGame) {
-        if (sending) {
-          onSendAnswer(null, true);
-        }
-        setTimer(TIMER_PENDING);
-        setDisplayGame(false);
-        setInputDisabled(true);
-        setMusicsNumber(musicNumber + 1);
-        updateAnswer('');
-      } else {
-        setInputDisabled(false);
-        setTimer(timeLimit);
-        setIsCorrect(null);
-        setDisplayGame(true);
+      if (sending) {
+        onSendAnswer(null, true);
       }
+      setTimer(0);
+      setDisplayGame(false);
+      setInputDisabled(true);
+      setMusicsNumber(musicNumber + 1);
+      updateAnswer('');
+
     }
   };
+
+  const handleClickStartMusic = function () {
+    setInputDisabled(false);
+    setTimer(timeLimit);
+    setIsCorrect(null);
+    setDisplayGame(true);
+  }
 
   const handleClickAnswer = function (answer) {
     const music = musicNumber;
@@ -323,9 +327,29 @@ function NewGame(props) {
           : renderProposals()
         }
 
+        {renderStart()}
+
         {renderPlayer()}
       </div>
     );
+  }
+
+  function renderStart() {
+    if (displayGame) {
+      return;
+    }
+
+    return (
+      <Button
+        onClick={handleClickStartMusic}
+        variant="contained"
+        size="large"
+        startIcon={<PlayArrowIcon />}
+        sx={{ marginBottom: '16px' }}
+      >
+        Lancer la musique
+      </ Button>
+    )
   }
 
   function renderProposals() {
@@ -370,9 +394,6 @@ function NewGame(props) {
 
     return (
       <div>
-        <Typography>
-          {!displayGame ? 'Prochaine manche dans...' : 'Trouvez le nom du film...'}
-        </Typography>
         <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
       </div>
     );
