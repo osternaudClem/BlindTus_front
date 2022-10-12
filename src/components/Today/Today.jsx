@@ -17,6 +17,8 @@ import {
   Grid,
   Alert,
   Snackbar,
+  Paper,
+  Stack,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -124,14 +126,14 @@ function Today({ onSaveHistory, game, history }) {
     });
 
     setIsCorrect(isCorrect);
-    
+
     onSaveHistory(answer, isCorrect);
-    
+
     updateAnswer('');
     setDisplayTimer(false);
     setDisplayGame(false);
     setTries(s => s + 1);
-    
+
     if (tries === 4) {
       setStep(STEPS['ENDED']);
     }
@@ -245,6 +247,7 @@ function Today({ onSaveHistory, game, history }) {
             <CircleButton onClick={handleClickNext} />
           </Box>
         }
+        {renderClues()}
       </div>
     )
   }
@@ -257,7 +260,7 @@ function Today({ onSaveHistory, game, history }) {
     return (
       <div>
         <Alert variant="outlined">La partie est finie pour aujourd'hui. Revenez demain !</Alert>
-        <Box sx={{ margin: '24px 0'}}>
+        <Box sx={{ margin: '24px 0' }}>
           <Button variant="contained" onClick={handleClickShareResult}>Partager le résultat</Button>
         </Box>
         <Result movie={game.music.movie} music={game.music} />
@@ -273,6 +276,47 @@ function Today({ onSaveHistory, game, history }) {
     return (
       <Player url={game.music.video} />
     );
+  }
+
+  function renderClues() {
+    const movie = game.music.movie;
+    const clues = [];
+
+    if (tries > 0) {
+      clues.push({ key: 'Année de sortie', value: movie.release_date });
+    }
+
+    if (tries > 1) {
+      clues.push({ key: 'Réalisateur', value: movie.directors[0] });
+    }
+
+    if (tries > 2) {
+      clues.push({ key: 'Acteurs', value: movie.casts });
+    }
+
+    if (tries > 3) {
+      clues.push({ key: 'Résumé', value: movie.overview });
+    }
+
+    if (!clues.length) {
+      return;
+    }
+
+    return (
+      <Paper elevation={2} sx={{ padding: '16px' }}>
+        <Typography variant="h5">Indices</Typography>
+        <Box>
+          {clues.map((clue, index) => {
+            return (
+              <Stack direction="row" sx={{ margin: '16px 0' }} key={index}>
+                <div style={{ width: '180px' }}>{clue.key}</div>
+                <div style={{ flex: 1 }}>{clue.value}</div>
+              </Stack>
+            )
+          })}
+        </Box>
+      </Paper>
+    )
   }
 
   function renderAlert() {
@@ -344,7 +388,7 @@ Today.propTypes = {
 };
 
 Today.defaultProps = {
-  onSaveHistory: () => {},
+  onSaveHistory: () => { },
   game: null,
   history: null,
 };
