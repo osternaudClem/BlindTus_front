@@ -23,7 +23,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
-import { Player } from '../Player';
+import { GamePlayer } from '../Game';
 import { Timer } from '../Timer';
 import { Steps } from '../Steps';
 import { HistoryDay } from '../History';
@@ -272,7 +272,10 @@ function Today({ onSaveHistory, game, history }) {
     }
 
     return (
-      <Player url={game.music.video} />
+      <GamePlayer
+        audioName={game.music.audio_name}
+        timecode={game.music.timecode}
+       />
     );
   }
 
