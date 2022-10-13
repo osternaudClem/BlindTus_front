@@ -1,11 +1,11 @@
 import React from 'react';
 import { IconButton } from '@mui/material/';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
-function CircleButton({ onClick }) {
+function CircleButton({ className, onClick }) {
   return (
-    <IconButton aria-label="play" size="large" onClick={onClick}>
-      <PlayCircleOutlineIcon sx={{ fontSize: 200 }} color="primary" />
+    <IconButton size="large" onClick={onClick} className={className}>
+      <PlayCircleIcon sx={{ fontSize: 220 }} color="primary" />
     </IconButton>
   )
 }

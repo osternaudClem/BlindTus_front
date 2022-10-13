@@ -44,3 +44,27 @@
     z-index: 2;
   }
 }
+
+.HomePage {
+  position: relative;
+
+  &__illustration {
+    opacity: .5;
+    width: 100%;
+  }
+
+  &__button {
+    background: #000 !important;
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
+    transform: scale(1) translate(-50%, -50%);
+    transition: all .15s ease-in-out !important;
+    
+    &:hover {
+      background: #101010 !important;
+      transform: scale(1.1) translate(-50%, -50%);
+    }
+  }
+}
