@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   Switch,
 } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import CircleIcon from '@mui/icons-material/Circle';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import AdjustIcon from '@mui/icons-material/Adjust';
@@ -24,6 +25,7 @@ import { UserContext } from '../../contexts/userContext';
 import { usersActions } from '../../actions';
 import { objectToArray } from '../../lib/array';
 import colors from '../../datas/colors/index';
+import './Settings.scss';
 
 const COLORS = objectToArray(colors);
 
@@ -31,7 +33,8 @@ function AvatarSettings(props) {
   const [avatar, setAvatar] = useState({});
   const { updateUser } = useContext(UserContext);
   const avatarSvg = createAvatar(style, { dataUri: true, backgroundColor: '#4f4f4f', radius: 100, scale: 80, ...avatar });
-
+  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('sm'));
+  
   useEffect(() => {
     if (props.user.avatarSettings && props.user.avatarSettings.seed) {
       setAvatar(props.user.avatarSettings);
@@ -84,16 +87,22 @@ function AvatarSettings(props) {
     <React.Fragment>
       <Typography variant="h3" component="h2" mb={2}>Avatar</Typography>
       <Paper sx={{ padding: '2rem' }}>
-        <Grid container>
+        <Grid container className="SettingsAvatar">
           <Grid
             item
-            xs={3}
+            xs={12}
+            md={3}
           >
-            <Avatar src={avatarSvg} alt="Cl3tus" sx={{ width: 200, height: 200 }} />
+            <Avatar
+              src={avatarSvg}
+              alt="Cl3tus"
+              className="AvatarSettings__avatar"
+            />
           </Grid>
           <Grid
             item
-            xs={9}
+            xs={12}
+            md={9}
           >
             <Stack
               direction="column"
@@ -102,7 +111,7 @@ function AvatarSettings(props) {
               sx={{ height: '100%' }}
             >
               <Box sx={{ flex: 1 }}>
-                <Stack direction="row" spacing={{ xs: 2 }} sx={{ marginBottom: '1rem' }}>
+                <Stack direction="row" spacing={{ xs: 2 }} sx={{ marginBottom: '1rem' }} className="SettingsAvatar__buttons">
                   <Button
                     variant="contained"
                     startIcon={<ShuffleIcon />}
@@ -135,7 +144,7 @@ function AvatarSettings(props) {
                 })}
 
                 <Stack
-                  direction="row"
+                  direction={largeScreen ? 'row' : 'column'}
                   spacing={{ xs: 2 }}
                   sx={{ marginTop: '1rem' }}
                 >

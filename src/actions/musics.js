@@ -1,12 +1,10 @@
-import axios from 'axios';
-import { api, requestHeader } from '../config';
+import { callApi } from '../lib/axios';
 import * as types from '../datas/actionTypes';
-const API = api[process.env.NODE_ENV];
 
 export function getMusics(limit) {
   return async function(dispatch) {
     try {
-      const success = await axios.get(`${API}/musics?limit=${limit}`, requestHeader);
+      const success = await callApi.get(`/musics?limit=${limit}`);
       dispatch({ type: types.GET_MUSICS_SUCCESS, musics: success.data });
       return success.data;
     } catch (error) {

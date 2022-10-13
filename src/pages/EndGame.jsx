@@ -10,6 +10,7 @@ import {
   Alert,
   Grid,
 } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { scoresActions, musicsActions } from '../actions';
 import { ScoresDetails } from '../components/Scores';
@@ -18,6 +19,7 @@ function EndGame(props) {
   const [, copyToClipBoard] = useCopyToClipboard();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
+  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
 
   useEffect(() => {
     props.musicsActions.reset();
@@ -76,9 +78,9 @@ function EndGame(props) {
     <div>
       <CssBaseline />
       {renderAlert()}
-      <Grid container alignItems="center">
+      <Grid container alignItems={largeScreen ? 'center' : 'left'} direction={largeScreen ? 'row' : 'column'}>
         <Grid item xs>
-          <Typography variant="h2">Fin de partie</Typography>
+          <Typography variant="h2" marginBottom={2}>Fin de partie</Typography>
         </Grid>
         <Grid item>
           <Button variant="contained" onClick={handleClickShareResults}>Partager le résultat</Button>

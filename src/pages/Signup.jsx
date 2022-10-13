@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { isEmail, isStrongPassword } from 'validator';
@@ -16,6 +16,7 @@ import {
   Alert,
   AlertTitle,
   Fade,
+  Link,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -165,9 +166,9 @@ function Signup(props) {
 
           </Grid>
           <Grid item>
-            <div onClick={() => navigate('/login')} variant="body2">
-              {"Déja un compte? Connecte-toi"}
-            </div>
+            <Link component={RouterLink} to="/login" color="inherit">
+              Déja un compte ? Connecte-toi
+            </Link>
           </Grid>
         </Grid>
         <Copyright sx={{ mt: 5 }} />

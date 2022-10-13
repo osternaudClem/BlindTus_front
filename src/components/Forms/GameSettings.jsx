@@ -21,6 +21,7 @@ import {
   AlertTitle,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useSlider, useTextfield } from '../../hooks/formHooks';
 import { gamesActions } from '../../actions';
@@ -39,7 +40,7 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
   const [difficulty, updateDifficulty] = useTextfield('easy');
   const [code, updateCode] = useTextfield('');
   const navigate = useNavigate();
-
+  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
   const handleClickSettings = async function (event) {
     event.preventDefault();
 
@@ -116,9 +117,21 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
               />
             </FormControl>
             <div style={{ marginTop: '16px' }}>
-              <Button variant="contained" onClick={handleClickSettings} type="submit" size="large">Lancer la partie</Button>
+              <Button
+                variant="contained"
+                onClick={handleClickSettings}
+                type="submit"
+                size="large"
+              >
+                Lancer la partie
+              </Button>
             </div>
-            <Divider textAlign="left" sx={{ marginTop: '24px' }}>Ou Créez votre partie sur mesure</Divider>
+            <Divider
+              textAlign={largeScreen ? 'left' : 'center'}
+              sx={{ marginTop: '24px' }}
+            >
+              Ou Créez votre partie sur mesure
+            </Divider>
           </Grid>
         }
         <Grid item xs={12}>

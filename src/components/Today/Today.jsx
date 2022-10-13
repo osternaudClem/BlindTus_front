@@ -173,7 +173,7 @@ function Today({ onSaveHistory, game, history }) {
       <Grid
         item
         xs={12}
-        sm={9}
+        sm={6}
         md={8}
       >
         <Typography component="h1" variant="h3" align="center" marginBottom={2}>
@@ -194,7 +194,7 @@ function Today({ onSaveHistory, game, history }) {
       <Grid
         item
         xs={12}
-        sm={3}
+        sm={6}
         md={4}
       >
         <HistoryDay history={history} />

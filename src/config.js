@@ -2,8 +2,8 @@ module.exports = {
   // API
   api: {
     // development: 'http://localhost:4000/api',
-    development: 'http://192.168.1.100:4000/api',
-    production: 'https://blindtus.cl3tus.com/api',
+    development: 'http://192.168.1.100:4000',
+    production: 'https://blindtus.cl3tus.com',
   },
   socketApi: {
     // development: 'http://localhost:4001',

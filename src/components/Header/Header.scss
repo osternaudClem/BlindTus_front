@@ -1,0 +1,20 @@
+.Header__logo {
+  cursor: pointer;
+  height: 40px;
+  margin-right: 24px;
+}
+
+.Header__volume {
+  margin-right: 16px;
+  width: 160px;
+}
+
+@media screen and (max-width: 600px) {
+  .Header__logo {
+    height: 16px;
+  }
+
+  .Header__volume {
+    width: 140px;
+  }
+}

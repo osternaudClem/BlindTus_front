@@ -16,6 +16,13 @@ export default function gamesReducers(state = initialState.games, action) {
         currentGame: action.game,
       }
     }
+
+    case types.RESET_GAME_SUCCESS: {
+      return {
+        ...state,
+        currentGame: {},
+      }
+    }
     
     default:
       return state;

@@ -49,7 +49,7 @@ const ResponsiveAppBar = (props) => {
     <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -76,6 +76,7 @@ const ResponsiveAppBar = (props) => {
               onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: 'block', md: 'none' },
+                width: { xs: '100%', md: 'auto' }
               }}
             >
               {pages.map((page) => (
@@ -83,9 +84,33 @@ const ResponsiveAppBar = (props) => {
                   <Typography textAlign="center">{page.label}</Typography>
                 </MenuItem>
               ))}
+              <Box sx={{ padding: '16px' }}>
+                <Button
+                  onClick={() => handleCloseNavMenu({ url: '/login' })}
+                  variant="outlined"
+                  sx={{ mb: 2, display: 'block' }}
+                  color="success"
+                >
+                  Se connecter
+                </Button>
+                <Button
+                  onClick={() => handleCloseNavMenu({ url: '/signup' })}
+                  variant="contained"
+                  sx={{ display: 'block' }}
+                >
+                  Créer un compte
+                </Button>
+              </Box>
             </Menu>
           </Box>
-          <img src={logo} height="40px" style={{ marginRight: '24px', cursor: 'pointer' }} alt="BlindTus logo" onClick={() => onClickLogo()} />
+          <Box sx={{ flexGrow: { xs: 1, md: 0 } }}>
+            <img
+              src={logo}
+              alt="BlindTus logo"
+              onClick={() => onClickLogo()}
+              className="Header__logo"
+            />
+          </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
@@ -98,12 +123,16 @@ const ResponsiveAppBar = (props) => {
             ))}
 
           </Box>
-          <div style={{ marginRight: '16px' }}>
-            <PlayerVolume onChange={(event, newValue) => setVolume(newValue)} value={volume} />
+          <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
+            <PlayerVolume
+              className="Header__volume"
+              onChange={(event, newValue) => setVolume(newValue)}
+              value={volume}
+            />
           </div>
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             <Button
-              onClick={() => handleCloseNavMenu({ url: '/login'})}
+              onClick={() => handleCloseNavMenu({ url: '/login' })}
               variant="outlined"
               sx={{ my: 2, display: 'block' }}
               color="success"
@@ -111,7 +140,7 @@ const ResponsiveAppBar = (props) => {
               Se connecter
             </Button>
             <Button
-              onClick={() => handleCloseNavMenu({ url: '/signup'})}
+              onClick={() => handleCloseNavMenu({ url: '/signup' })}
               variant="contained"
               sx={{ my: 2, display: 'block', marginLeft: '16px' }}
             >

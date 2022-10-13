@@ -5,3 +5,9 @@ body {
 .Page {
   margin-top: 100px;
 }
+
+@media screen and (max-width: 600px) {
+  .Page {
+    margin-top: 16px;
+  }
+}

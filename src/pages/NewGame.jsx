@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
 
 import {
   musicsActions,
@@ -27,7 +28,7 @@ import {
 import { shuffle } from '../lib/array';
 import { checkSimilarity } from '../lib/check';
 
-import { Player } from '../components/Player';
+import { GamePlayer } from '../components/Game';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
@@ -42,6 +43,7 @@ const TIMER_GAME = 10;
 
 function NewGame(props) {
   const [isStarted, setIsStarted] = useState(false);
+  const [isEndGame, setIsEndGame] = useState(false);
   const [musicNumber, setMusicsNumber] = useState(0);
   const [answer, updateAnswer] = useTextfield();
   const [isCorrect, setIsCorrect] = useState(null);
@@ -79,6 +81,10 @@ function NewGame(props) {
       })();
     }
 
+    return () => {
+      props.gamesActions.reset();
+    }
+
   }, [props.scoresActions, props.gamesActions, code, navigate]);
 
   useEffect(() => {
@@ -88,10 +94,6 @@ function NewGame(props) {
   }, [inputDisabled])
 
   const getMusics = async function (limit) {
-    if (props.musics.selection.length > 0) {
-      return;
-    }
-
     const allMusics = await props.musicsActions.getMusics(limit);
 
     return allMusics;
@@ -135,27 +137,30 @@ function NewGame(props) {
   function onTimerFinished(count, sending = true) {
     setTimeLeft(count);
     if (count === 0 && displayGame) {
-      if (musicNumber >= totalMusics) {
-        props.historyActions.saveHistory({
-          scores: props.scores.currentGame,
-          user: user,
-          game: props.games.currentGame,
-        })
-        navigate('/end-game');
-        return;
-      }
-
       if (sending) {
         onSendAnswer(null, true);
       }
+
       setTimer(0);
       setDisplayGame(false);
       setInputDisabled(true);
       setMusicsNumber(musicNumber + 1);
       updateAnswer('');
 
+      if (musicNumber >= totalMusics - 1) {
+        props.historyActions.saveHistory({
+          scores: props.scores.currentGame,
+          user: user,
+          game: props.games.currentGame,
+        })
+        setIsEndGame(true);
+      }
     }
   };
+
+  const handleClickShowResults = function () {
+    navigate('/end-game');
+  }
 
   const handleClickStartMusic = function () {
     setInputDisabled(false);
@@ -335,25 +340,32 @@ function NewGame(props) {
   }
 
   function renderStart() {
-    if (displayGame) {
+    if (displayGame && !isEndGame) {
       return;
     }
 
     return (
       <Button
-        onClick={handleClickStartMusic}
+        onClick={
+          isEndGame
+            ? handleClickShowResults
+            : handleClickStartMusic
+        }
         variant="contained"
         size="large"
-        startIcon={<PlayArrowIcon />}
+        startIcon={isEndGame
+          ? <SportsScoreIcon />
+          : <PlayArrowIcon />
+        }
         sx={{ marginBottom: '16px' }}
       >
-        Lancer la musique
+        {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
       </ Button>
     )
   }
 
   function renderProposals() {
-    if (!displayGame) {
+    if (!displayGame || isEndGame) {
       return;
     }
 
@@ -366,7 +378,7 @@ function NewGame(props) {
   }
 
   function renderPlayer() {
-    if (!displayGame) {
+    if (!displayGame || isEndGame) {
       if (musicNumber > 0) {
         return (
           <React.Fragment>
@@ -382,8 +394,13 @@ function NewGame(props) {
       return;
     }
 
+    const music = props.games.currentGame.musics[musicNumber];
+
     return (
-      <Player url={props.games.currentGame.musics[musicNumber].video} />
+      <GamePlayer
+        audioName={music.audio_name}
+        timecode={music.timecode}
+      />
     );
   }
 

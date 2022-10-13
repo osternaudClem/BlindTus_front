@@ -1,7 +1,5 @@
-import axios from 'axios';
-import { api, requestHeader } from '../config';
+import { callApi } from '../lib/axios';
 import * as types from '../datas/actionTypes';
-const API = api[process.env.NODE_ENV];
 
 export function getFullHistory() {
   return async function (dispatch) {
@@ -15,7 +13,7 @@ export function getFullHistory() {
     }
 
     try {
-      const success = await axios.get(`${API}/historytoday`, requestHeader);
+      const success = await callApi.get('/historytoday');
       return onSuccess(success);
     } catch (error) {
       return onError(error);
@@ -35,7 +33,7 @@ export function getHistory(historyId) {
     }
 
     try {
-      const success = await axios.get(`${API}/historytoday/${historyId}`, requestHeader);
+      const success = await callApi.get(`/historytoday/${historyId}`);
       return onSuccess(success);
     } catch (error) {
       return onError(error);
@@ -55,7 +53,7 @@ export function getTodayUser(userId) {
     }
 
     try {
-      const success = await axios.get(`${API}/historytoday/user/${userId}`, requestHeader);
+      const success = await callApi.get(`/historytoday/user/${userId}`);
       return onSuccess(success);
     } catch (error) {
       return onError(error);
@@ -66,9 +64,9 @@ export function getTodayUser(userId) {
 export function saveHistory(history) {
   return async function (dispatch) {
     try {
-      const success = await axios.post(`${API}/historytoday`, {
+      const success = await callApi.post('/historytoday', {
         ...history
-      }, requestHeader);
+      });
 
       dispatch({ type: types.SAVE_HISTORY_TODAY_SUCCESS, history: success.data });
 
