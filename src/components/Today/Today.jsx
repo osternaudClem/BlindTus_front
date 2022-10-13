@@ -26,7 +26,6 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Player } from '../Player';
 import { Timer } from '../Timer';
 import { Steps } from '../Steps';
-import { CircleButton } from '../Buttons';
 import { HistoryDay } from '../History';
 import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
