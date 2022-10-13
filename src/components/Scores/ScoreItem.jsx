@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
   Typography,
   ListItem,
@@ -15,8 +14,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { MovieMusicCard } from '../Cards';
 
 import { useToggle } from '../../hooks/formHooks';
-import { api, requestHeader } from '../../config';
-const API = api[process.env.NODE_ENV];
+import { callApi } from '../../lib/axios';
 
 function ScoreItem({ score }) {
   const [open, onClickItem] = useToggle(false);
@@ -26,8 +24,8 @@ function ScoreItem({ score }) {
   useEffect(() => {
     if (!movie) {
       (async function () {
-        const movie = await axios.get(`${API}/movies/${score.movie_id}`, requestHeader);
-        const music = await axios.get(`${API}/musics/${score.music_id}`, requestHeader);
+        const movie = await callApi.get(`/movies/${score.movie_id}`);
+        const music = await callApi.get(`/musics/${score.music_id}`);
         setMovie(movie.data);
         setMusic(music.data);
       })();

@@ -60,6 +60,7 @@ const RoutesUrl = () => (
           <Route path="/suggest-movie" element={<SuggestMoviePage />} />
           <Route path="/suggest-movie/:movie_query" element={<SuggestMoviePage />} />
           <Route path="/suggest-movie/:movie_query/:movie_id" element={<SuggestMoviePage />} />
+          <Route path="/test" element={<TestPage />} />
         </Route>
         <Route path="/" element={<NotConnected />}>
           <Route path="/login" element={<LoginPage />} />
@@ -67,7 +68,6 @@ const RoutesUrl = () => (
           <Route path="/confirm" element={<ConfirmEmailPage />} />
         </Route>
         <Route path="/today" element={<TodayPage />} />
-        <Route path="/test" element={<TestPage />} />
       </Routes>
     </BrowserRouter>
   </ThemeProvider>

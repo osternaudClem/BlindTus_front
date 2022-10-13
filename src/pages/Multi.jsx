@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import axios from 'axios';
 
 import {
   CssBaseline,
@@ -16,15 +15,14 @@ import {
   Stack,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { api, requestHeader } from '../config';
 
+import { callApi } from '../lib/axios';
 import { SocketContext } from '../contexts/sockets';
 import Lobby from './Multi/Lobby';
 import Play from './Multi/Play';
 import Results from './Multi/Results';
 import { UserAvatar } from '../components/Avatar';
 
-const API = api[process.env.NODE_ENV];
 const TIMER_GAME = 30;
 
 function Multi(props) {
@@ -72,7 +70,7 @@ function Multi(props) {
     });
 
     socket.on('ROOM_USERS', async users => {
-      const response = await axios.get(`${API}/users?usernames=${users.map(user => user.username)}`, requestHeader);
+      const response = await callApi.get(`/users?usernames=${users.map(user => user.username)}`);
       users.map((user, index) => user.info = response.data[index]);
       setPlayers(users);
     });

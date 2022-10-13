@@ -1,5 +1,5 @@
-import { useState} from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import useCookie from 'react-use-cookie';
@@ -15,6 +15,7 @@ import {
   Fade,
   Alert,
   AlertTitle,
+  Link,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
@@ -28,7 +29,7 @@ function Login(props) {
   const [showPassword, updateShowPassword] = useToggle();
   const [email, updateEmail] = useTextfield();
   const [password, updatePassword] = useTextfield();
-  const [ serverErrors, setServerErrors] = useState(null);
+  const [serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async function (event) {
@@ -122,13 +123,13 @@ function Login(props) {
         </Button>
         <Grid container>
           <Grid item xs>
-            <Link href="#" variant="body2">
+            {/* <Link href="#" variant="body2" style={{ color: 'white'}}>
               Forgot password?
-            </Link>
+            </Link> */}
           </Grid>
           <Grid item>
-            <Link to="/signup">
-              Don't have an account? Sign Up
+            <Link component={RouterLink} to="/signup" color="inherit">
+              Vous n'avez pas encore de comte ? Créez en un !
             </Link>
           </Grid>
         </Grid>

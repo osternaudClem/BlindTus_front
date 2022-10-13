@@ -5,7 +5,7 @@ import reducer from '../reducers';
 
 let middleware = [thunk];
 
-if (false) {
+if (true) {
   const reduxImmutableStateInvariant = require('redux-immutable-state-invariant').default();
   middleware = [...middleware, reduxImmutableStateInvariant, logger];
 } else {

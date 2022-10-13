@@ -23,6 +23,8 @@ import { UserContext } from '../../contexts/userContext';
 import { PlayerVolume } from '../Forms';
 import logo from '../../assets/logo_light.png';
 
+import './Header.scss';
+
 const pages = [
   {
     label: 'Démarer une partie',
@@ -106,10 +108,10 @@ const ResponsiveAppBar = (props) => {
   }
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="sticky" className="Header">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -145,7 +147,9 @@ const ResponsiveAppBar = (props) => {
               ))}
             </Menu>
           </Box>
-          <img src={logo} height="40px" style={{ marginRight: '24px', cursor: 'pointer' }} alt="BlindTus logo" onClick={() => onClickLogo()} />
+          <Box sx={{ flexGrow: { xs: 1, md: 0}}}>
+            <img src={logo} className="Header__logo" alt="BlindTus logo" onClick={() => onClickLogo()} />
+          </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
@@ -158,8 +162,12 @@ const ResponsiveAppBar = (props) => {
             ))}
 
           </Box>
-          <div style={{ marginRight: '16px' }}>
-            <PlayerVolume onChange={(event, newValue) => setVolume(newValue)} value={volume} />
+          <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
+            <PlayerVolume
+              className="Header__volume"
+              onChange={(event, newValue) => setVolume(newValue)}
+              value={volume}
+            />
           </div>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Utilisateur">

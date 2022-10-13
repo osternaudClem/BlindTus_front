@@ -1,0 +1,22 @@
+.AvatarSettings__avatar {
+  height: 200px !important;
+  width: 200px !important;
+}
+
+@media screen and (max-width: 600px) {
+  .SettingsAvatar {
+    &__buttons {
+      display: block !important;
+      
+      & > button {
+        margin: 0 !important;
+        margin-bottom: 16px !important;
+      }
+    }
+  }
+
+  .AvatarSettings__avatar {
+    margin: auto;
+    margin-bottom: 32px;
+  }
+}

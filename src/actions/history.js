@@ -1,12 +1,10 @@
-import axios from 'axios';
-import { api, requestHeader } from '../config';
+import { callApi } from '../lib/axios';
 import * as types from '../datas/actionTypes';
-const API = api[process.env.NODE_ENV];
 
 export function getFullHistory(userId) {
   return async function (dispatch) {
     try {
-      const success = await axios.get(`${API}/history?user=${userId}`, requestHeader);
+      const success = await callApi.get(`/history?user=${userId}`);
       dispatch({ type: types.GET_HISTORY_SUCCESS, history: success.data });
       return success.data;
     } catch (error) {
@@ -19,9 +17,9 @@ export function getFullHistory(userId) {
 export function saveHistory(history) {
   return async function (dispatch) {
     try {
-      const success = await axios.post(`${API}/history`, {
+      const success = await callApi.post('/history', {
         ...history
-      }, requestHeader);
+      });
 
       dispatch({ type: types.ADD_HISTORY_SUCCESS, history: success.data });
       return success.data;

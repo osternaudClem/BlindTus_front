@@ -9,6 +9,8 @@ import { usersActions } from '../actions';
 import { Header } from '../components/Header';
 import { UserContext } from '../contexts/userContext';
 
+import '../assets/App.scss';
+
 function App(props) {
   const [user, setUser] = useState({});
   const navigate = useNavigate();

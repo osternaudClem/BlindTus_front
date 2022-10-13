@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams  } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -31,10 +31,19 @@ function UserSettings(props) {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container>
       <CssBaseline />
       <Typography variant="h1" component="h1" mb={4}>Parametres</Typography>
-      <Tabs value={tab} onChange={(event, value) => updateTab(value)}>
+      <Tabs
+        value={tab}
+        onChange={(event, value) => updateTab(value)}
+        TabIndicatorProps={{ sx: { display: 'none' } }}
+        sx={{
+          '& .MuiTabs-flexContainer': {
+            flexWrap: 'wrap',
+          },
+        }}
+      >
         <Tab label="Avatar" />
         <Tab label="Informations du compte" />
         <Tab label="Changer de mot de passe" />

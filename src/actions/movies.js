@@ -1,12 +1,10 @@
-import axios from 'axios';
-import { api, requestHeader } from '../config';
+import { callApi } from '../lib/axios';
 import * as types from '../datas/actionTypes';
-const API = api[process.env.NODE_ENV];
 
 export function getCover() {
   return async function (dispatch) {
     try {
-      const success = await axios.get(`${API}/movies`, requestHeader);
+      const success = await callApi.get('/movies');
       dispatch({ type: types.SAVE_COVER_SUCCESS, movies: success.data });
       return success.data;
     } catch (error) {
@@ -18,7 +16,7 @@ export function getCover() {
 export function getAll() {
   return async function (dispatch) {
     try {
-      const success = await axios.get(`${API}/movies?limit=-1`, requestHeader);
+      const success = await callApi.get(`/movies?limit=-1`);
       dispatch({ type: types.GET_ALL_MOVIES, movies: success.data });
       return success.data;
     } catch (error) {
@@ -30,7 +28,7 @@ export function getAll() {
 export function findMovies(query) {
   return async function (dispatch) {
     try {
-      const success = await axios.get(`${API}/movies/find/${query}`, requestHeader);
+      const success = await callApi.get(`/movies/find/${query}`);
       dispatch({ type: types.FIND_MOVIES_SUCCESS, movies: success.data });
       return success.data;
     } catch (error) {
@@ -42,7 +40,7 @@ export function findMovies(query) {
 export function saveSelectedMovie(movie_id) {
   return async function(dispatch) { 
     try {
-      const success = await axios.get(`${API}/movies/find/id/${movie_id}`, requestHeader);
+      const success = await callApi.get(`/movies/find/id/${movie_id}`);
       dispatch({ type: types.SAVE_SELECTED_MOVIE_SUCCESS, movie: success.data });
       return success.data;
     } catch (error) {
@@ -54,9 +52,9 @@ export function saveSelectedMovie(movie_id) {
 export function saveMovie(movie) {
   return async function() {
     try {
-      const success = await axios.post(`${API}/movies`, {
+      const success = await callApi.post('/movies', {
         movie
-      }, requestHeader);
+      });
       return success.data;
     } catch (error) {
       throw error.response;

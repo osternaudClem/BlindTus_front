@@ -39,13 +39,21 @@
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     margin: 0;
-    max-width: 300px;
-    flex: auto;
+    width: 300px;
+    // flex: none;
   }
 
   &__content {
     flex: 1;
     padding: 12px;
     padding-right: 24px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .MovieCard {
+    &__poster {
+      width: 100%;
+    }
   }
 }

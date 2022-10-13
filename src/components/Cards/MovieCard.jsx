@@ -6,14 +6,16 @@ import {
   Chip,
   Stack,
 } from '@mui/material';
-import { tmdb } from '../../config';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { tmdb } from '../../config';
 import './Cards.scss';
 
 function MovieCard({ movie, music, hideGenres }) {
+  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
   return (
     <Stack
-      direction="row"
+      direction={largeScreen ? 'row' : 'column'}
       spacing={2}
     >
       <img
@@ -22,7 +24,7 @@ function MovieCard({ movie, music, hideGenres }) {
         className="MovieCard__poster"
       />
       <div className="MovieCard__content">
-        <Divider textAlign="left" sx={{ marginBottom: '16px'}}>A propos du film</Divider>
+        <Divider textAlign={largeScreen ? 'left' : 'center'} sx={{ marginBottom: '16px' }}>A propos du film</Divider>
         <Typography variant="h4" gutterBottom>{movie.title_fr}</Typography>
         <Typography variant="h5" gutterBottom>{movie.directors}</Typography>
         <Typography variant="h6" gutterBottom>{movie.release_date}</Typography>
@@ -38,7 +40,6 @@ function MovieCard({ movie, music, hideGenres }) {
       return;
     }
 
-
     return (
       <div>
         {movie.genres.map(genre => <Chip label={genre} size="small" variant="outlined" key={genre} />)}
@@ -53,7 +54,7 @@ function MovieCard({ movie, music, hideGenres }) {
 
     return (
       <React.Fragment>
-        <Divider textAlign="left" sx={{ margin: '16px 0'}}>A props de la musique</Divider>
+        <Divider textAlign={largeScreen ? 'left' : 'center'} sx={{ margin: '16px 0' }}>A props de la musique</Divider>
         <Typography variant="h5" gutterBottom>{music.title}</Typography>
         <Typography variant="h6" gutterBottom>de <b>{music.author}</b></Typography>
       </React.Fragment>

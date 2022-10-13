@@ -19,7 +19,7 @@ function HistoryDay({ history }) {
       <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
           <Grid item xs>
-            <Typography variant="h5">Essaie</Typography>
+            <Typography variant="h5">Essais</Typography>
           </Grid>
           <Grid item>
             <Typography variant="h6">{history.attempts.length}/5</Typography>

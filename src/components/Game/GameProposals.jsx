@@ -5,15 +5,17 @@ import {
   Stack,
   Button
 } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function GameProposals({ proposals, onClick }) {
+  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
   const stack = [];
 
   for (let i = 0; i < 4; i++) {
     stack.push(
       <Stack
         key={i}
-        direction="row"
+        direction={largeScreen ? 'row' : 'column'}
       >
         {renderProposalsButton(i * 2)}
       </Stack>
@@ -30,7 +32,7 @@ function GameProposals({ proposals, onClick }) {
     const buttons = [];
 
     for (let i = 0; i < 2; i++) {
-     
+
       buttons.push(
         <Button
           key={i}
