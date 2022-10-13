@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import useCookie from 'react-use-cookie';
+import { isStrongPassword } from 'validator';
 import {
   Avatar,
   Button,
@@ -10,53 +10,64 @@ import {
   Box,
   Grid,
   Typography,
+  FormHelperText,
   IconButton,
   InputAdornment,
-  Fade,
   Alert,
   AlertTitle,
+  Fade,
   Link,
 } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { musicsActions, usersActions } from '../actions';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { usersActions } from '../actions';
 import { useTextfield, useToggle } from '../hooks/formHooks';
 import { Copyright } from '../components/Footer';
+import './Page.scss';
 
-function Login(props) {
-  const [, setUserToken] = useCookie('user', {});
-  const [showPassword, updateShowPassword] = useToggle();
-  const [email, updateEmail] = useTextfield();
+
+function NewPassword(props) {
+  // eslint-disable-next-line
   const [password, updatePassword] = useTextfield();
+  const [showPassword, updateShowPassword] = useToggle(false);
+  const [confirmPassowrd, updateConfirmPassword] = useTextfield();
+  const [errors, setErrors] = useState({});
   const [serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const token = urlParams.get('token');
 
   const handleSubmit = async function (event) {
     event.preventDefault();
     setServerErrors(null);
+    // Check password
+    const passwordError = password === '' || !isStrongPassword(password, {
+      minSymbols: 0,
+    });
+    // Check confirm password
+    const confirmPasswordError = password !== confirmPassowrd;
 
-    const user = await props.usersActions.login(email, password);
+    setErrors(errors => {
+      return {
+        ...errors,
+        password: passwordError,
+        confirmPassowrd: confirmPasswordError,
+      }
+    });
 
-    if (user.error && user.error === 'notConfirmed') {
-      return navigate('/confirm');
+    if (passwordError || confirmPasswordError) {
+      return;
     }
-    else if (user.error) {
-      return setServerErrors(user.error);
+
+    const response = await props.usersActions.saveNewPassword(token, password);
+
+    if (response.error) {
+      return setServerErrors(response.messages);
     }
 
-    if (user.username) {
-      const isDev = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
-
-      setUserToken(user._id, {
-        days: 365,
-        SameSite: 'Strict',
-        Secure: !isDev,
-        domain: isDev ? '' : '.cl3tus.com',
-      });
-
-      navigate('/');
-    }
+    navigate('/login');
   };
 
   return (
@@ -73,33 +84,22 @@ function Login(props) {
         <LockOutlinedIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Se connecter
+        Nouveau mot de passe
       </Typography>
-      <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+      <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         {renderError()}
         <TextField
           margin="normal"
           required
           fullWidth
-          id="email"
-          type="email"
-          label="Email Address"
-          name="email"
-          autoComplete="email"
-          autoFocus
-          onChange={updateEmail}
-        />
-
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
+          name="other"
+          label="Mot de passe"
           type={showPassword ? 'text' : 'password'}
-          id="password"
-          autoComplete="current-password"
           onChange={updatePassword}
+          error={errors && errors.password}
+          inputProps={{ 
+            autoComplete: 'off',
+          }}
           InputProps={{
             endAdornment:
               <InputAdornment position="end" >
@@ -113,29 +113,43 @@ function Login(props) {
               </InputAdornment>
           }}
         />
+        <FormHelperText>
+          Le mot de passe doit faire au minimum 8 charactères et contenir au moins 1 majuscule, 1 minuscule et 1 chiffre.
+        </FormHelperText>
+
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          label="Confirmer le mot de passe"
+          type="password"
+          onChange={updateConfirmPassword}
+          error={errors && errors.confirmPassowrd}
+          inputProps={{ autoComplete: 'off' }}
+        />
+
         <Button
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Se connecter
+          Créer un nouveau mot de passe
         </Button>
         <Grid container>
           <Grid item xs>
-            <Link component={RouterLink} to="/ask-new-password" color="inherit">
-              Mot de passe perdu ?
-            </Link>
+
           </Grid>
           <Grid item>
-            <Link component={RouterLink} to="/signup" color="inherit">
-              Vous n'avez pas encore de comte ? Créez en un !
+            <Link component={RouterLink} to="/login" color="inherit">
+              Déja un compte ? Connecte-toi
             </Link>
           </Grid>
         </Grid>
         <Copyright sx={{ mt: 5 }} />
       </Box>
     </Box>
+
   );
 
   function renderError() {
@@ -156,16 +170,14 @@ function Login(props) {
 
 function mapStateToProps(state) {
   return {
-    musics: state.musics,
     users: state.users,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    musicsActions: bindActionCreators(musicsActions, dispatch),
     usersActions: bindActionCreators(usersActions, dispatch),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(NewPassword)

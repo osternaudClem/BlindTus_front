@@ -18,6 +18,8 @@ import {
   UserSettingsPage,
   MultiPage,
   SuggestMoviePage,
+  NewPasswordPage,
+  AskNewPasswordPage,
 } from './pages';
 import { CssBaseline } from '@mui/material';
 
@@ -66,6 +68,8 @@ const RoutesUrl = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/confirm" element={<ConfirmEmailPage />} />
+          <Route path="/ask-new-password" element={<AskNewPasswordPage />} />
+          <Route path="/new-password" element={<NewPasswordPage />} />
         </Route>
         <Route path="/today" element={<TodayPage />} />
       </Routes>

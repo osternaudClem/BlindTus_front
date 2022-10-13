@@ -10,6 +10,8 @@ export { default as GameOfTheDayPage } from './GameOfTheDay';
 export { default as TodayPage } from './Today';
 export { default as UserSettingsPage } from './UserSettings';
 export { default as SuggestMoviePage } from './SuggestMovie';
+export { default as NewPasswordPage } from './NewPassword';
+export { default as AskNewPasswordPage } from './AskNewPassword';
 
 // Multi
 export { default as MultiPage } from './Multi';

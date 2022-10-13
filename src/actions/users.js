@@ -75,3 +75,28 @@ export function changePassword(userId, update) {
     }
   }
 }
+
+export function askNewPassword(email) {
+  return async function () {
+    try {
+      const success = await callApi.get(`/users/ask-new-password/${email}`);
+      return success.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+}
+
+export function saveNewPassword(token, password) {
+  return async function () {
+    try {
+      const success = await callApi.post(`/users/save-new-password`, {
+        password,
+        token,
+      });
+      return success.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+}
