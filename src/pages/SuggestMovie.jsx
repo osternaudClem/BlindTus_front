@@ -87,7 +87,7 @@ function SuggestMovie(props) {
 
   const handleClickSaveMovie = async function (movie) {
     movie.verified = false;
-    movie.user = user._id;
+    movie.added_by = user._id;
     const success = await props.moviesActions.saveMovie(movie);
 
     if (success._id) {

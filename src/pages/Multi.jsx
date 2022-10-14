@@ -258,7 +258,7 @@ function Multi(props) {
           <Typography variant="h4" gutterBottom>Joueurs</Typography>
           <Stack spacing={1}>
             {players.map((player, index) => {
-              return <UserAvatar key={index} username={player.username} avatar={player.info.avatar} displayUsername="right" />
+              return <UserAvatar key={index} username={player.username} avatar={player.info ? player.info.avatar : null} displayUsername="right" />
             })}
           </Stack>
         </div>
@@ -330,8 +330,7 @@ function Multi(props) {
               }
 
               return null;
-            })
-
+            });
 
             return (
               <div key={`${user.id}`}>
