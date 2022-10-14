@@ -19,8 +19,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 
-// const URL = 'https://blindtus.cl3tus.com';
-const URL = 'http://localhost:3000';
+const URL = 'https://blindtus.cl3tus.com';
+// const URL = 'http://localhost:3000';
 
 function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator, code, settings, ...props }) {
   const [, copyToClipBoard] = useCopyToClipboard();
