@@ -69,14 +69,6 @@ function Multi(props) {
       setError(error);
     });
 
-    socket.on('ROOM_USERS', async users => {
-      const response = await callApi.get(`/users?usernames=${users.map(user => user.username)}`);
-      console.log('>>> response', response)
-      users.map((user, index) => user.info = response.data[index]);
-      console.log('>>> users', users);
-      setPlayers(users);
-    });
-
     socket.on('PLAYER_DISCONNECTED', (player, game) => {
       setGame(game);
     })
@@ -120,6 +112,14 @@ function Multi(props) {
       // window.removeEventListener('beforeunload', handleTabClose);
     };
   }, [navigate, socket, roomCode, onJoinGame]);
+
+  useEffect(() => {
+    socket.on('ROOM_USERS', async users => {
+      const response = await callApi.get(`/users?usernames=${users.map(user => user.username)}`);
+      users.map((user, index) => user.info = response.data[index]);
+      setPlayers(users);
+    });
+  }, [])
 
   const handleTabClose = function (event) {
     event.preventDefault();
