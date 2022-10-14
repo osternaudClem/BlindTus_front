@@ -72,6 +72,7 @@ function Multi(props) {
     socket.on('ROOM_USERS', async users => {
       const response = await callApi.get(`/users?usernames=${users.map(user => user.username)}`);
       users.map((user, index) => user.info = response.data[index]);
+      console.log('>>> users', users);
       setPlayers(users);
     });
 
