@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { historyActions } from '../actions';
+import { format } from 'date-fns'
 import {
   CssBaseline,
   Typography,
@@ -11,6 +11,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import { Stack } from '@mui/system';
+import { historyActions } from '../actions';
 
 const columns = [
   {
@@ -68,6 +69,9 @@ const columns = [
     headerName: 'Date de création',
     minWidth: 150,
     flex: 1,
+    renderCell: (params) => {
+      return format(new Date(params.value), "ii MMM yy @ kk'h'mm");
+    }
   },    
 ];
 
