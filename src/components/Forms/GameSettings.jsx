@@ -26,7 +26,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSlider, useTextfield } from '../../hooks/formHooks';
 import { gamesActions } from '../../actions';
 
-const NOVIE_NUMBER = 3;
+const NOVIE_NUMBER = 10;
 const MOVIE_MIN = 3;
 const MOVIE_MAX = 100;
 

@@ -24,7 +24,7 @@ import Results from './Multi/Results';
 import { UserAvatar } from '../components/Avatar';
 
 const TIMER_GAME = 30;
-const NOVIE_NUMBER = 3;
+const NOVIE_NUMBER = 10;
 
 function Multi(props) {
   const [open, setOpen] = useState(false);
@@ -85,7 +85,6 @@ function Multi(props) {
     });
 
     socket.on('START_GAME', ({ room, game, musics }) => {
-      // setIsEndGame(false);
       setGame(game);
       setMusics(musics);
       setRoom(room);
