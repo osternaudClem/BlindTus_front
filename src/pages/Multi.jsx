@@ -120,6 +120,10 @@ function Multi(props) {
       users.map((user, index) => user.info = response.data[index]);
       setPlayers(users);
     });
+
+    return function () {
+      socket.emit('LEAVE_ROOM');
+    }
   }, [socket])
 
   const handleTabClose = function (event) {
@@ -163,7 +167,7 @@ function Multi(props) {
     });
   }
 
-  const onEndGame = function() {
+  const onEndGame = function () {
     setIsEndGame(true);
   }
 
@@ -261,7 +265,12 @@ function Multi(props) {
           <Typography variant="h4" gutterBottom>Joueurs</Typography>
           <Stack spacing={1}>
             {players.map((player, index) => {
-              return <UserAvatar key={index} username={player.username} avatar={player.info ? player.info.avatar : null} displayUsername="right" />
+              return (
+                <Stack direction="row" alignItems="center" key={index}>
+                  <CloseIcon />
+                  <UserAvatar username={player.username} avatar={player.info ? player.info.avatar : null} displayUsername="right" />
+                </Stack>
+              )
             })}
           </Stack>
         </div>
@@ -299,6 +308,7 @@ function Multi(props) {
             const player = players.find(p => p.username === score.username);
             return (
               <Stack direction="row" spacing={2} alignItems="center" key={index}>
+                <CloseIcon />
                 <UserAvatar username={player.username} avatar={player.info.avatar} displayUsername="right" />
                 <Typography variant="h6">{score.score}</Typography>
               </Stack>
