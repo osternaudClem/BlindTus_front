@@ -1,13 +1,15 @@
 module.exports = {
   // API
   api: {
-    // development: 'http://localhost:4000/api',
-    development: 'http://192.168.1.100:4000',
+    development: 'http://localhost:4000',
+    // development: 'http://192.168.1.100:4000',
+    // development: 'https://blindtus.cl3tus.com',
     production: 'https://blindtus.cl3tus.com',
   },
   socketApi: {
-    // development: 'http://localhost:4001',
-    development: 'http://192.168.1.100:4001',
+    development: 'http://localhost:4001',
+    // development: 'http://192.168.1.100:4001',
+    // development: 'https://blindtus.cl3tus.com',
     production: 'https://blindtus.cl3tus.com',
   },
   tmdb: {

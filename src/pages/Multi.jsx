@@ -59,16 +59,28 @@ function Multi(props) {
       setTimeLimit(room.settings.timeLimit);
       setDifficulty(room.settings.difficulty);
       setTotalMusics(room.settings.totalMusics);
+
+      return (() => {
+        socket.off('JOIN_ROOM');
+      });
     });
-  }, [props.user, socket]);
+  }, []);
 
   useEffect(() => {
     // window.addEventListener('beforeunload', handleTabClose);
+
+    if (!socket.connected) {
+      socket.connect();
+    }
 
     socket.on('ERROR', error => {
       setOpen(true);
       setError(error);
     });
+
+    socket.on('KICK', () => {
+      navigate(0);
+    })
 
     socket.on('PLAYER_DISCONNECTED', (player, game) => {
       setGame(game);
@@ -104,27 +116,35 @@ function Multi(props) {
       console.log('>>> reason', reason);
     });
 
-
     if (roomCode) {
       onJoinGame(roomCode);
     }
 
     return () => {
-      // window.removeEventListener('beforeunload', handleTabClose);
+      window.removeEventListener('beforeunload', handleTabClose);
+      socket.off('ERROR');
+      socket.off('KICK');
+      socket.off('PLAYER_DISCONNECTED');
+      socket.off('SETTINGS_UPDATED');
+      socket.off('NEW_CREATOR');
+      socket.off('START_GAME');
+      socket.off('UPDATE_SCORES');
+      socket.off('NEW_GAME');
+      socket.off('disconnect');
     };
-  }, [navigate, socket, roomCode, onJoinGame]);
+  }, []);
 
   useEffect(() => {
     socket.on('ROOM_USERS', async users => {
       const response = await callApi.get(`/users?usernames=${users.map(user => user.username)}`);
-      users.map((user, index) => user.info = response.data[index]);
+      users.map((user, index) => user.info = response.data.find(d => d.username === user.username));
       setPlayers(users);
     });
 
     return function () {
-      socket.emit('LEAVE_ROOM');
+      // socket.emit('LEAVE_ROOM');
     }
-  }, [socket])
+  }, [])
 
   const handleTabClose = function (event) {
     event.preventDefault();
@@ -176,6 +196,10 @@ function Multi(props) {
       setIsStarted(false);
       setIsEndGame(false);
     });
+  }
+
+  const handleClickDisconnect = function (user) {
+    socket.emit('KICK_USER', { user });
   }
 
   return (
@@ -267,7 +291,11 @@ function Multi(props) {
             {players.map((player, index) => {
               return (
                 <Stack direction="row" alignItems="center" key={index}>
-                  <CloseIcon />
+                  {isCreator &&
+                    <IconButton onClick={() => handleClickDisconnect(player)}>
+                      <CloseIcon />
+                    </IconButton>
+                  }
                   <UserAvatar username={player.username} avatar={player.info ? player.info.avatar : null} displayUsername="right" />
                 </Stack>
               )
@@ -308,7 +336,6 @@ function Multi(props) {
             const player = players.find(p => p.username === score.username);
             return (
               <Stack direction="row" spacing={2} alignItems="center" key={index}>
-                <CloseIcon />
                 <UserAvatar username={player.username} avatar={player.info.avatar} displayUsername="right" />
                 <Typography variant="h6">{score.score}</Typography>
               </Stack>
@@ -351,6 +378,11 @@ function Multi(props) {
                     <Typography variant="body">{userScore}</Typography>
                   }
                 >
+                  {isCreator &&
+                    <IconButton onClick={() => handleClickDisconnect(user)}>
+                      <CloseIcon />
+                    </IconButton>
+                  }
                   <UserAvatar avatar={players[index].info.avatar} username={user.username} displayUsername="right" />
                 </ListItem>
                 <Divider variant="middle" />

@@ -53,6 +53,10 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
       setAnswerSent(false);
       setTimer(0);
       setIsEndGame(isEndGame);
+
+      return(() => {
+        socket.off('NEXT_ROUND');
+      });
     });
 
     socket.on('START_MUSIC', () => {
@@ -73,8 +77,12 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
 
     return(() => {
       endGame = false;
+      nexMusicNumber = 0;
       setIsEndGame(false);
       setMusicsNumber(0);
+
+      socket.off('NEXT_ROUND');
+      socket.off('START_MUSIC');
     });
   }, [socket]);
 

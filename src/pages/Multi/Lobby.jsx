@@ -69,10 +69,10 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
 
   return (
     <div>
-      {renderAlert()}
       <Typography component="h1" variant="h3" marginBottom={6}>
         Multijoueur {code && `Room #${code}`}
       </Typography>
+      {renderAlert()}
       {code && (
         <Box marginBottom={4}>
           <TextField
