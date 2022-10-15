@@ -129,7 +129,7 @@ function Login(props) {
           </Grid>
           <Grid item>
             <Link component={RouterLink} to="/signup" color="inherit">
-              Vous n'avez pas encore de comte ? Créez en un !
+              Créez en un compte
             </Link>
           </Grid>
         </Grid>

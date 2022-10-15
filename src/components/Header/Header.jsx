@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
 import { PlayerVolume } from '../Forms';
 import logo from '../../assets/logo_light.png';
@@ -147,7 +148,7 @@ const ResponsiveAppBar = (props) => {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: { xs: 1, md: 0}}}>
+          <Box sx={{ flexGrow: { xs: 1, md: 0 } }}>
             <img src={logo} className="Header__logo" alt="BlindTus logo" onClick={() => onClickLogo()} />
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -160,15 +161,16 @@ const ResponsiveAppBar = (props) => {
                 {page.label}
               </Button>
             ))}
-
           </Box>
-          <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
-            <PlayerVolume
-              className="Header__volume"
-              onChange={(event, newValue) => setVolume(newValue)}
-              value={volume}
-            />
-          </div>
+          {!isMobileDevice() &&
+            <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
+              <PlayerVolume
+                className="Header__volume"
+                onChange={(event, newValue) => setVolume(newValue)}
+                value={volume}
+              />
+            </div>
+          }
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Utilisateur">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

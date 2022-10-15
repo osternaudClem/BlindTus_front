@@ -26,7 +26,6 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
   const [answer, updateAnswer] = useTextfield();
   const [isCorrect, setIsCorrect] = useState(null);
   const [musicNumber, setMusicsNumber] = useState(0);
-  const [nextMusicNumber, setNextMusicNumber] = useState(0);
   const [timer, setTimer] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIMER_GAME);
   const [inputDisabled, setInputDisabled] = useState(true);
@@ -44,27 +43,40 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
   }, [inputDisabled]);
 
   useEffect(() => {
+    let nexMusicNumber = 0;
+    let endGame = false;
+
     socket.on('NEXT_ROUND', ({ step, isEndGame }) => {
+      endGame = isEndGame;
+      nexMusicNumber = step;
       setDisplayGame(false);
       setAnswerSent(false);
       setTimer(0);
-      setNextMusicNumber(step);
       setIsEndGame(isEndGame);
     });
 
     socket.on('START_MUSIC', () => {
-      if (isEndGame) {
+      if (endGame) {
+        setDisplayGame(false);
+        setIsEndGame(false);
+        setMusicsNumber(0);
         onEndGame();
       }
 
-      setMusicsNumber(parseInt(nextMusicNumber));
       setDisplayResult(false);
       setInputDisabled(false);
+      setMusicsNumber(nexMusicNumber);
       setTimer(room.settings.timeLimit);
       setIsCorrect(null);
       setDisplayGame(true);
     });
-  }, [musicNumber, socket, isEndGame, nextMusicNumber, onEndGame, room.settings]);
+
+    return(() => {
+      endGame = false;
+      setIsEndGame(false);
+      setMusicsNumber(0);
+    });
+  }, [socket]);
 
   useEffect(() => {
     if (musics[musicNumber].proposals && musicNumber < musics.length) {
@@ -84,13 +96,10 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
       updateAnswer('');
       setAnswerSent(false);
     }
-
   };
 
   const handleClickStartMusic = function () {
-    socket.emit('START_MUSIC');
-
-
+    socket.emit('ASK_START_MUSIC');
   }
 
   const onSendAnswer = (event, timeOut = false) => {

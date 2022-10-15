@@ -32,3 +32,7 @@ export function checkSimilarity(content, titles, score = 0.8) {
 
   return isCorrect;
 }
+
+export function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}

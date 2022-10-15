@@ -24,6 +24,7 @@ import Results from './Multi/Results';
 import { UserAvatar } from '../components/Avatar';
 
 const TIMER_GAME = 30;
+const NOVIE_NUMBER = 3;
 
 function Multi(props) {
   const [open, setOpen] = useState(false);
@@ -34,7 +35,7 @@ function Multi(props) {
   const [players, setPlayers] = useState([]);
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
-  const [totalMusics, setTotalMusics] = useState(5);
+  const [totalMusics, setTotalMusics] = useState(NOVIE_NUMBER);
   const [musics, setMusics] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
@@ -84,6 +85,7 @@ function Multi(props) {
     });
 
     socket.on('START_GAME', ({ room, game, musics }) => {
+      // setIsEndGame(false);
       setGame(game);
       setMusics(musics);
       setRoom(room);
@@ -119,7 +121,7 @@ function Multi(props) {
       users.map((user, index) => user.info = response.data[index]);
       setPlayers(users);
     });
-  }, [])
+  }, [socket])
 
   const handleTabClose = function (event) {
     event.preventDefault();
@@ -162,12 +164,12 @@ function Multi(props) {
     });
   }
 
-  const onEndGame = function () {
+  const onEndGame = function() {
     setIsEndGame(true);
   }
 
   const onNewGame = function () {
-    socket.emit('ASK_NEW_GAME', ({ user }) => {
+    socket.emit('ASK_NEW_GAME', () => {
       setIsStarted(false);
       setIsEndGame(false);
     });
@@ -297,8 +299,8 @@ function Multi(props) {
           {usersScore.map((score, index) => {
             const player = players.find(p => p.username === score.username);
             return (
-              <Stack direction="row" spacing={2} alignItems="center">
-                <UserAvatar key={index} username={player.username} avatar={player.info.avatar} displayUsername="right" />
+              <Stack direction="row" spacing={2} alignItems="center" key={index}>
+                <UserAvatar username={player.username} avatar={player.info.avatar} displayUsername="right" />
                 <Typography variant="h6">{score.score}</Typography>
               </Stack>
             )
@@ -323,7 +325,6 @@ function Multi(props) {
         <List dense>
           {game.users.map((user, index) => {
             let userScore = 0;
-            console.log('>>> index', index)
 
             game.rounds.map(round => {
               const newScore = round.scores.find(s => s.username === user.username);

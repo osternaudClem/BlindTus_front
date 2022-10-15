@@ -20,7 +20,7 @@ function SemiBackground(props) {
     <Grid
       item
       sm={false}
-      md={7}
+      md={6}
       sx={{
         backgroundImage: `url(${tmdb.image_path}${props.movies.cover})`,
         backgroundRepeat: 'no-repeat',

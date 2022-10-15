@@ -1,7 +1,9 @@
 .Header__logo {
+  align-items: center;
   cursor: pointer;
   height: 40px;
   margin-right: 24px;
+  transform: translateY(4px);
 }
 
 .Header__volume {

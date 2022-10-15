@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import { isMobileDevice } from '../../lib/check';
 import { PlayerVolume } from '../Forms';
 import logo from '../../assets/logo_light.png';
 
@@ -123,13 +124,15 @@ const ResponsiveAppBar = (props) => {
             ))}
 
           </Box>
-          <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
-            <PlayerVolume
-              className="Header__volume"
-              onChange={(event, newValue) => setVolume(newValue)}
-              value={volume}
-            />
-          </div>
+          {!isMobileDevice() &&
+            <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
+              <PlayerVolume
+                className="Header__volume"
+                onChange={(event, newValue) => setVolume(newValue)}
+                value={volume}
+              />
+            </div>
+          }
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             <Button
               onClick={() => handleCloseNavMenu({ url: '/login' })}

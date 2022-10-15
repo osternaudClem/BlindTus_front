@@ -26,6 +26,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSlider, useTextfield } from '../../hooks/formHooks';
 import { gamesActions } from '../../actions';
 
+const NOVIE_NUMBER = 3;
 const MOVIE_MIN = 3;
 const MOVIE_MAX = 100;
 
@@ -36,7 +37,7 @@ function valuetext(value) {
 function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode, ...props }) {
   const [errorCode, setErrorCode] = useState(null);
   const [time, updateTime] = useSlider(30);
-  const [movieNumber, updateMovieNumber] = useTextfield(5);
+  const [movieNumber, updateMovieNumber] = useTextfield(NOVIE_NUMBER);
   const [difficulty, updateDifficulty] = useTextfield('easy');
   const [code, updateCode] = useTextfield('');
   const navigate = useNavigate();

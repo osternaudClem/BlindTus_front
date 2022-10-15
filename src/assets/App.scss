@@ -1,4 +1,21 @@
+// Hack to remove autofill color
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 100px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+  transition-delay: background-color 5000s, color 5000s;
+}
+
+.NotLogged {
+  &__content {
+    min-height: calc(100vh - 70px);
+  }
+}
+
 @media screen and (max-width: 600px) {
+
   .MuiFormControl-root,
   .MuiTextField-root,
   .MuiButton-root {

@@ -28,9 +28,9 @@ function NotConnected(props) {
     <div>
       <CssBaseline />
       <HeaderNotLogged />
-      <Grid container component="main" sx={{ height: '100vh' }} className="LoginPage">
+      <Grid container component="main" className="NotLogged">
         <SemiBackground />
-        <Grid item sm={12} md={5} component={Paper} elevation={6} square>
+        <Grid item sm={12} md={6} component={Paper} elevation={6} square className="NotLogged__content">
           <Box
             sx={{
               my: 8,
