@@ -11,7 +11,7 @@ import { UserAvatar } from '../../components/Avatar';
 function Results({ game, players, onNewGame }) {
   return (
     <Paper level={2}>
-      <Button variant="contained" onClick={onNewGame}>Noubelle partie</Button>
+      <Button variant="contained" onClick={onNewGame}>Nouvelle partie</Button>
       {game.movies && game.movies.map((movie, index) => {
         return (
           <div key={index} style={{ padding: '8px 16px' }}>

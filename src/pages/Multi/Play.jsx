@@ -4,10 +4,17 @@ import {
   Alert,
   AlertTitle,
   Button,
+  Typography,
+  Paper,
+  Stack,
+  Chip,
+  Divider,
 } from '@mui/material';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { checkSimilarity } from '../../lib/check';
@@ -18,10 +25,11 @@ import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
 import { MovieTextField } from '../../components/Forms';
 import { GameProposals } from '../../components/Game';
+import { UserAvatar } from '../../components/Avatar';
 
 const TIMER_GAME = 10;
 
-function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
+function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndGame }) {
   const [score, setScore] = useState(0);
   const [answer, updateAnswer] = useTextfield();
   const [isCorrect, setIsCorrect] = useState(null);
@@ -54,7 +62,7 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
       setTimer(0);
       setIsEndGame(isEndGame);
 
-      return(() => {
+      return (() => {
         socket.off('NEXT_ROUND');
       });
     });
@@ -75,7 +83,7 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
       setDisplayGame(true);
     });
 
-    return(() => {
+    return (() => {
       endGame = false;
       nexMusicNumber = 0;
       setIsEndGame(false);
@@ -140,7 +148,7 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
 
     setScore(score);
 
-    onAnswer(score, musicNumber);
+    onAnswer(score, musicNumber, answer);
     setAnswerSent(true);
     setDisplayResult(true);
     setInputDisabled(true);
@@ -164,7 +172,7 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
     }
 
     setScore(score);
-    onAnswer(score, musicNumber);
+    onAnswer(score, musicNumber, answer);
     setAnswerSent(true);
     setDisplayResult(true);
   }
@@ -278,11 +286,53 @@ function Play({ socket, room, musics, isCreator, onAnswer, onEndGame }) {
           + {Math.round(score)} points !
         </Alert>
 
+        {renderRoundResults()}
+
         <Result movie={musics[musicNumber].movie} music={musics[musicNumber]} />
       </React.Fragment>
     )
   }
 
+  function renderRoundResults() {
+    console.log('>>> game.rounds[musicNumber]', game, musicNumber)
+    if (!game.rounds[musicNumber]) {
+      return;
+    }
+
+    return (
+      <Paper elevation={2} style={{ padding: '8px 16px', marginBottom: '16px' }}>
+        <Typography component="h3" variant="h5">Résultat de la manche</Typography>
+        {game.rounds[musicNumber].scores.map((user, index) => {
+          const player = players.find(p => p.username === user.username);
+          const isCorrect = user.score > 0;
+          return (
+            <Stack key={index} direction="row" alignItems="center" style={{ marginTop: '16px' }}>
+              <div style={{ marginRight: '16px', transform: 'translateY(2px)' }} >
+                {isCorrect
+                  ? <CheckIcon color="success" />
+                  : <ClearIcon color="error" />
+                }
+              </div>
+
+              <UserAvatar
+                username={player.username}
+                avatar={player.info ? player.info.avatar : null}
+                displayUsername="right"
+                style={{ width: '200px' }}
+              />
+              <Divider orientation="vertical" flexItem></Divider>
+              <Typography
+                variant="body1"
+                style={{ marginLeft: '24px', marginRight: '16px', flexGrow: 1 }}
+                className="text--crop"
+              >{user.answer}</Typography>
+              <Chip variant="outlined" label={`+${user.score} points`} color={isCorrect ? 'success' : 'error'} sx={{ fontSize: '16px'}} />
+            </Stack>
+          )
+        })}
+      </Paper>
+    )
+  }
 }
 
 export default Play;

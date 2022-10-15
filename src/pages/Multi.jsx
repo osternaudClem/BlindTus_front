@@ -40,6 +40,7 @@ function Multi(props) {
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
+  const [scores, setScores] = useState([]);
   const navigate = useNavigate();
   const socket = useContext(SocketContext);
   const queryString = window.location.search;
@@ -107,6 +108,10 @@ function Multi(props) {
       setGame(game);
     });
 
+    socket.on('NEXT_ROUND', ({ game }) => {
+      setScores(game.rounds);
+    });
+
     socket.on('NEW_GAME', () => {
       setIsStarted(false);
       setIsEndGame(false);
@@ -130,6 +135,7 @@ function Multi(props) {
       socket.off('START_GAME');
       socket.off('UPDATE_SCORES');
       socket.off('NEW_GAME');
+      socket.off('NEXT_ROUND');
       socket.off('disconnect');
     };
   }, []);
@@ -142,7 +148,8 @@ function Multi(props) {
     });
 
     return function () {
-      // socket.emit('LEAVE_ROOM');
+      socket.off('ROOM_USERS');
+      socket.emit('LEAVE_ROOM');
     }
   }, [])
 
@@ -181,8 +188,8 @@ function Multi(props) {
     socket.emit('UPDATE_SETTINGS', settings);
   }
 
-  const onAnswer = function (score, step) {
-    socket.emit('ADD_SCORE', ({ score: Math.round(score), step }), ({ game }) => {
+  const onAnswer = function (score, step, answer) {
+    socket.emit('ADD_SCORE', ({ score: Math.round(score), step, answer }), ({ game }) => {
       setGame(game);
     });
   }
@@ -270,6 +277,8 @@ function Multi(props) {
           socket={socket}
           musics={musics}
           room={room}
+          game={game}
+          players={players}
           isCreator={isCreator}
           onAnswer={onAnswer}
           onEndGame={onEndGame}
@@ -326,6 +335,7 @@ function Multi(props) {
 
       return null;
     });
+
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
@@ -351,6 +361,25 @@ function Multi(props) {
       return;
     }
 
+    let usersScore = [];
+
+    game.users.map(user => {
+      let userScore = 0;
+
+      scores.map(round => {
+        const newScore = round.scores.find(s => s.username === user.username);
+        if (newScore) {
+          userScore = userScore + newScore.score;
+        }
+
+        return null;
+      });
+
+      return usersScore.push({ username: user.username, score: userScore });
+    });
+
+    usersScore = usersScore.sort((a, b) => b.score - a.score);
+
     return (
       <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
@@ -359,23 +388,12 @@ function Multi(props) {
           </Grid>
         </Grid>
         <List dense>
-          {game.users.map((user, index) => {
-            let userScore = 0;
-
-            game.rounds.map(round => {
-              const newScore = round.scores.find(s => s.username === user.username);
-              if (newScore) {
-                userScore = userScore + newScore.score;
-              }
-
-              return null;
-            });
-
+          {usersScore.map((user, index) => {
             return (
-              <div key={`${user.id}`}>
+              <div key={index}>
                 <ListItem
                   secondaryAction={
-                    <Typography variant="body">{userScore}</Typography>
+                    <Typography variant="body">{user.score}</Typography>
                   }
                 >
                   {isCreator &&
@@ -383,7 +401,11 @@ function Multi(props) {
                       <CloseIcon />
                     </IconButton>
                   }
-                  <UserAvatar avatar={players[index].info.avatar} username={user.username} displayUsername="right" />
+                  <UserAvatar
+                    avatar={players[index].info.avatar}
+                    username={user.username}
+                    displayUsername="right"
+                  />
                 </ListItem>
                 <Divider variant="middle" />
               </div>

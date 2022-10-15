@@ -1,19 +1,21 @@
 import PropTypes from 'prop-types';
 import { Avatar, Stack, Typography } from '@mui/material';
 
-function UserAvatar({ avatar, username, displayUsername }) {
+function UserAvatar({ avatar, username, displayUsername, style }) {
+  console.log('>>> style', style)
   return (
     <Stack
       direction="row"
       spacing={2}
       alignItems="center"
+      style={style}
     >
       {displayUsername === 'left' &&
         <Typography variant="body" marginRight={2}>{username}</Typography>
       }
       <Avatar src={avatar || 'undefined'} alt={username} />
       {displayUsername === 'right' &&
-        <Typography variant="body" marginRight={2}>{username}</Typography>
+        <Typography variant="body" marginRight={2} className="text--crop">{username}</Typography>
       }
     </Stack>
   )
@@ -22,12 +24,14 @@ function UserAvatar({ avatar, username, displayUsername }) {
 UserAvatar.propTypes = {
   avatar: PropTypes.string,
   displayUsername: PropTypes.oneOf(['none', 'left', 'right']),
+  style: PropTypes.object,
   username: PropTypes.string,
 };
 
 UserAvatar.defaultProps = {
   avatar: null,
   displayUsername: 'none',
+  style: {},
   username: null,
 }
 

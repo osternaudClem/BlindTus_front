@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
 import { useLocalStorage } from 'usehooks-ts';
@@ -84,7 +84,11 @@ const ResponsiveAppBar = (props) => {
 
   const handleCloseNavMenu = page => {
     if (page.url) {
-      navigate(page.url);
+      navigate(page.url, { replace: true});
+
+      if (page.url === '/lobby') {
+        navigate(0);
+      }
     }
     setAnchorElNav(null);
   };
