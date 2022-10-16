@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { Avatar, Stack, Typography } from '@mui/material';
 
 function UserAvatar({ avatar, username, displayUsername, style }) {
-  console.log('>>> style', style)
   return (
     <Stack
       direction="row"

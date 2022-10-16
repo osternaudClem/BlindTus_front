@@ -32,8 +32,6 @@ function AskNewPassword(props) {
 
     const user = await props.usersActions.askNewPassword(email);
 
-    console.log('>>> user', user)
-
     if (user.error) {
       return setServerErrors(user.messages);
     }
