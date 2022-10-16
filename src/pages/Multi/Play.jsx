@@ -20,11 +20,10 @@ import { useTextfield } from '../../hooks/formHooks';
 import { checkSimilarity } from '../../lib/check';
 import { shuffle } from '../../lib/array';
 
-import { Player } from '../../components/Player';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
 import { MovieTextField } from '../../components/Forms';
-import { GameProposals } from '../../components/Game';
+import { GamePlayer, GameProposals } from '../../components/Game';
 import { UserAvatar } from '../../components/Avatar';
 
 const TIMER_GAME = 10;
@@ -32,6 +31,7 @@ const TIMER_GAME = 10;
 function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndGame }) {
   const [score, setScore] = useState(0);
   const [answer, updateAnswer] = useTextfield();
+  const [isReady, setIsReady] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
   const [musicNumber, setMusicsNumber] = useState(0);
   const [timer, setTimer] = useState(0);
@@ -48,7 +48,11 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     if (!inputDisabled && answerField.current) {
       answerField.current.focus();
     }
-  }, [inputDisabled]);
+
+    if (isReady) {
+      setTimer(room.settings.timeLimit);
+    }
+  }, [inputDisabled, isReady]);
 
   useEffect(() => {
     let nexMusicNumber = 0;
@@ -78,9 +82,12 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       setDisplayResult(false);
       setInputDisabled(false);
       setMusicsNumber(nexMusicNumber);
-      setTimer(room.settings.timeLimit);
       setIsCorrect(null);
       setDisplayGame(true);
+    });
+
+    socket.on('IS_EVERYBODY_READY', ({ isReadyToPlay }) => {
+      setIsReady(isReadyToPlay);
     });
 
     return (() => {
@@ -91,6 +98,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
 
       socket.off('NEXT_ROUND');
       socket.off('START_MUSIC');
+      socket.off('IS_EVERYBODY_READY');
     });
   }, [socket]);
 
@@ -177,11 +185,14 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     setDisplayResult(true);
   }
 
+  const onCanPlayAudio = function () {
+    socket.emit('PLAYER_AUDIO_READY');
+  }
+
   return (
     <div>
       {renderGame()}
     </div>
-
   )
 
   function renderGame() {
@@ -270,7 +281,11 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     }
 
     return (
-      <Player url={musics[musicNumber].video} />
+      <GamePlayer
+        audioName={musics[musicNumber].audio_name}
+        timecode={musics[musicNumber].timecode}
+        canPlay={onCanPlayAudio}
+      />
     );
   }
 
@@ -294,7 +309,6 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
   }
 
   function renderRoundResults() {
-    console.log('>>> game.rounds[musicNumber]', game, musicNumber)
     if (!game.rounds[musicNumber]) {
       return;
     }
@@ -326,7 +340,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
                 style={{ marginLeft: '24px', marginRight: '16px', flexGrow: 1 }}
                 className="text--crop"
               >{user.answer}</Typography>
-              <Chip variant="outlined" label={`+${user.score} points`} color={isCorrect ? 'success' : 'error'} sx={{ fontSize: '16px'}} />
+              <Chip variant="outlined" label={`+${user.score} points`} color={isCorrect ? 'success' : 'error'} sx={{ fontSize: '16px' }} />
             </Stack>
           )
         })}

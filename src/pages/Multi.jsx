@@ -13,6 +13,7 @@ import {
   ListItem,
   Divider,
   Stack,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -32,6 +33,8 @@ function Multi(props) {
   const [code, setCode] = useState(null);
   const [room, setRoom] = useState(null);
   const [game, setGame] = useState(null);
+  const [roundStarted, setRoundStarted] = useState(false);
+  const [readyPlayers, setReadyPlayers] = useState([]);
   const [players, setPlayers] = useState([]);
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
@@ -109,6 +112,7 @@ function Multi(props) {
     });
 
     socket.on('NEXT_ROUND', ({ game }) => {
+      setRoundStarted(false);
       setScores(game.rounds);
     });
 
@@ -125,6 +129,14 @@ function Multi(props) {
       onJoinGame(roomCode);
     }
 
+    socket.on('IS_EVERYBODY_READY', ({ players }) => {
+      setReadyPlayers(players);
+    });
+
+    socket.on('START_MUSIC', () => {
+      setRoundStarted(true);
+    });
+
     return () => {
       window.removeEventListener('beforeunload', handleTabClose);
       socket.off('ERROR');
@@ -136,6 +148,7 @@ function Multi(props) {
       socket.off('UPDATE_SCORES');
       socket.off('NEW_GAME');
       socket.off('NEXT_ROUND');
+      socket.off('IS_EVERYBODY_READY');
       socket.off('disconnect');
     };
   }, []);
@@ -375,7 +388,7 @@ function Multi(props) {
         return null;
       });
 
-      return usersScore.push({ username: user.username, score: userScore });
+      return usersScore.push({ username: user.username, score: userScore, id: user.id });
     });
 
     usersScore = usersScore.sort((a, b) => b.score - a.score);
@@ -393,7 +406,9 @@ function Multi(props) {
               <div key={index}>
                 <ListItem
                   secondaryAction={
-                    <Typography variant="body">{user.score}</Typography>
+                    (!readyPlayers.includes(user.id) && roundStarted)
+                    ? <CircularProgress color="primary" />
+                    : <Typography variant="body">{user.score}</Typography>
                   }
                 >
                   {isCreator &&
