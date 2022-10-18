@@ -9,11 +9,18 @@ import {
 } from '@mui/material';
 
 import { updateTitle } from '../lib/document';
+import { GamePlayer } from '../components/Game';
+
+const AUDIO_NAME = 'michael-kamen-river-chase-bicbyihdnm';
 
 function Test() {
   useEffect(() => {
     updateTitle('Test');
   }, []);
+
+  const onCanPlayAudio = function () {
+
+  }
 
   return (
     <Box>
@@ -22,7 +29,11 @@ function Test() {
         <Typography variant="h3">Test</Typography>
 
         <Box sx={{ '& button': { m: 1 } }}>
-          
+          <GamePlayer
+            audioName={AUDIO_NAME}
+            canPlay={onCanPlayAudio}
+            showControl
+          />
         </Box>
       </Container>
     </Box>

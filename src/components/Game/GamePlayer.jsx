@@ -4,7 +4,7 @@ import { useReadLocalStorage } from 'usehooks-ts';
 import { api } from '../../config';
 const API = api[process.env.NODE_ENV];
 
-function GamePlayer({ audioName, timecode, canPlay }) {
+function GamePlayer({ audioName, timecode, canPlay, showControl }) {
   const audioRef = useRef();
   const volume = useReadLocalStorage('player_volume');
 
@@ -17,7 +17,7 @@ function GamePlayer({ audioName, timecode, canPlay }) {
       src={`${API}/api/audio/${audioName}.mp3#t=${timecode}`}
       loop
       autoPlay
-      // controls
+      controls={showControl}
       ref={audioRef}
       onCanPlayThrough={canPlay}
     />
@@ -27,11 +27,13 @@ function GamePlayer({ audioName, timecode, canPlay }) {
 GamePlayer.propTypes = {
   audioName: PropTypes.string.isRequired,
   canPlay: PropTypes.func,
+  showControl: PropTypes.bool,
   timecode: PropTypes.number,
 };
 
 GamePlayer.defaultProps = {
   canPlay: () => {},
+  showControl: false,
   timecode: 0,
 };
 
