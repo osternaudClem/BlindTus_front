@@ -31,7 +31,6 @@ function Test() {
         <Box sx={{ '& button': { m: 1 } }}>
           <GamePlayer
             audioName={AUDIO_NAME}
-            canPlay={onCanPlayAudio}
             showControl
           />
         </Box>
