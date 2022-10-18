@@ -12,12 +12,6 @@ function GamePlayer({ audioName, timecode, canPlay, isReady }) {
     audioRef.current.volume = volume === null ? .7 : volume / 100;
   }, [volume]);
 
-  // useEffect(() => {
-  //   if (isReady) {
-  //     audioRef.current.play();
-  //   }
-  // }, [isReady]);
-
   const onCanPlayThrough = function() {
     audioRef.current.play();
     canPlay();
@@ -30,7 +24,7 @@ function GamePlayer({ audioName, timecode, canPlay, isReady }) {
       autoPlay
       controls
       ref={audioRef}
-      onCanPlayThrough={canPlay}
+      onCanPlayThrough={onCanPlayThrough}
     />
   );
 }
