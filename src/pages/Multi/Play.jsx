@@ -188,7 +188,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
   }
 
   const onCanPlayAudio = function () {
-    socket.emit('PLAYER_AUDIO_READY');
+    // socket.emit('PLAYER_AUDIO_READY');
   }
 
   return (
