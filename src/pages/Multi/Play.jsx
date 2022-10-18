@@ -48,11 +48,13 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     if (!inputDisabled && answerField.current) {
       answerField.current.focus();
     }
+  }, [inputDisabled]);
 
+  useEffect(() => {
     if (isReady) {
       setTimer(room.settings.timeLimit);
     }
-  }, [inputDisabled, isReady]);
+  }, [isReady]);
 
   useEffect(() => {
     let nexMusicNumber = 0;
