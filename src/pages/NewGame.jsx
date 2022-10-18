@@ -27,6 +27,7 @@ import {
 
 import { shuffle } from '../lib/array';
 import { checkSimilarity } from '../lib/check';
+import { updateTitle } from '../lib/document';
 
 import { GamePlayer } from '../components/Game';
 import { Timer } from '../components/Timer';
@@ -64,6 +65,10 @@ function NewGame(props) {
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get('code');
   const answerField = useRef(null);
+
+  useEffect(() => {
+    updateTitle('Nouvelle partie');
+  },[]);
 
   useEffect(() => {
     props.scoresActions.reset();

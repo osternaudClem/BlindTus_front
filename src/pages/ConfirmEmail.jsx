@@ -14,6 +14,7 @@ import {
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ReplayIcon from '@mui/icons-material/Replay';
 import { usersActions } from '../actions';
+import { updateTitle } from '../lib/document';
 import './Page.scss';
 
 function ConmfirmEmail(props) {
@@ -24,6 +25,10 @@ function ConmfirmEmail(props) {
   const urlParams = new URLSearchParams(queryString);
   const token = urlParams.get('token');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updateTitle('Confirmez votre e-mail');
+  }, []);
 
   useEffect(() => {
     if (token&& call === 0) {

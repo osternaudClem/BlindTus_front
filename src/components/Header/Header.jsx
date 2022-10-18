@@ -84,7 +84,7 @@ const ResponsiveAppBar = (props) => {
 
   const handleCloseNavMenu = page => {
     if (page.url) {
-      navigate(page.url, { replace: true});
+      navigate(page.url);
 
       if (page.url === '/lobby') {
         navigate(0);

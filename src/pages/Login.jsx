@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -22,6 +22,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { musicsActions, usersActions } from '../actions';
 import { useTextfield, useToggle } from '../hooks/formHooks';
+import { updateTitle } from '../lib/document';
 import { Copyright } from '../components/Footer';
 
 function Login(props) {
@@ -31,6 +32,10 @@ function Login(props) {
   const [password, updatePassword] = useTextfield();
   const [serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updateTitle('Se connecter');
+  }, []);
 
   const handleSubmit = async function (event) {
     event.preventDefault();

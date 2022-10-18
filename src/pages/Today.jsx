@@ -14,6 +14,7 @@ import { Today } from '../components/Today';
 
 import { isToday } from '../lib/date';
 import { encrypt, decrypt } from '../lib/crypt';
+import { updateTitle } from '../lib/document';
 import { todayActions } from '../actions';
 
 function TodayPage(props) {
@@ -22,6 +23,10 @@ function TodayPage(props) {
   const [todayGamesLocal, setTodayGamesLocal] = useState(null);
   const [todayStatsLocal, setTodayStatsLocal] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updateTitle('Partie du jour');
+  }, []);
 
   useEffect(() => {
     const userId = getCookie('user');

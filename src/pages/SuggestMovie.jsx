@@ -27,6 +27,7 @@ import { UserContext } from '../contexts/userContext';
 import { useTextfield } from '../hooks/formHooks';
 import { moviesActions } from '../actions';
 import { isMovieAlreadyAdded } from '../lib/check';
+import { updateTitle } from '../lib/document';
 import { tmdb } from '../config';
 
 const steps = ['Rechercher un film', 'Séléctionner le film', 'Sauvergarder'];
@@ -37,11 +38,15 @@ function SlideTransition(props) {
 
 function SuggestMovie(props) {
   const [currentStep, step] = useStep(3);
-  const {value: isSnackOpen, toggle: toggleSnack} = useBoolean(false);
+  const { value: isSnackOpen, toggle: toggleSnack } = useBoolean(false);
   const [query, onChangeQuery] = useTextfield();
   const { movie_id, movie_query } = useParams();
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updateTitle('Suggérer un film');
+  }, []);
 
   useEffect(() => {
     if (!props.movies.all.length) {
@@ -49,8 +54,6 @@ function SuggestMovie(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-
 
   useEffect(() => {
     if (movie_query) {

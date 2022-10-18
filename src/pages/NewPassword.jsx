@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -23,9 +23,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { usersActions } from '../actions';
 import { useTextfield, useToggle } from '../hooks/formHooks';
+import { updateTitle } from '../lib/document';
 import { Copyright } from '../components/Footer';
 import './Page.scss';
-
 
 function NewPassword(props) {
   // eslint-disable-next-line
@@ -38,6 +38,10 @@ function NewPassword(props) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const token = urlParams.get('token');
+
+  useEffect(() => {
+    updateTitle('Nouveau mot de passe');
+  }, []);
 
   const handleSubmit = async function (event) {
     event.preventDefault();
