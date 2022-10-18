@@ -285,6 +285,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
         audioName={musics[musicNumber].audio_name}
         timecode={musics[musicNumber].timecode}
         canPlay={onCanPlayAudio}
+        isReady={isReady}
       />
     );
   }
