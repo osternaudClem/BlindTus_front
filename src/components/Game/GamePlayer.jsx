@@ -17,7 +17,7 @@ function GamePlayer({ audioName, timecode, canPlay }) {
       src={`${API}/api/audio/${audioName}.mp3#t=${timecode}`}
       loop
       autoPlay
-      // controls
+      controls
       ref={audioRef}
       onCanPlayThrough={canPlay}
     />
