@@ -18,6 +18,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 import { callApi } from '../lib/axios';
+import { updateTitle } from '../lib/document';
 import { SocketContext } from '../contexts/sockets';
 import Lobby from './Multi/Lobby';
 import Play from './Multi/Play';
@@ -49,6 +50,10 @@ function Multi(props) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const roomCode = urlParams.get('code');
+
+  useEffect(() => {
+    updateTitle('Multijoueur');
+  }, []);
 
   const onJoinGame = useCallback((customRoom) => {
     socket.emit('JOIN_ROOM', { username: props.user.username, room: customRoom }, ({ error, user, room }) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -23,9 +23,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { musicsActions, usersActions } from '../actions';
 import { useTextfield, useToggle } from '../hooks/formHooks';
+import { updateTitle } from '../lib/document';
 import { Copyright } from '../components/Footer';
 import './Page.scss';
-
 
 function Signup(props) {
   // eslint-disable-next-line
@@ -37,6 +37,10 @@ function Signup(props) {
   const [errors, setErrors] = useState({});
   const [serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updateTitle('Créé un compte');
+  }, []);
 
   const handleSubmit = async function (event) {
     event.preventDefault();

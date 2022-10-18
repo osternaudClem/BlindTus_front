@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -14,12 +14,17 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { usersActions } from '../actions';
 import { useTextfield } from '../hooks/formHooks';
+import { updateTitle } from '../lib/document';
 import { Copyright } from '../components/Footer';
 
 function AskNewPassword(props) {
   const [email, updateEmail] = useTextfield();
   const [openSuccess, setOpenSuccess] = useState(0);
   const [serverErrors, setServerErrors] = useState(null);
+
+  useEffect(() => {
+    updateTitle('Demande d\'un nouveau mot de passe');
+  }, []);
 
   const handleSubmit = async function (event) {
     event.preventDefault();

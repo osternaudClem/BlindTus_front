@@ -12,6 +12,7 @@ import { styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import { Stack } from '@mui/system';
 import { historyActions } from '../actions';
+import { updateTitle } from '../lib/document';
 
 const columns = [
   {
@@ -93,6 +94,10 @@ function CustomNoRowsOverlay() {
 }
 
 function History(props) {
+  useEffect(() => {
+    updateTitle('Historique des parties');
+  }, []);
+
   useEffect(() => {
     if (props.history.all.length === 0 && props.user._id) {
       (async function () {

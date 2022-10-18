@@ -9,12 +9,17 @@ import {
 } from '../actions';
 
 import { UserContext } from '../contexts/userContext';
+import { updateTitle } from '../lib/document';
 
 import { Today } from '../components/Today';
 
 function GameOfTheDay(props) {
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
+
+  useEffect(() => {
+    updateTitle('Partie du jour');
+  }, []);
 
   useEffect(() => {
     (async function () {

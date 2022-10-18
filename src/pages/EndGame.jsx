@@ -11,7 +11,7 @@ import {
   Grid,
 } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { updateTitle } from '../lib/document';
 import { scoresActions, musicsActions } from '../actions';
 import { ScoresDetails } from '../components/Scores';
 
@@ -20,6 +20,10 @@ function EndGame(props) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
   const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
+
+  useEffect(() => {
+    updateTitle('Fin de partie');
+  }, []);
 
   useEffect(() => {
     props.musicsActions.reset();

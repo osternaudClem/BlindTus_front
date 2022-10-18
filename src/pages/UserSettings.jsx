@@ -12,11 +12,16 @@ import {
 
 import { AvatarSettings, CredentialsSettings, ChangePasswordSettings } from '../components/Settings';
 import { usersActions } from '../actions';
+import { updateTitle } from '../lib/document';
 
 function UserSettings(props) {
   const [tab, setTab] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    updateTitle('Paramètre du compte');
+  }, []);
 
   useEffect(() => {
     const urlTab = searchParams.get('t');
