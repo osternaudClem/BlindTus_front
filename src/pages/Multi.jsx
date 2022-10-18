@@ -73,7 +73,7 @@ function Multi(props) {
         socket.off('JOIN_ROOM');
       });
     });
-  }, []);
+  }, [socket, props.user.username]);
 
   useEffect(() => {
     // window.addEventListener('beforeunload', handleTabClose);
@@ -156,7 +156,7 @@ function Multi(props) {
       socket.off('IS_EVERYBODY_READY');
       socket.off('disconnect');
     };
-  }, []);
+  }, [socket, navigate, onJoinGame, roomCode]);
 
   useEffect(() => {
     socket.on('ROOM_USERS', async users => {
@@ -169,7 +169,7 @@ function Multi(props) {
       socket.off('ROOM_USERS');
       socket.emit('LEAVE_ROOM');
     }
-  }, [])
+  }, [socket])
 
   const handleTabClose = function (event) {
     event.preventDefault();

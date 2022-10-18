@@ -54,7 +54,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     if (isReady) {
       setTimer(room.settings.timeLimit);
     }
-  }, [isReady]);
+  }, [isReady, room.settings.timeLimit]);
 
   useEffect(() => {
     let nexMusicNumber = 0;
@@ -67,6 +67,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       setAnswerSent(false);
       setTimer(0);
       setIsEndGame(isEndGame);
+      setIsReady(false);
 
       return (() => {
         socket.off('NEXT_ROUND');
@@ -102,6 +103,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       socket.off('START_MUSIC');
       socket.off('IS_EVERYBODY_READY');
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   useEffect(() => {
