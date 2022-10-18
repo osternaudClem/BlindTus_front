@@ -80,6 +80,7 @@ function Login(props) {
       <Typography component="h1" variant="h5">
         Se connecter
       </Typography>
+      <Typography marginY={2}>Seule la <b><RouterLink to="/today" style={{ color: 'inherit' }}>partie du jour</RouterLink></b> est disponnible sans avoir de compte.</Typography>
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
         {renderError()}
         <TextField

@@ -226,7 +226,6 @@ function NewGame(props) {
     setIsCorrect(isAnswerCorrect);
 
     if (!isAnswerCorrect && !timeOut) {
-      // setIsCorrect(null);
       window.setTimeout(() => {
         setIsCorrect(null);
       }, 500)
@@ -257,7 +256,7 @@ function NewGame(props) {
       <Grid
         item
         xs={12}
-        sm={9}
+        sm={isStarted ? 6 : 12}
         md={8}
       >
         {renderButton()}
@@ -266,7 +265,7 @@ function NewGame(props) {
       <Grid
         item
         xs={12}
-        sm={3}
+        sm={6}
         md={4}
       >
         {isStarted &&
@@ -313,7 +312,6 @@ function NewGame(props) {
 
         {difficulty === 'difficult'
           ? (
-
             <Box
               sx={{
                 width: '100%',

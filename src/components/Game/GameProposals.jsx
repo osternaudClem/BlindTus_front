@@ -7,6 +7,8 @@ import {
 } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import './Game.scss';
+
 function GameProposals({ proposals, onClick }) {
   const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
   const stack = [];
@@ -32,7 +34,6 @@ function GameProposals({ proposals, onClick }) {
     const buttons = [];
 
     for (let i = 0; i < 2; i++) {
-
       buttons.push(
         <Button
           key={i}
@@ -40,7 +41,8 @@ function GameProposals({ proposals, onClick }) {
           sx={{ flex: 1 }}
           size="large"
           color="inherit"
-          onClick={(event) => onClick(proposals[index + i])}
+          onClick={() => onClick(proposals[index + i])}
+          className="GameProposals_button"
         >
           {proposals[index + i]}
         </Button>

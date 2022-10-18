@@ -21,8 +21,16 @@ import logo from '../../assets/logo_light.png';
 
 const pages = [
   {
+    label: 'Démarer une partie',
+    url: '/new-game'
+  },
+  {
     label: 'Partie du jour',
-    url: '/today'
+    url: '/today',
+  },
+  {
+    label: 'Multijoueur',
+    url: '/lobby',
   },
 ];
 

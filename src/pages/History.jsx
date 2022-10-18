@@ -102,7 +102,6 @@ function History(props) {
     if (props.history.all.length === 0 && props.user._id) {
       (async function () {
         await props.historyActions.getFullHistory(props.user._id);
-
       })();
     }
 

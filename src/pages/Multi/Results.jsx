@@ -1,27 +1,25 @@
 import React from 'react';
 import {
   Typography,
-  Stack,
   Paper,
   Divider,
   Button,
 } from '@mui/material';
-import { UserAvatar } from '../../components/Avatar';
+import { GameRoundResults } from '../../components/Game';
 
 function Results({ game, players, onNewGame }) {
   return (
     <Paper level={2}>
-      <Button variant="contained" onClick={onNewGame}>Nouvelle partie</Button>
+      <div style={{ padding: '16px' }}>
+        <Button variant="contained" onClick={onNewGame}>Nouvelle partie</Button>
+      </div>
       {game.movies && game.movies.map((movie, index) => {
         return (
           <div key={index} style={{ padding: '8px 16px' }}>
             <Typography component="h3" variant="h5">{movie}</Typography>
-            {players.map((player, indexPlayer) => {
+            {players.map(() => {
               return (
-                <Stack direction="row" spacing={2} alignItems="center" key={indexPlayer}>
-                  <UserAvatar avatar={player.info.avatar} username={player.username} displayUsername="right" />
-                  <Typography variant="h6">{game.rounds[index].scores.find(s => s.username === player.username).score}</Typography>
-                </Stack>
+                <GameRoundResults game={game} players={players} musicNumber={index} minimize />
               )
             })}
             <Divider sx={{ marginTop: '8px' }} />

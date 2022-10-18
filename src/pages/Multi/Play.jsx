@@ -4,17 +4,11 @@ import {
   Alert,
   AlertTitle,
   Button,
-  Typography,
   Paper,
-  Stack,
-  Chip,
-  Divider,
+  Typography,
 } from '@mui/material';
-
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { checkSimilarity } from '../../lib/check';
@@ -23,8 +17,7 @@ import { shuffle } from '../../lib/array';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
 import { MovieTextField } from '../../components/Forms';
-import { GamePlayer, GameProposals } from '../../components/Game';
-import { UserAvatar } from '../../components/Avatar';
+import { GamePlayer, GameProposals, GameRoundResults } from '../../components/Game';
 
 const TIMER_GAME = 10;
 
@@ -321,34 +314,11 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     return (
       <Paper elevation={2} style={{ padding: '8px 16px', marginBottom: '16px' }}>
         <Typography component="h3" variant="h5">Résultat de la manche</Typography>
-        {game.rounds[musicNumber].scores.map((user, index) => {
-          const player = players.find(p => p.username === user.username);
-          const isCorrect = user.score > 0;
-          return (
-            <Stack key={index} direction="row" alignItems="center" style={{ marginTop: '16px' }}>
-              <div style={{ marginRight: '16px', transform: 'translateY(2px)' }} >
-                {isCorrect
-                  ? <CheckIcon color="success" />
-                  : <ClearIcon color="error" />
-                }
-              </div>
-
-              <UserAvatar
-                username={player.username}
-                avatar={player.info ? player.info.avatar : null}
-                displayUsername="right"
-                style={{ width: '200px' }}
-              />
-              <Divider orientation="vertical" flexItem></Divider>
-              <Typography
-                variant="body1"
-                style={{ marginLeft: '24px', marginRight: '16px', flexGrow: 1 }}
-                className="text--crop"
-              >{user.answer}</Typography>
-              <Chip variant="outlined" label={`+${user.score} points`} color={isCorrect ? 'success' : 'error'} sx={{ fontSize: '16px' }} />
-            </Stack>
-          )
-        })}
+        <GameRoundResults
+          game={game}
+          players={players}
+          musicNumber={musicNumber}
+        />
       </Paper>
     )
   }

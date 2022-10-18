@@ -8,12 +8,12 @@ import {
   Alert,
   IconButton,
   Typography,
-  Box,
   List,
   ListItem,
   Divider,
   Stack,
   CircularProgress,
+  Paper,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -252,7 +252,7 @@ function Multi(props) {
       <Grid
         item
         xs={12}
-        sm={9}
+        sm={6}
         md={8}
       >
         {render()}
@@ -261,7 +261,7 @@ function Multi(props) {
       <Grid
         item
         xs={12}
-        sm={3}
+        sm={6}
         md={4}
       >
         {renderSide()}
@@ -310,9 +310,9 @@ function Multi(props) {
   }
 
   function renderSide() {
-    if (!isStarted) {
+    if (!isStarted && code) {
       return (
-        <div>
+        <Paper elevation={2} style={{ padding: '8px 16px' }}>
           <Typography variant="h4" gutterBottom>Joueurs</Typography>
           <Stack spacing={1}>
             {players.map((player, index) => {
@@ -328,7 +328,7 @@ function Multi(props) {
               )
             })}
           </Stack>
-        </div>
+        </Paper>
       )
     }
 
@@ -357,7 +357,7 @@ function Multi(props) {
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
-      <div>
+      <Paper elevation={2} style={{ padding: '8px 16px' }}>
         <Typography variant="h4" gutterBottom>Joueurs</Typography>
         <Stack spacing={1}>
           {usersScore.map((score, index) => {
@@ -370,7 +370,7 @@ function Multi(props) {
             )
           })}
         </Stack>
-      </div>
+      </Paper>
     )
   }
 
@@ -399,7 +399,7 @@ function Multi(props) {
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
-      <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
+      <Paper sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography variant="h5">Scores</Typography>
@@ -410,10 +410,11 @@ function Multi(props) {
             return (
               <div key={index}>
                 <ListItem
+                  sx={{ paddingLeft: 0, paddingRight: 0 }}
                   secondaryAction={
                     (!readyPlayers.includes(user.id) && roundStarted)
-                    ? <CircularProgress color="primary" />
-                    : <Typography variant="body">{user.score}</Typography>
+                      ? <CircularProgress color="primary" />
+                      : <Typography variant="body">{user.score}</Typography>
                   }
                 >
                   {isCreator &&
@@ -427,12 +428,12 @@ function Multi(props) {
                     displayUsername="right"
                   />
                 </ListItem>
-                <Divider variant="middle" />
+                <Divider sx={{ marginTop: '8px' }} />
               </div>
             )
           })}
         </List>
-      </Box>
+      </Paper>
     )
   }
 }
