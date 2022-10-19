@@ -12,6 +12,13 @@ function GamePlayer({ audioName, timecode, canPlay, showControl }) {
     audioRef.current.volume = volume === null ? .7 : volume / 100;
   }, [volume]);
 
+  useEffect(() => {
+    audioRef.current.addEventListener('canplaythrough', () => {
+      console.log('>>> Can play')
+      canPlay()
+    })
+  })
+
   return (
     <audio
       src={`${API}/api/audio/${audioName}.mp3#t=${timecode}`}
@@ -19,7 +26,7 @@ function GamePlayer({ audioName, timecode, canPlay, showControl }) {
       autoPlay
       controls={showControl}
       ref={audioRef}
-      onCanPlayThrough={canPlay}
+    // onCanPlayThrough={canPlay}
     />
   );
 }
@@ -32,7 +39,7 @@ GamePlayer.propTypes = {
 };
 
 GamePlayer.defaultProps = {
-  canPlay: () => {},
+  canPlay: () => { },
   showControl: false,
   timecode: 0,
 };
