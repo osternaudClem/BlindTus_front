@@ -13,3 +13,12 @@
     transform: rotate(1deg);
   }
 }
+
+@media screen and (max-width: 600px) {
+  .SendMusic__button {
+    display: block !important;
+    margin-left: 0 !important;
+    margin-top: 16px !important;
+    width: 100%;
+  }
+}

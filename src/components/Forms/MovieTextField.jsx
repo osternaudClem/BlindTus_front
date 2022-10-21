@@ -1,28 +1,38 @@
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { TextField, InputAdornment } from '@mui/material';
+import { TextField, InputAdornment, Grid, Button } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 
 import './Forms.scss';
 
 function MovieTextField({ onChange, placeholder, value, disabled, inputRef, isCorrect }) {
   return (
-    <TextField
-      onChange={onChange}
-      value={value}
-      placeholder={placeholder}
-      fullWidth
-      autoFocus
-      disabled={disabled}
-      inputRef={inputRef}
-      className={classnames({ 
-        'Input--shaking': isCorrect === false,
-      })}
-      InputProps={{
-        style: { height: '80px', fontSize: '24px' },
-        endAdornment: renderIcon(),
-      }}
-    />
+    <Grid container>
+      <Grid item sx={{ flexGrow: 1}}>
+      <TextField
+        onChange={onChange}
+        value={value}
+        placeholder={placeholder}
+        fullWidth
+        autoFocus
+        disabled={disabled}
+        inputRef={inputRef}
+        className={classnames({
+          'Input--shaking': isCorrect === false,
+        })}
+        InputProps={{
+          style: { height: '80px', fontSize: '24px' },
+          endAdornment: renderIcon(),
+        }}
+      />
+      </Grid>
+      <Grid item alignItems="stretch" style={{ display: 'flex', marginLeft: '16px' }} className="SendMusic__button">
+          <Button variant="contained" color="secondary" type="submit">
+            Envoyer
+          </Button>
+        </Grid>
+
+    </Grid>
   )
 
   function renderIcon() {
