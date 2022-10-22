@@ -16,7 +16,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { isMobileDevice } from '../../lib/check';
-import { PlayerVolume } from '../Forms';
+import { GameVolume } from '../Game';
 import logo from '../../assets/logo_light.png';
 
 const pages = [
@@ -134,7 +134,7 @@ const ResponsiveAppBar = (props) => {
           </Box>
           {!isMobileDevice() &&
             <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
-              <PlayerVolume
+              <GameVolume
                 className="Header__volume"
                 onChange={(event, newValue) => setVolume(newValue)}
                 value={volume}

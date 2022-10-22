@@ -25,6 +25,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useSlider, useTextfield } from '../../hooks/formHooks';
 import { gamesActions } from '../../actions';
+import { PaperBox } from '../UI';
 
 const NOVIE_NUMBER = 10;
 const MOVIE_MIN = 3;
@@ -40,8 +41,9 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
   const [movieNumber, updateMovieNumber] = useTextfield(NOVIE_NUMBER);
   const [difficulty, updateDifficulty] = useTextfield('easy');
   const [code, updateCode] = useTextfield('');
-  const navigate = useNavigate();
   const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
+  const navigate = useNavigate();
+
   const handleClickSettings = async function (event) {
     event.preventDefault();
 
@@ -88,107 +90,109 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
   }
 
   return (
-    <Box sx={{ width: '100%' }} component="form" onSubmit={handleClickSettings}>
-      <Grid container spacing={3}>
-        {!noGameCode &&
-          <Grid item xs={12}>
-            {errorCode && (
-              <Alert severity="error" sx={{ marginBottom: '24px' }}>
-                <AlertTitle>Erreur</AlertTitle>
-                {errorCode}
-              </Alert>
-            )}
-            <FormControl>
-              <TextField
-                label="Code de la partie"
-                value={code}
-                onChange={updateCode}
-                InputProps={{
-                  endAdornment:
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="erase text field"
-                        onClick={handleClickResetCode}
-                        edge="end"
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </InputAdornment>
-                }}
-              />
-            </FormControl>
-            <div style={{ marginTop: '16px' }}>
-              <Button
-                variant="contained"
-                onClick={handleClickSettings}
-                type="submit"
-                size="large"
+    <PaperBox>
+      <Box sx={{ width: '100%' }} component="form" onSubmit={handleClickSettings}>
+        <Grid container spacing={3}>
+          {!noGameCode &&
+            <Grid item xs={12}>
+              {errorCode && (
+                <Alert severity="error" sx={{ marginBottom: '24px' }}>
+                  <AlertTitle>Erreur</AlertTitle>
+                  {errorCode}
+                </Alert>
+              )}
+              <FormControl>
+                <TextField
+                  label="Code de la partie"
+                  value={code}
+                  onChange={updateCode}
+                  InputProps={{
+                    endAdornment:
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="erase text field"
+                          onClick={handleClickResetCode}
+                          edge="end"
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      </InputAdornment>
+                  }}
+                />
+              </FormControl>
+              <div style={{ marginTop: '16px' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleClickSettings}
+                  type="submit"
+                  size="large"
+                >
+                  Lancer la partie
+                </Button>
+              </div>
+              <Divider
+                textAlign={largeScreen ? 'left' : 'center'}
+                sx={{ marginTop: '24px' }}
               >
-                Lancer la partie
-              </Button>
-            </div>
-            <Divider
-              textAlign={largeScreen ? 'left' : 'center'}
-              sx={{ marginTop: '24px' }}
-            >
-              Ou Créez votre partie sur mesure
-            </Divider>
-          </Grid>
-        }
-        <Grid item xs={12}>
-          <Typography gutterBottom>
-            Durée de chaques manches: {time} secondes
-          </Typography>
-          <Slider
-            aria-label="Durée des manches"
-            defaultValue={30}
-            getAriaValueText={valuetext}
-            valueLabelDisplay="auto"
-            step={5}
-            marks
-            min={5}
-            max={180}
-            onChange={onTimeChange}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Typography gutterBottom>
-            Nombre de films
-          </Typography>
-          <TextField
-            type="number"
-            defaultValue={movieNumber}
-            InputProps={{
-              inputProps: {
-                min: MOVIE_MIN,
-                max: MOVIE_MAX,
-              }
-            }}
-            onChange={onMovieNumberChange}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl>
+                Ou Créez votre partie sur mesure
+              </Divider>
+            </Grid>
+          }
+          <Grid item xs={12}>
             <Typography gutterBottom>
-              Difficulté de la partie
+              Durée de chaques manches: {time} secondes
             </Typography>
-            <RadioGroup
-              defaultValue={difficulty}
-              value={difficulty}
-              onChange={onDifficultyChange}
-            >
-              <FormControlLabel value="easy" control={<Radio />} label="Facile (réponse parmis plusieurs)" />
-              <FormControlLabel value="difficult" control={<Radio />} label="Difficile (tapez la bonne réponse)" />
-              <Typography variant="subtitle1"></Typography>
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+            <Slider
+              aria-label="Durée des manches"
+              defaultValue={30}
+              getAriaValueText={valuetext}
+              valueLabelDisplay="auto"
+              step={5}
+              marks
+              min={5}
+              max={180}
+              onChange={onTimeChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography gutterBottom>
+              Nombre de films
+            </Typography>
+            <TextField
+              type="number"
+              defaultValue={movieNumber}
+              InputProps={{
+                inputProps: {
+                  min: MOVIE_MIN,
+                  max: MOVIE_MAX,
+                }
+              }}
+              onChange={onMovieNumberChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl>
+              <Typography gutterBottom>
+                Difficulté de la partie
+              </Typography>
+              <RadioGroup
+                defaultValue={difficulty}
+                value={difficulty}
+                onChange={onDifficultyChange}
+              >
+                <FormControlLabel value="easy" control={<Radio />} label="Facile (réponse parmis plusieurs)" />
+                <FormControlLabel value="difficult" control={<Radio />} label="Difficile (tapez la bonne réponse)" />
+                <Typography variant="subtitle1"></Typography>
+              </RadioGroup>
+            </FormControl>
+          </Grid>
 
-        <Grid item xs={12}>
-          <Button variant="contained" onClick={handleClickSettings} type="submit">Lancer la partie</Button>
+          <Grid item xs={12}>
+            <Button variant="contained" onClick={handleClickSettings} type="submit">Lancer la partie</Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </PaperBox>
   )
 }
 

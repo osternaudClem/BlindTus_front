@@ -23,14 +23,14 @@ import HelpIcon from '@mui/icons-material/Help';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
+import { addLeadingZeros } from '../../lib/number';
+import { checkSimilarity } from '../../lib/check';
 import { GamePlayer } from '../Game';
 import { Timer } from '../Timer';
 import { Steps } from '../Steps';
 import { HistoryDay } from '../History';
 import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
-import { addLeadingZeros } from '../../lib/number';
-import { checkSimilarity } from '../../lib/check';
 import { MovieTextField } from '../Forms';
 
 const TIMERS = [10, 25, 40, 70, 120];
@@ -160,10 +160,6 @@ function Today({ onSaveHistory, game, history }) {
     }
 
     setIsAlertOpen(true);
-  }
-
-  if (!game || !history) {
-    return <div>Chargement...</div>
   }
 
   return (

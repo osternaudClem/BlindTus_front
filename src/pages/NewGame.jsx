@@ -29,6 +29,7 @@ import { shuffle } from '../lib/array';
 import { checkSimilarity } from '../lib/check';
 import { updateTitle } from '../lib/document';
 
+import { PaperBox } from '../components/UI';
 import { GamePlayer } from '../components/Game';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
@@ -292,10 +293,10 @@ function NewGame(props) {
     }
 
     return (
-      <Paper elevation={2} sx={{ padding: '2rem' }}>
+      <div>
         <Typography component="h2" variant="h3" marginBottom={4}>Nouvelle partie</Typography>
         <GameSettings onSettingsSaved={onSettingsSaved} redirect="new-game" />
-      </Paper>
+      </div>
     );
   }
 

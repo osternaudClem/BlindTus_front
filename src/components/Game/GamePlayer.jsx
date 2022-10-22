@@ -16,7 +16,24 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
     if (isReady) {
       audioRef.current.play();
     }
-  }, [isReady])
+  }, [isReady]);
+
+  const onAudioProgress = function() {
+    const duration = audioRef.current.duration;
+    console.log('>>> duration', duration);
+    console.log('>>> audioRef.current.buffered.length', audioRef.current.buffered.length);
+    if (duration > 0) {
+      for (let i = 0; i < audioRef.current.buffered.length; i++) {
+        if (
+          audioRef.current.buffered.start(audioRef.current.buffered.length - 1 - i) <
+          audioRef.current.currentTime
+        ) {
+          console.log((audioRef.current.buffered.end(audioRef.current.buffered.length - 1 - i) * 100) / duration);
+          break;
+        }
+      }
+    }
+  }
 
   return (
     <audio
@@ -25,7 +42,8 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
       // autoPlay
       controls={showControl}
       ref={audioRef}
-    onCanPlayThrough={canPlay}
+      onCanPlayThrough={canPlay}
+      onProgress={onAudioProgress}
     />
   );
 }

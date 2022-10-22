@@ -23,11 +23,8 @@ function SemiBackground(props) {
       md={6}
       sx={{
         backgroundImage: `url(${tmdb.image_path}${props.movies.cover})`,
-        backgroundRepeat: 'no-repeat',
         backgroundColor: (t) =>
           t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
       }}
       className="LoginPage__cover"
     >

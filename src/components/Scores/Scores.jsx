@@ -15,6 +15,7 @@ import {
 import { red } from '@mui/material/colors';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import { PaperBox } from '../UI';
 import './Scores.scss';
 
 function Scores(props) {
@@ -23,7 +24,7 @@ function Scores(props) {
   }, 0);
 
   return (
-    <Paper elevation={2} className="Scores">
+    <PaperBox className="Scores">
       <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
           <Grid item xs>
@@ -61,7 +62,7 @@ function Scores(props) {
           ))}
         </List>
       </Box>
-    </Paper>
+    </PaperBox>
   )
 }
 

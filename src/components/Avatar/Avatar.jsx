@@ -8,11 +8,12 @@ function UserAvatar({ avatar, username, displayUsername, style }) {
       spacing={2}
       alignItems="center"
       style={style}
+      data-testid="test-UserAvatar"
     >
       {displayUsername === 'left' &&
         <Typography variant="body" marginRight={2}>{username}</Typography>
       }
-      <Avatar src={avatar || 'undefined'} alt={username} />
+      <Avatar src={avatar || 'undefined'} alt={username} data-testid="test-UserAvatar__avatar" />
       {displayUsername === 'right' &&
         <Typography variant="body" marginRight={2} className="text--crop">{username}</Typography>
       }

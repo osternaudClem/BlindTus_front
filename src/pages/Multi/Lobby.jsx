@@ -18,6 +18,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
+import { PaperBox } from '../../components/UI';
 
 const URL = 'https://blindtus.cl3tus.com';
 
@@ -104,24 +105,22 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
     }
 
     return (
-      <div>
-        <div>
-          <Button variant="contained" onClick={handleClickCreate}>Créer une partie</Button>
-          <Divider textAlign="left" sx={{ margin: '12px 0' }}>Ou</Divider>
-          <Box component="form" onSubmit={handleSubmitRoom}>
-            <Stack
-              direction="row"
-              spacing={2}
-            >
-              <TextField
-                label="Rejoindre une room"
-                onChange={updateCustomRoom}
-              />
-              <Button variant="contained" onClick={handleSubmitRoom}>Rejoindre</Button>
-            </Stack>
-          </Box>
-        </div>
-      </div>
+      <PaperBox>
+        <Button variant="contained" onClick={handleClickCreate}>Créer une partie</Button>
+        <Divider textAlign="left" sx={{ margin: '12px 0' }}>Ou</Divider>
+        <Box component="form" onSubmit={handleSubmitRoom}>
+          <Stack
+            direction="row"
+            spacing={2}
+          >
+            <TextField
+              label="Rejoindre une room"
+              onChange={updateCustomRoom}
+            />
+            <Button variant="contained" onClick={handleSubmitRoom}>Rejoindre</Button>
+          </Stack>
+        </Box>
+      </PaperBox>
     )
   }
 

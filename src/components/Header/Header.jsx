@@ -21,7 +21,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
-import { PlayerVolume } from '../Forms';
+import { GameVolume } from '../Game';
 import logo from '../../assets/logo_light.png';
 
 import './Header.scss';
@@ -86,9 +86,9 @@ const ResponsiveAppBar = (props) => {
     if (page.url) {
       navigate(page.url);
 
-      if (page.url === '/lobby') {
-        navigate(0);
-      }
+      // if (page.url === '/lobby') {
+      //   navigate(0);
+      // }
     }
     setAnchorElNav(null);
   };
@@ -109,7 +109,7 @@ const ResponsiveAppBar = (props) => {
   }
 
   if (!props.user) {
-    return <div>Loading ...</div>
+    return;
   }
 
   return (
@@ -168,7 +168,7 @@ const ResponsiveAppBar = (props) => {
           </Box>
           {!isMobileDevice() &&
             <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
-              <PlayerVolume
+              <GameVolume
                 className="Header__volume"
                 onChange={(event, newValue) => setVolume(newValue)}
                 value={volume}

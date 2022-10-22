@@ -12,6 +12,7 @@ import { UserContext } from '../contexts/userContext';
 import { updateTitle } from '../lib/document';
 
 import { Today } from '../components/Today';
+import { Loading } from '../components/UI';
 
 function GameOfTheDay(props) {
   const { user } = useContext(UserContext);
@@ -55,7 +56,7 @@ function GameOfTheDay(props) {
   }
 
   if (!props.today.game || !props.historyToday.today || !props.historyToday.today._id) {
-    return <div>Chargement...</div>
+    return <Loading />
   }
 
   return (

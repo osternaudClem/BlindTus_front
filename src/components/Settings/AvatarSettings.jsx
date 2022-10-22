@@ -80,7 +80,7 @@ function AvatarSettings(props) {
 
 
   if (!avatar.seed) {
-    return <div>Loading ...</div>
+    return;
   }
 
   return (

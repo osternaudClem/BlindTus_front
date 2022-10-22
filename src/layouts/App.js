@@ -7,6 +7,7 @@ import { getCookie } from 'react-use-cookie';
 import { SocketContext, socket } from '../contexts/sockets';
 import { usersActions } from '../actions';
 import { Header } from '../components/Header';
+import { Loading } from '../components/UI';
 import { UserContext } from '../contexts/userContext';
 
 import '../assets/App.scss';
@@ -35,7 +36,7 @@ function App(props) {
   };
 
   if (!user._id) {
-    return <div>Loading ...</div>
+    return <Loading />
   }
 
   return (

@@ -14,6 +14,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { updateTitle } from '../lib/document';
 import { scoresActions, musicsActions } from '../actions';
 import { ScoresDetails } from '../components/Scores';
+import { PaperBox } from '../components/UI';
 
 function EndGame(props) {
   const [, copyToClipBoard] = useCopyToClipboard();
@@ -90,7 +91,9 @@ function EndGame(props) {
           <Button variant="contained" onClick={handleClickShareResults}>Partager le résultat</Button>
         </Grid>
       </Grid>
-      <ScoresDetails />
+      <PaperBox>
+        <ScoresDetails />
+      </PaperBox>
     </div>
   )
 

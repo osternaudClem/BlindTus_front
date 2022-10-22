@@ -7,7 +7,7 @@ import {
 import VolumeDown from '@mui/icons-material/VolumeDown';
 import VolumeUp from '@mui/icons-material/VolumeUp';
 
-function PlayerVolume({ className, onChange, value }) {
+function GameVolume({ className, onChange, value }) {
   return (
     <Box className={className}>
       <Stack spacing={2} direction="row"  alignItems="center">
@@ -22,16 +22,16 @@ function PlayerVolume({ className, onChange, value }) {
   );
 }
 
-PlayerVolume.propTypes = {
+GameVolume.propTypes = {
   className: PropTypes.string,
   onChange: PropTypes.func,
   value: PropTypes.number,
 }
 
-PlayerVolume.defaultProps = {
+GameVolume.defaultProps = {
   className: '',
   onChange: () => {},
   value: 70,
 }
 
-export default PlayerVolume;
+export default GameVolume;

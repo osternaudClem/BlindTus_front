@@ -12,10 +12,11 @@ import {
 import { red, green } from '@mui/material/colors';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import { PaperBox } from '../UI';
 
 function HistoryDay({ history }) {
   return (
-    <Paper elevation={2} className="Scores">
+    <PaperBox className="Scores">
       <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
         <Grid container alignItems="center">
           <Grid item xs>
@@ -45,7 +46,7 @@ function HistoryDay({ history }) {
           ))}
         </List>
       </Box>
-    </Paper>
+    </PaperBox>
   )
 }
 

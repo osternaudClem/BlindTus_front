@@ -16,6 +16,7 @@ import { isToday } from '../lib/date';
 import { encrypt, decrypt } from '../lib/crypt';
 import { updateTitle } from '../lib/document';
 import { todayActions } from '../actions';
+import { Loading } from '../components/UI';
 
 function TodayPage(props) {
   const [todayGames, setTodayGames] = useLocalStorage('todayGames', null);
@@ -130,7 +131,7 @@ function TodayPage(props) {
   }
 
   if (!todayGamesLocal) {
-    return <div>Loading ...</div>
+    return <Loading />
   }
 
   return (
