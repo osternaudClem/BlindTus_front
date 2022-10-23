@@ -17,11 +17,24 @@ import { shuffle } from '../../lib/array';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
 import { MovieTextField } from '../../components/Forms';
-import { GamePlayer, GameProposals, GameRoundResults } from '../../components/Game';
+import {
+  GamePlayer,
+  GameProposals,
+  GameRoundResults,
+} from '../../components/Game';
 
 const TIMER_GAME = 10;
 
-function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndGame }) {
+function Play({
+  socket,
+  room,
+  musics,
+  isCreator,
+  game,
+  players,
+  onAnswer,
+  onEndGame,
+}) {
   const [score, setScore] = useState(0);
   const [answer, updateAnswer] = useTextfield();
   const [isReady, setIsReady] = useState(false);
@@ -62,9 +75,9 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       setIsEndGame(isEndGame);
       setIsReady(false);
 
-      return (() => {
+      return () => {
         socket.off('NEXT_ROUND');
-      });
+      };
     });
 
     socket.on('START_MUSIC', () => {
@@ -86,7 +99,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       setIsReady(isReadyToPlay);
     });
 
-    return (() => {
+    return () => {
       endGame = false;
       nexMusicNumber = 0;
       setIsEndGame(false);
@@ -95,13 +108,18 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       socket.off('NEXT_ROUND');
       socket.off('START_MUSIC');
       socket.off('IS_EVERYBODY_READY');
-    });
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   useEffect(() => {
     if (musics[musicNumber].proposals && musicNumber < musics.length) {
-      setProposals(shuffle([musics[musicNumber].movie.title_fr, ...musics[musicNumber].proposals.slice(0, 7)]));
+      setProposals(
+        shuffle([
+          musics[musicNumber].movie.title_fr,
+          ...musics[musicNumber].proposals.slice(0, 7),
+        ])
+      );
     }
   }, [musicNumber, musics]);
 
@@ -121,7 +139,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
 
   const handleClickStartMusic = function () {
     socket.emit('ASK_START_MUSIC');
-  }
+  };
 
   const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
@@ -148,7 +166,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = timeLeft * 100 / room.settings.timeLimit;
+      score = (timeLeft * 100) / room.settings.timeLimit;
     }
 
     setScore(score);
@@ -158,7 +176,7 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     setDisplayResult(true);
     setInputDisabled(true);
     updateAnswer('');
-  }
+  };
 
   const handleClickAnswer = function (answer) {
     const music = musicNumber;
@@ -173,24 +191,20 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = timeLeft * 100 / room.settings.timeLimit;
+      score = (timeLeft * 100) / room.settings.timeLimit;
     }
 
     setScore(score);
     onAnswer(score, musicNumber, answer);
     setAnswerSent(true);
     setDisplayResult(true);
-  }
+  };
 
   const onCanPlayAudio = function () {
     socket.emit('PLAYER_AUDIO_READY');
-  }
+  };
 
-  return (
-    <div>
-      {renderGame()}
-    </div>
-  )
+  return <div>{renderGame()}</div>;
 
   function renderGame() {
     if (!musics || musics.length === 0) {
@@ -199,35 +213,40 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
 
     return (
       <div>
-        <div>{musicNumber + 1} / {musics.length}</div>
+        <div>
+          {musicNumber + 1} / {musics.length}
+        </div>
 
-        <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
+        <Timer
+          limit={timer}
+          onFinished={(count) => onTimerFinished(count)}
+          key={timer}
+          className="NewGame__timer"
+        />
 
-        {room.settings.difficulty === 'difficult'
-          ? (
-
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-              }}
-              mb={4}
-              component="form"
-              noValidate
-              autoComplete="off"
-              onSubmit={event => onSendAnswer(event)}
-            >
-              <MovieTextField
-                onChange={updateAnswer}
-                value={answer}
-                disabled={inputDisabled}
-                inputRef={answerField}
-                isCorrect={isCorrect}
-              />
-            </Box>
-          )
-          : renderProposals()
-        }
+        {room.settings.difficulty === 'difficult' ? (
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '100%',
+            }}
+            mb={4}
+            component="form"
+            noValidate
+            autoComplete="off"
+            onSubmit={(event) => onSendAnswer(event)}
+          >
+            <MovieTextField
+              onChange={updateAnswer}
+              value={answer}
+              disabled={inputDisabled}
+              inputRef={answerField}
+              isCorrect={isCorrect}
+            />
+          </Box>
+        ) : (
+          renderProposals()
+        )}
         {renderStart()}
         {renderResult()}
         {renderPlayer()}
@@ -242,10 +261,15 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
 
     if (!isCreator) {
       return (
-        <Alert variant="outlined" severity="info" icon={false} sx={{ marginBottom: '16px' }}>
+        <Alert
+          variant="outlined"
+          severity="info"
+          icon={false}
+          sx={{ marginBottom: '16px' }}
+        >
           En attente du Maître du jeu...
         </Alert>
-      )
+      );
     }
 
     return (
@@ -253,15 +277,12 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
         onClick={handleClickStartMusic}
         variant="contained"
         size="large"
-        startIcon={isEndGame
-          ? <SportsScoreIcon />
-          : <PlayArrowIcon />
-        }
+        startIcon={isEndGame ? <SportsScoreIcon /> : <PlayArrowIcon />}
         sx={{ marginBottom: '16px' }}
       >
         {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
-      </ Button>
-    )
+      </Button>
+    );
   }
 
   function renderProposals() {
@@ -269,7 +290,12 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
       return;
     }
 
-    return <GameProposals proposals={proposals} onClick={handleClickAnswer} />;
+    return (
+      <GameProposals
+        proposals={proposals}
+        onClick={handleClickAnswer}
+      />
+    );
   }
 
   function renderPlayer() {
@@ -282,7 +308,6 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
         audioName={musics[musicNumber].audio_name}
         timecode={musics[musicNumber].timecode}
         canPlay={onCanPlayAudio}
-        showControl
         isReady={isReady}
       />
     );
@@ -295,16 +320,24 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
 
     return (
       <React.Fragment>
-        <Alert variant="outlined" icon={false} severity={isCorrect ? 'success' : 'error'} sx={{ marginBottom: '16px' }}>
-          <AlertTitle>Réponse {isCorrect ? 'correct' : 'fausse'} !</AlertTitle>
-          + {Math.round(score)} points !
+        <Alert
+          variant="outlined"
+          icon={false}
+          severity={isCorrect ? 'success' : 'error'}
+          sx={{ marginBottom: '16px' }}
+        >
+          <AlertTitle>Réponse {isCorrect ? 'correct' : 'fausse'} !</AlertTitle>+{' '}
+          {Math.round(score)} points !
         </Alert>
 
         {renderRoundResults()}
 
-        <Result movie={musics[musicNumber].movie} music={musics[musicNumber]} />
+        <Result
+          movie={musics[musicNumber].movie}
+          music={musics[musicNumber]}
+        />
       </React.Fragment>
-    )
+    );
   }
 
   function renderRoundResults() {
@@ -313,17 +346,24 @@ function Play({ socket, room, musics, isCreator, game, players, onAnswer, onEndG
     }
 
     return (
-      <Paper elevation={2} style={{ padding: '8px 16px', marginBottom: '16px' }}>
-        <Typography component="h3" variant="h5">Résultat de la manche</Typography>
+      <Paper
+        elevation={2}
+        style={{ padding: '8px 16px', marginBottom: '16px' }}
+      >
+        <Typography
+          component="h3"
+          variant="h5"
+        >
+          Résultat de la manche
+        </Typography>
         <GameRoundResults
           game={game}
           players={players}
           musicNumber={musicNumber}
         />
       </Paper>
-    )
+    );
   }
 }
 
 export default Play;
-

@@ -192,7 +192,6 @@ function Today({ onSaveHistory, game, history }) {
         <Typography
           component="h1"
           variant="h3"
-          align="center"
           marginBottom={2}
         >
           Musique du jour
@@ -204,7 +203,6 @@ function Today({ onSaveHistory, game, history }) {
         <Typography
           component="p"
           variant="subtitle2"
-          align="center"
           marginBottom={10}
         >
           Vous ne pouvez entrer le nom du film que pendant la lecture
