@@ -18,11 +18,6 @@ const state = Object.freeze({
   scores: {
     currentGame: [],
   },
-  gameSettings: {
-    timeLimit: 30,
-    difficulty: 'easy',
-    totalMusic: 5,
-  },
   history: {
     all: [],
   },

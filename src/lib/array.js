@@ -1,9 +1,19 @@
+/**
+ * @name objectToArray
+ * @param {Object} object
+ * @returns {[]}
+ */
 export function objectToArray(object) {
   const result = Object.keys(object).map((key) => object[key]);
 
   return result;
 }
 
+/**
+ * @name shuffle
+ * @param {[]} array
+ * @returns {[]}
+ */
 export function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
@@ -25,8 +35,8 @@ export function shuffle(array) {
 }
 
 /**
- *
- * @param {Array} array
+ * @name addSpaces
+ * @param {string[]} array
  * @param {string} separator
  * @returns {string}
  */

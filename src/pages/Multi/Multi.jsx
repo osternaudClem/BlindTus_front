@@ -16,14 +16,13 @@ import {
   Paper,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
-import { callApi } from '../lib/axios';
-import { updateTitle } from '../lib/document';
-import { SocketContext } from '../contexts/sockets';
-import Lobby from './Multi/Lobby';
-import Play from './Multi/Play';
-import Results from './Multi/Results';
-import { UserAvatar } from '../components/Avatar';
+import { callApi } from '../../lib/axios';
+import { updateTitle } from '../../lib/document';
+import { SocketContext } from '../../contexts/sockets';
+import Lobby from './Lobby';
+import Play from './Play';
+import Results from './Results';
+import { UserAvatar } from '../../components/Avatar';
 
 const TIMER_GAME = 30;
 const NOVIE_NUMBER = 10;
@@ -55,25 +54,32 @@ function Multi(props) {
     updateTitle('Multijoueur');
   }, []);
 
-  const onJoinGame = useCallback((customRoom) => {
-    socket.emit('JOIN_ROOM', { username: props.user.username, room: customRoom }, ({ error, user, room }) => {
-      if (error) {
-        console.log('>>> error', error);
-        setOpen(true);
-        return setError(error);
-      }
+  const onJoinGame = useCallback(
+    (customRoom) => {
+      socket.emit(
+        'JOIN_ROOM',
+        { username: props.user.username, room: customRoom },
+        ({ error, user, room }) => {
+          if (error) {
+            console.log('>>> error', error);
+            setOpen(true);
+            return setError(error);
+          }
 
-      setIsCreator(user.isCreator);
-      setCode(customRoom);
-      setTimeLimit(room.settings.timeLimit);
-      setDifficulty(room.settings.difficulty);
-      setTotalMusics(room.settings.totalMusics);
+          setIsCreator(user.isCreator);
+          setCode(customRoom);
+          setTimeLimit(room.settings.timeLimit);
+          setDifficulty(room.settings.difficulty);
+          setTotalMusics(room.settings.totalMusics);
 
-      return (() => {
-        socket.off('JOIN_ROOM');
-      });
-    });
-  }, [socket, props.user.username]);
+          return () => {
+            socket.off('JOIN_ROOM');
+          };
+        }
+      );
+    },
+    [socket, props.user.username]
+  );
 
   useEffect(() => {
     // window.addEventListener('beforeunload', handleTabClose);
@@ -82,20 +88,20 @@ function Multi(props) {
       socket.connect();
     }
 
-    socket.on('ERROR', error => {
+    socket.on('ERROR', (error) => {
       setOpen(true);
       setError(error);
     });
 
     socket.on('KICK', () => {
       navigate(0);
-    })
+    });
 
     socket.on('PLAYER_DISCONNECTED', (player, game) => {
       setGame(game);
-    })
+    });
 
-    socket.on('SETTINGS_UPDATED', settings => {
+    socket.on('SETTINGS_UPDATED', (settings) => {
       setTimeLimit(settings.timeLimit);
       setDifficulty(settings.difficulty);
       setTotalMusics(settings.totalMusics);
@@ -126,7 +132,7 @@ function Multi(props) {
       setIsEndGame(false);
     });
 
-    socket.on('disconnect', reason => {
+    socket.on('disconnect', (reason) => {
       console.log('>>> reason', reason);
     });
 
@@ -159,17 +165,22 @@ function Multi(props) {
   }, [socket, navigate, onJoinGame, roomCode]);
 
   useEffect(() => {
-    socket.on('ROOM_USERS', async users => {
-      const response = await callApi.get(`/users?usernames=${users.map(user => user.username)}`);
-      users.map((user, index) => user.info = response.data.find(d => d.username === user.username));
+    socket.on('ROOM_USERS', async (users) => {
+      const response = await callApi.get(
+        `/users?usernames=${users.map((user) => user.username)}`
+      );
+      users.map(
+        (user, index) =>
+          (user.info = response.data.find((d) => d.username === user.username))
+      );
       setPlayers(users);
     });
 
     return function () {
       socket.off('ROOM_USERS');
       socket.emit('LEAVE_ROOM');
-    }
-  }, [socket])
+    };
+  }, [socket]);
 
   const handleTabClose = function (event) {
     event.preventDefault();
@@ -182,55 +193,68 @@ function Multi(props) {
   const handleClickError = function () {
     setError(null);
     setOpen(false);
-  }
+  };
 
   const onCreateGame = function (code) {
-    socket.emit('CREATE_ROOM', {
-      username: props.user.username,
-      room: code,
-      settings: {
-        timeLimit,
-        difficulty,
-        totalMusics,
+    socket.emit(
+      'CREATE_ROOM',
+      {
+        username: props.user.username,
+        room: code,
+        settings: {
+          timeLimit,
+          difficulty,
+          totalMusics,
+        },
       },
-    }, ({ error, user }) => {
-      if (error) {
-        return setError(error);
+      ({ error, user }) => {
+        if (error) {
+          return setError(error);
+        }
+        setCode(code);
+        setIsCreator(true);
       }
-      setCode(code);
-      setIsCreator(true);
-    });
-  }
+    );
+  };
 
   const onUpdateSettings = function (settings) {
     socket.emit('UPDATE_SETTINGS', settings);
-  }
+  };
 
   const onAnswer = function (score, step, answer) {
-    socket.emit('ADD_SCORE', ({ score: Math.round(score), step, answer }), ({ game }) => {
-      setGame(game);
-    });
-  }
+    socket.emit(
+      'ADD_SCORE',
+      { score: Math.round(score), step, answer },
+      ({ game }) => {
+        setGame(game);
+      }
+    );
+  };
 
   const onEndGame = function () {
     setIsEndGame(true);
-  }
+  };
 
   const onNewGame = function () {
     socket.emit('ASK_NEW_GAME', () => {
       setIsStarted(false);
       setIsEndGame(false);
     });
-  }
+  };
 
   const handleClickDisconnect = function (user) {
     socket.emit('KICK_USER', { user });
-  }
+  };
 
   return (
-    <Grid container spacing={12} component="main" className="LoginPage">
+    <Grid
+      container
+      spacing={12}
+      component="main"
+      className="LoginPage"
+    >
       <CssBaseline />
-      {open &&
+      {open && (
         <Alert
           variant="outlined"
           severity="error"
@@ -248,7 +272,7 @@ function Multi(props) {
         >
           {error}
         </Alert>
-      }
+      )}
       <Grid
         item
         xs={12}
@@ -286,7 +310,7 @@ function Multi(props) {
             totalMusics,
           }}
         />
-      )
+      );
     }
 
     if (!isEndGame) {
@@ -301,35 +325,55 @@ function Multi(props) {
           onAnswer={onAnswer}
           onEndGame={onEndGame}
         />
-      )
+      );
     }
 
     return (
-      <Results game={game} players={players} onNewGame={onNewGame} />
-    )
+      <Results
+        game={game}
+        players={players}
+        onNewGame={onNewGame}
+      />
+    );
   }
 
   function renderSide() {
     if (!isStarted && code) {
       return (
-        <Paper elevation={2} style={{ padding: '8px 16px' }}>
-          <Typography variant="h4" gutterBottom>Joueurs</Typography>
+        <Paper
+          elevation={2}
+          style={{ padding: '8px 16px' }}
+        >
+          <Typography
+            variant="h4"
+            gutterBottom
+          >
+            Joueurs
+          </Typography>
           <Stack spacing={1}>
             {players.map((player, index) => {
               return (
-                <Stack direction="row" alignItems="center" key={index}>
-                  {isCreator &&
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  key={index}
+                >
+                  {isCreator && (
                     <IconButton onClick={() => handleClickDisconnect(player)}>
                       <CloseIcon />
                     </IconButton>
-                  }
-                  <UserAvatar username={player.username} avatar={player.info ? player.info.avatar : null} displayUsername="right" />
+                  )}
+                  <UserAvatar
+                    username={player.username}
+                    avatar={player.info ? player.info.avatar : null}
+                    displayUsername="right"
+                  />
                 </Stack>
-              )
+              );
             })}
           </Stack>
         </Paper>
-      )
+      );
     }
 
     if (!isEndGame) {
@@ -338,11 +382,11 @@ function Multi(props) {
 
     let usersScore = [];
 
-    game.users.map(user => {
+    game.users.map((user) => {
       let userScore = 0;
 
-      game.rounds.map(round => {
-        const newScore = round.scores.find(s => s.username === user.username);
+      game.rounds.map((round) => {
+        const newScore = round.scores.find((s) => s.username === user.username);
         if (newScore) {
           userScore = userScore + newScore.score;
         }
@@ -357,21 +401,38 @@ function Multi(props) {
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
-      <Paper elevation={2} style={{ padding: '8px 16px' }}>
-        <Typography variant="h4" gutterBottom>Joueurs</Typography>
+      <Paper
+        elevation={2}
+        style={{ padding: '8px 16px' }}
+      >
+        <Typography
+          variant="h4"
+          gutterBottom
+        >
+          Joueurs
+        </Typography>
         <Stack spacing={1}>
           {usersScore.map((score, index) => {
-            const player = players.find(p => p.username === score.username);
+            const player = players.find((p) => p.username === score.username);
             return (
-              <Stack direction="row" spacing={2} alignItems="center" key={index}>
-                <UserAvatar username={player.username} avatar={player.info.avatar} displayUsername="right" />
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                key={index}
+              >
+                <UserAvatar
+                  username={player.username}
+                  avatar={player.info.avatar}
+                  displayUsername="right"
+                />
                 <Typography variant="h6">{score.score}</Typography>
               </Stack>
-            )
+            );
           })}
         </Stack>
       </Paper>
-    )
+    );
   }
 
   function renderScore() {
@@ -381,11 +442,11 @@ function Multi(props) {
 
     let usersScore = [];
 
-    game.users.map(user => {
+    game.users.map((user) => {
       let userScore = 0;
 
-      scores.map(round => {
-        const newScore = round.scores.find(s => s.username === user.username);
+      scores.map((round) => {
+        const newScore = round.scores.find((s) => s.username === user.username);
         if (newScore) {
           userScore = userScore + newScore.score;
         }
@@ -393,15 +454,28 @@ function Multi(props) {
         return null;
       });
 
-      return usersScore.push({ username: user.username, score: userScore, id: user.id });
+      return usersScore.push({
+        username: user.username,
+        score: userScore,
+        id: user.id,
+      });
     });
 
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
-      <Paper sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-        <Grid container alignItems="center">
-          <Grid item xs>
+      <Paper
+        sx={{ p: 2 }}
+        style={{ marginTop: '-8px' }}
+      >
+        <Grid
+          container
+          alignItems="center"
+        >
+          <Grid
+            item
+            xs
+          >
             <Typography variant="h5">Scores</Typography>
           </Grid>
         </Grid>
@@ -412,16 +486,18 @@ function Multi(props) {
                 <ListItem
                   sx={{ paddingLeft: 0, paddingRight: 0 }}
                   secondaryAction={
-                    (!readyPlayers.includes(user.id) && roundStarted)
-                      ? <CircularProgress color="primary" />
-                      : <Typography variant="body">{user.score}</Typography>
+                    !readyPlayers.includes(user.id) && roundStarted ? (
+                      <CircularProgress color="primary" />
+                    ) : (
+                      <Typography variant="body">{user.score}</Typography>
+                    )
                   }
                 >
-                  {isCreator &&
+                  {isCreator && (
                     <IconButton onClick={() => handleClickDisconnect(user)}>
                       <CloseIcon />
                     </IconButton>
-                  }
+                  )}
                   <UserAvatar
                     avatar={players[index].info.avatar}
                     username={user.username}
@@ -430,24 +506,22 @@ function Multi(props) {
                 </ListItem>
                 <Divider sx={{ marginTop: '8px' }} />
               </div>
-            )
+            );
           })}
         </List>
       </Paper>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     user: state.users.me,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-
-  }
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Multi);

@@ -2,17 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {
-  Container,
-  CssBaseline,
-  Tab,
-  Tabs,
-  Typography,
-} from '@mui/material';
+import { Container, CssBaseline, Tab, Tabs, Typography } from '@mui/material';
 
-import { AvatarSettings, CredentialsSettings, ChangePasswordSettings } from '../components/Settings';
-import { usersActions } from '../actions';
-import { updateTitle } from '../lib/document';
+import {
+  AvatarSettings,
+  CredentialsSettings,
+  ChangePasswordSettings,
+} from '../../components/Settings';
+import { usersActions } from '../../actions';
+import { updateTitle } from '../../lib/document';
 
 function UserSettings(props) {
   const [tab, setTab] = useState(0);
@@ -28,17 +26,23 @@ function UserSettings(props) {
     if (urlTab) {
       setTab(parseInt(urlTab));
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   const updateTab = function (value) {
     setTab(value);
     navigate(`/settings?t=${value}`);
-  }
+  };
 
   return (
     <Container>
       <CssBaseline />
-      <Typography variant="h1" component="h1" mb={4}>Parametres</Typography>
+      <Typography
+        variant="h1"
+        component="h1"
+        mb={4}
+      >
+        Parametres
+      </Typography>
       <Tabs
         value={tab}
         onChange={(event, value) => updateTab(value)}
@@ -55,21 +59,21 @@ function UserSettings(props) {
       </Tabs>
       {renderTab()}
     </Container>
-  )
+  );
 
   function renderTab() {
     switch (tab) {
       case 0:
-        return <AvatarSettings />
+        return <AvatarSettings />;
 
       case 1:
-        return <CredentialsSettings />
+        return <CredentialsSettings />;
 
       case 2:
-        return <ChangePasswordSettings />
+        return <ChangePasswordSettings />;
 
       default:
-        return <AvatarSettings />
+        return <AvatarSettings />;
     }
   }
 }

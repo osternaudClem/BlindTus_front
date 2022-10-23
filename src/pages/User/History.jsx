@@ -1,18 +1,13 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { format } from 'date-fns'
-import {
-  CssBaseline,
-  Typography,
-  Box,
-  Avatar,
-} from '@mui/material';
+import { format } from 'date-fns';
+import { CssBaseline, Typography, Box, Avatar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import { Stack } from '@mui/system';
-import { historyActions } from '../actions';
-import { updateTitle } from '../lib/document';
+import { historyActions } from '../../actions';
+import { updateTitle } from '../../lib/document';
 
 const columns = [
   {
@@ -47,7 +42,8 @@ const columns = [
     headerName: 'Difficulté',
     minWidth: 150,
     flex: 1,
-    valueGetter: (params) => params.row.game.difficulty === 'easy' ? 'Facile' : 'Difficile',
+    valueGetter: (params) =>
+      params.row.game.difficulty === 'easy' ? 'Facile' : 'Difficile',
   },
   {
     field: 'created_by',
@@ -58,12 +54,23 @@ const columns = [
     renderCell: (params) => {
       const user = params.row.game.created_by;
       return (
-        <Stack direction="row" alignItems="center">
-          <Avatar src={user.avatar} alt={user.username} />
-          <Typography variant="subtitle1" marginLeft={2}>{user.username}</Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+        >
+          <Avatar
+            src={user.avatar}
+            alt={user.username}
+          />
+          <Typography
+            variant="subtitle1"
+            marginLeft={2}
+          >
+            {user.username}
+          </Typography>
         </Stack>
-      )
-    }
+      );
+    },
   },
   {
     field: 'created_at',
@@ -72,8 +79,8 @@ const columns = [
     flex: 1,
     renderCell: (params) => {
       return format(new Date(params.value), "ii MMM yy @ kk'h'mm");
-    }
-  },    
+    },
+  },
 ];
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
@@ -83,7 +90,6 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   height: '100%',
 }));
-
 
 function CustomNoRowsOverlay() {
   return (
@@ -111,7 +117,13 @@ function History(props) {
   return (
     <div>
       <CssBaseline />
-      <Typography component="h1" variant="h2" gutterBottom>Historique des parties</Typography>
+      <Typography
+        component="h1"
+        variant="h2"
+        gutterBottom
+      >
+        Historique des parties
+      </Typography>
       <Box sx={{ width: '100%' }}>
         <DataGrid
           autoHeight
@@ -127,20 +139,20 @@ function History(props) {
         />
       </Box>
     </div>
-  )
+  );
 }
 
 function mapStateToProps(state) {
   return {
     history: state.history,
     user: state.users.me,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     historyActions: bindActionCreators(historyActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(History)
+export default connect(mapStateToProps, mapDispatchToProps)(History);

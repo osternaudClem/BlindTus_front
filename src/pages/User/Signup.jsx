@@ -21,11 +21,11 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { musicsActions, usersActions } from '../actions';
-import { useTextfield, useToggle } from '../hooks/formHooks';
-import { updateTitle } from '../lib/document';
-import { Copyright } from '../components/Footer';
-import './Page.scss';
+import { musicsActions, usersActions } from '../../actions';
+import { useTextfield, useToggle } from '../../hooks/formHooks';
+import { updateTitle } from '../../lib/document';
+import { Copyright } from '../../components/Footer';
+import '../Page.scss';
 
 function Signup(props) {
   // eslint-disable-next-line
@@ -46,38 +46,44 @@ function Signup(props) {
     event.preventDefault();
     setServerErrors(null);
     // Check username
-    const usernameError = username === '' || !/^[a-zA-Z0-9\-_$@*!]{3,30}$/.test(username);
+    const usernameError =
+      username === '' || !/^[a-zA-Z0-9\-_$@*!]{3,30}$/.test(username);
     // Check email
     const emailError = email === '' || !isEmail(email);
     // Check password
-    const passwordError = password === '' || !isStrongPassword(password, {
-      minSymbols: 0,
-    });
+    const passwordError =
+      password === '' ||
+      !isStrongPassword(password, {
+        minSymbols: 0,
+      });
     // Check confirm password
     const confirmPasswordError = password !== confirmPassowrd;
 
-    setErrors(errors => {
+    setErrors((errors) => {
       return {
         ...errors,
         username: usernameError,
         email: emailError,
         password: passwordError,
         confirmPassowrd: confirmPasswordError,
-      }
+      };
     });
 
     if (usernameError || emailError || passwordError || confirmPasswordError) {
       return;
     }
 
-    const response = await props.usersActions.signup({ username, email, password });
+    const response = await props.usersActions.signup({
+      username,
+      email,
+      password,
+    });
 
     if (response.error) {
       return setServerErrors(response.messages);
     }
 
     navigate('/confirm');
-
   };
 
   return (
@@ -93,10 +99,19 @@ function Signup(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography component="h1" variant="h5">
+      <Typography
+        component="h1"
+        variant="h5"
+      >
         Créer un compte
       </Typography>
-      <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+        sx={{ mt: 1 }}
+      >
         {renderError()}
         <TextField
           margin="none"
@@ -131,8 +146,8 @@ function Signup(props) {
           onChange={updatePassword}
           error={errors && errors.password}
           InputProps={{
-            endAdornment:
-              <InputAdornment position="end" >
+            endAdornment: (
+              <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={updateShowPassword}
@@ -141,10 +156,12 @@ function Signup(props) {
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
+            ),
           }}
         />
         <FormHelperText>
-          Le mot de passe doit faire au minimum 8 charactères et contenir au moins 1 majuscule, 1 minuscule et 1 chiffre.
+          Le mot de passe doit faire au minimum 8 charactères et contenir au
+          moins 1 majuscule, 1 minuscule et 1 chiffre.
         </FormHelperText>
 
         <TextField
@@ -166,11 +183,16 @@ function Signup(props) {
           Créer mon compte
         </Button>
         <Grid container>
-          <Grid item xs>
-
-          </Grid>
+          <Grid
+            item
+            xs
+          ></Grid>
           <Grid item>
-            <Link component={RouterLink} to="/login" color="inherit">
+            <Link
+              component={RouterLink}
+              to="/login"
+              color="inherit"
+            >
               Déja un compte ? Connecte-toi
             </Link>
           </Grid>
@@ -178,7 +200,6 @@ function Signup(props) {
         <Copyright sx={{ mt: 5 }} />
       </Box>
     </Box>
-
   );
 
   function renderError() {
@@ -187,13 +208,19 @@ function Signup(props) {
     }
 
     return (
-      <Fade in timeout={{ enter: 500 }}>
-        <Alert severity="error" sx={{ marginBottom: '24px' }}>
+      <Fade
+        in
+        timeout={{ enter: 500 }}
+      >
+        <Alert
+          severity="error"
+          sx={{ marginBottom: '24px' }}
+        >
           <AlertTitle>Error</AlertTitle>
           {serverErrors}
         </Alert>
       </Fade>
-    )
+    );
   }
 }
 
@@ -201,14 +228,14 @@ function mapStateToProps(state) {
   return {
     musics: state.musics,
     users: state.users,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     musicsActions: bindActionCreators(musicsActions, dispatch),
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Signup)
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

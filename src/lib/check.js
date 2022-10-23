@@ -1,9 +1,15 @@
 import stringSimilarity from 'string-similarity';
 
+/**
+ * @name isMovieAlreadyAdded
+ * @param {Object[]} moviesList
+ * @param {Object} movie
+ * @returns {boolean}
+ */
 export function isMovieAlreadyAdded(moviesList, movie) {
   let exist = false;
 
-  moviesList.map(movieList => {
+  moviesList.map((movieList) => {
     if (movieList.title === movie.original_title) {
       exist = true;
     }
@@ -14,13 +20,26 @@ export function isMovieAlreadyAdded(moviesList, movie) {
   return exist;
 }
 
+/**
+ * @name checkSimilarity
+ * @param {string} content
+ * @param {string} titles
+ * @param {?number} score
+ * @returns {boolean}
+ */
 export function checkSimilarity(content, titles, score = 0.8) {
   let isCorrect = false;
 
-  titles.map(title => {
+  titles.map((title) => {
     const similarity = stringSimilarity.compareTwoStrings(
-      content.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-      title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      content
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, ''),
+      title
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
     );
 
     if (similarity >= score) {
@@ -33,6 +52,12 @@ export function checkSimilarity(content, titles, score = 0.8) {
   return isCorrect;
 }
 
+/**
+ * @name isMobileDevice
+ * @returns {boolean}
+ */
 export function isMobileDevice() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 }

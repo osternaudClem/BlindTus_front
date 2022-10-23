@@ -21,11 +21,11 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { usersActions } from '../actions';
-import { useTextfield, useToggle } from '../hooks/formHooks';
-import { updateTitle } from '../lib/document';
-import { Copyright } from '../components/Footer';
-import './Page.scss';
+import { usersActions } from '../../actions';
+import { useTextfield, useToggle } from '../../hooks/formHooks';
+import { updateTitle } from '../../lib/document';
+import { Copyright } from '../../components/Footer';
+import '../Page.scss';
 
 function NewPassword(props) {
   // eslint-disable-next-line
@@ -47,18 +47,20 @@ function NewPassword(props) {
     event.preventDefault();
     setServerErrors(null);
     // Check password
-    const passwordError = password === '' || !isStrongPassword(password, {
-      minSymbols: 0,
-    });
+    const passwordError =
+      password === '' ||
+      !isStrongPassword(password, {
+        minSymbols: 0,
+      });
     // Check confirm password
     const confirmPasswordError = password !== confirmPassowrd;
 
-    setErrors(errors => {
+    setErrors((errors) => {
       return {
         ...errors,
         password: passwordError,
         confirmPassowrd: confirmPasswordError,
-      }
+      };
     });
 
     if (passwordError || confirmPasswordError) {
@@ -87,10 +89,19 @@ function NewPassword(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography component="h1" variant="h5">
+      <Typography
+        component="h1"
+        variant="h5"
+      >
         Nouveau mot de passe
       </Typography>
-      <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+        sx={{ mt: 1 }}
+      >
         {renderError()}
         <TextField
           margin="normal"
@@ -101,12 +112,12 @@ function NewPassword(props) {
           type={showPassword ? 'text' : 'password'}
           onChange={updatePassword}
           error={errors && errors.password}
-          inputProps={{ 
+          inputProps={{
             autoComplete: 'off',
           }}
           InputProps={{
-            endAdornment:
-              <InputAdornment position="end" >
+            endAdornment: (
+              <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={updateShowPassword}
@@ -115,10 +126,12 @@ function NewPassword(props) {
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
+            ),
           }}
         />
         <FormHelperText>
-          Le mot de passe doit faire au minimum 8 charactères et contenir au moins 1 majuscule, 1 minuscule et 1 chiffre.
+          Le mot de passe doit faire au minimum 8 charactères et contenir au
+          moins 1 majuscule, 1 minuscule et 1 chiffre.
         </FormHelperText>
 
         <TextField
@@ -141,11 +154,16 @@ function NewPassword(props) {
           Créer un nouveau mot de passe
         </Button>
         <Grid container>
-          <Grid item xs>
-
-          </Grid>
+          <Grid
+            item
+            xs
+          ></Grid>
           <Grid item>
-            <Link component={RouterLink} to="/login" color="inherit">
+            <Link
+              component={RouterLink}
+              to="/login"
+              color="inherit"
+            >
               Déja un compte ? Connecte-toi
             </Link>
           </Grid>
@@ -153,7 +171,6 @@ function NewPassword(props) {
         <Copyright sx={{ mt: 5 }} />
       </Box>
     </Box>
-
   );
 
   function renderError() {
@@ -162,26 +179,32 @@ function NewPassword(props) {
     }
 
     return (
-      <Fade in timeout={{ enter: 500 }}>
-        <Alert severity="error" sx={{ marginBottom: '24px' }}>
+      <Fade
+        in
+        timeout={{ enter: 500 }}
+      >
+        <Alert
+          severity="error"
+          sx={{ marginBottom: '24px' }}
+        >
           <AlertTitle>Error</AlertTitle>
           {serverErrors}
         </Alert>
       </Fade>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     users: state.users,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewPassword)
+export default connect(mapStateToProps, mapDispatchToProps)(NewPassword);

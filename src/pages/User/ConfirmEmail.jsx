@@ -13,9 +13,9 @@ import {
 } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { usersActions } from '../actions';
-import { updateTitle } from '../lib/document';
-import './Page.scss';
+import { usersActions } from '../../actions';
+import { updateTitle } from '../../lib/document';
+import '../Page.scss';
 
 function ConmfirmEmail(props) {
   const [, setUserToken] = useCookie('user', {});
@@ -31,14 +31,14 @@ function ConmfirmEmail(props) {
   }, []);
 
   useEffect(() => {
-    if (token&& call === 0) {
+    if (token && call === 0) {
       (async function () {
         const request = await props.usersActions.confirm(token);
         if (request.error) {
           setError(request.messages);
-        }
-        else {
-          const isDev = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
+        } else {
+          const isDev =
+            !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
           setUserToken(request._id, {
             days: 365,
             SameSite: 'Strict',
@@ -66,21 +66,31 @@ function ConmfirmEmail(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <EmailOutlinedIcon />
       </Avatar>
-      <Typography component="h1" variant="h3">
+      <Typography
+        component="h1"
+        variant="h3"
+      >
         Validez votre e-mail
       </Typography>
       {renderError()}
-      <Typography component="p" variant="body1" className="ConfirmEmail__content">
-        Un e-mail vient de vous etres envoyé !
-        Nous vous avons envoyez un lien pour confirmer votre compte a l'adresse: <b>{props.users.me.email}</b>
+      <Typography
+        component="p"
+        variant="body1"
+        className="ConfirmEmail__content"
+      >
+        Un e-mail vient de vous etres envoyé ! Nous vous avons envoyez un lien
+        pour confirmer votre compte a l'adresse: <b>{props.users.me.email}</b>
       </Typography>
 
-      <Typography component="p" variant="body2" className="ConfirmEmail__subcontent">
-        Vous n'avez pas reçu un e-mail de confirmation ?
-        Vérifiez vos SPAM ou <ReplayIcon className="ConfirmEmail__texticon" /> Envoyer de nouveau.
+      <Typography
+        component="p"
+        variant="body2"
+        className="ConfirmEmail__subcontent"
+      >
+        Vous n'avez pas reçu un e-mail de confirmation ? Vérifiez vos SPAM ou{' '}
+        <ReplayIcon className="ConfirmEmail__texticon" /> Envoyer de nouveau.
       </Typography>
     </Box>
-
   );
 
   function renderError() {
@@ -89,26 +99,32 @@ function ConmfirmEmail(props) {
     }
 
     return (
-      <Fade in timeout={{ enter: 500 }}>
-        <Alert severity="error" sx={{ marginTop: '24px', width: '100%'}}>
+      <Fade
+        in
+        timeout={{ enter: 500 }}
+      >
+        <Alert
+          severity="error"
+          sx={{ marginTop: '24px', width: '100%' }}
+        >
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
       </Fade>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     users: state.users,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConmfirmEmail)
+export default connect(mapStateToProps, mapDispatchToProps)(ConmfirmEmail);

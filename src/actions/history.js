@@ -1,10 +1,15 @@
 import { callApi } from '../lib/axios';
 import * as types from '../datas/actionTypes';
 
-export function getFullHistory(userId) {
+/**
+ * @name getFullHistory
+ * @param {string} user_id
+ * @returns {string|Object[]}
+ */
+export function getFullHistory(user_id) {
   return async function (dispatch) {
     try {
-      const success = await callApi.get(`/history?user=${userId}`);
+      const success = await callApi.get(`/history?user=${user_id}`);
       dispatch({ type: types.GET_HISTORY_SUCCESS, history: success.data });
       return success.data;
     } catch (error) {
@@ -13,12 +18,16 @@ export function getFullHistory(userId) {
   };
 }
 
-
+/**
+ * @name saveHistory
+ * @param {Object} history
+ * @returns {string|Object}
+ */
 export function saveHistory(history) {
   return async function (dispatch) {
     try {
       const success = await callApi.post('/history', {
-        ...history
+        ...history,
       });
 
       dispatch({ type: types.ADD_HISTORY_SUCCESS, history: success.data });
@@ -26,5 +35,5 @@ export function saveHistory(history) {
     } catch (error) {
       throw error.response;
     }
-  }
+  };
 }

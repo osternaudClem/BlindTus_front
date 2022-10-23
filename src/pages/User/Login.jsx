@@ -20,10 +20,10 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { musicsActions, usersActions } from '../actions';
-import { useTextfield, useToggle } from '../hooks/formHooks';
-import { updateTitle } from '../lib/document';
-import { Copyright } from '../components/Footer';
+import { musicsActions, usersActions } from '../../actions';
+import { useTextfield, useToggle } from '../../hooks/formHooks';
+import { updateTitle } from '../../lib/document';
+import { Copyright } from '../../components/Footer';
 
 function Login(props) {
   const [, setUserToken] = useCookie('user', {});
@@ -45,13 +45,13 @@ function Login(props) {
 
     if (user.error && user.error === 'notConfirmed') {
       return navigate('/confirm');
-    }
-    else if (user.error) {
+    } else if (user.error) {
       return setServerErrors(user.error);
     }
 
     if (user.username) {
-      const isDev = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
+      const isDev =
+        !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
       setUserToken(user._id, {
         days: 365,
@@ -77,11 +77,30 @@ function Login(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography component="h1" variant="h5">
+      <Typography
+        component="h1"
+        variant="h5"
+      >
         Se connecter
       </Typography>
-      <Typography marginY={2}>Seule la <b><RouterLink to="/today" style={{ color: 'inherit' }}>partie du jour</RouterLink></b> est disponnible sans avoir de compte.</Typography>
-      <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+      <Typography marginY={2}>
+        Seule la{' '}
+        <b>
+          <RouterLink
+            to="/today"
+            style={{ color: 'inherit' }}
+          >
+            partie du jour
+          </RouterLink>
+        </b>{' '}
+        est disponnible sans avoir de compte.
+      </Typography>
+      <Box
+        component="form"
+        noValidate
+        onSubmit={handleSubmit}
+        sx={{ mt: 1 }}
+      >
         {renderError()}
         <TextField
           margin="normal"
@@ -107,8 +126,8 @@ function Login(props) {
           autoComplete="current-password"
           onChange={updatePassword}
           InputProps={{
-            endAdornment:
-              <InputAdornment position="end" >
+            endAdornment: (
+              <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={updateShowPassword}
@@ -117,6 +136,7 @@ function Login(props) {
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
+            ),
           }}
         />
         <Button
@@ -128,13 +148,24 @@ function Login(props) {
           Se connecter
         </Button>
         <Grid container>
-          <Grid item xs>
-            <Link component={RouterLink} to="/ask-new-password" color="inherit">
+          <Grid
+            item
+            xs
+          >
+            <Link
+              component={RouterLink}
+              to="/ask-new-password"
+              color="inherit"
+            >
               Mot de passe perdu ?
             </Link>
           </Grid>
           <Grid item>
-            <Link component={RouterLink} to="/signup" color="inherit">
+            <Link
+              component={RouterLink}
+              to="/signup"
+              color="inherit"
+            >
               Créez en un compte
             </Link>
           </Grid>
@@ -150,13 +181,19 @@ function Login(props) {
     }
 
     return (
-      <Fade in timeout={{ enter: 500 }}>
-        <Alert severity="error" sx={{ marginBottom: '24px' }}>
+      <Fade
+        in
+        timeout={{ enter: 500 }}
+      >
+        <Alert
+          severity="error"
+          sx={{ marginBottom: '24px' }}
+        >
           <AlertTitle>Error</AlertTitle>
           {serverErrors}
         </Alert>
       </Fade>
-    )
+    );
   }
 }
 
@@ -164,14 +201,14 @@ function mapStateToProps(state) {
   return {
     musics: state.musics,
     users: state.users,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     musicsActions: bindActionCreators(musicsActions, dispatch),
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

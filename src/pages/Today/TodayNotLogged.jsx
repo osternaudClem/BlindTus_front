@@ -4,21 +4,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useLocalStorage } from 'usehooks-ts';
 import { getCookie } from 'react-use-cookie';
+import { Container } from '@mui/material';
+import { HeaderNotLogged } from '../../components/Header';
+import { Today } from '../../components/Today';
+import { isToday } from '../../lib/date';
+import { encrypt, decrypt } from '../../lib/crypt';
+import { updateTitle } from '../../lib/document';
+import { todayActions } from '../../actions';
+import { Loading } from '../../components/UI';
 
-import {
-  Container,
-} from '@mui/material';
-
-import { HeaderNotLogged } from '../components/Header';
-import { Today } from '../components/Today';
-
-import { isToday } from '../lib/date';
-import { encrypt, decrypt } from '../lib/crypt';
-import { updateTitle } from '../lib/document';
-import { todayActions } from '../actions';
-import { Loading } from '../components/UI';
-
-function TodayPage(props) {
+function TodayNotLoggedPage(props) {
   const [todayGames, setTodayGames] = useLocalStorage('todayGames', null);
   const [todayStats, setTodayStats] = useLocalStorage('todayStats', null);
   const [todayGamesLocal, setTodayGamesLocal] = useState(null);
@@ -72,7 +67,13 @@ function TodayPage(props) {
         }
       }
     })();
-  }, [props.today.game, props.todayActions, todayGames, todayGamesLocal, setTodayGames]);
+  }, [
+    props.today.game,
+    props.todayActions,
+    todayGames,
+    todayGamesLocal,
+    setTodayGames,
+  ]);
 
   const saveHistory = function (answer, isCorrect) {
     const today = decrypt(todayGames);
@@ -95,16 +96,15 @@ function TodayPage(props) {
           totalWin: parseInt(todayStatsLocal.totalWin) + (today.isWin ? 1 : 0),
           stats: todayStatsLocal.stats,
           ...newStats,
-        }
+        };
 
         if (today.isWin) {
-          newStats.stats[today.attempts.length] = parseInt(newStats.stats[today.attempts.length]) + 1;
-        }
-        else {
+          newStats.stats[today.attempts.length] =
+            parseInt(newStats.stats[today.attempts.length]) + 1;
+        } else {
           newStats.stats.notWin = parseInt(newStats.stats.notWin) + 1;
         }
-      }
-      else {
+      } else {
         newStats = {
           totalGames: 1,
           totalWin: today.isWin ? 1 : 0,
@@ -114,30 +114,32 @@ function TodayPage(props) {
             3: 0,
             4: 0,
             5: 0,
-            notWin: 0
-          }
-        }
+            notWin: 0,
+          },
+        };
 
         if (today.isWin) {
           newStats.stats[today.attempts.length] = 1;
-        }
-        else {
+        } else {
           newStats.stats.notWin = 1;
         }
       }
 
       setTodayStats(encrypt(newStats));
     }
-  }
+  };
 
   if (!todayGamesLocal) {
-    return <Loading />
+    return <Loading />;
   }
 
   return (
     <div>
       <HeaderNotLogged />
-      <Container maxWidth="xl" className="Page">
+      <Container
+        maxWidth="xl"
+        className="Page"
+      >
         <Today
           game={props.today.game}
           history={todayGamesLocal}
@@ -145,19 +147,19 @@ function TodayPage(props) {
         />
       </Container>
     </div>
-  )
+  );
 }
 
 function mapStateToProps(state) {
   return {
     today: state.today,
-  }
-};
+  };
+}
 
 function mapDispatchToProps(dispatch) {
   return {
     todayActions: bindActionCreators(todayActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TodayPage);
+export default connect(mapStateToProps, mapDispatchToProps)(TodayNotLoggedPage);

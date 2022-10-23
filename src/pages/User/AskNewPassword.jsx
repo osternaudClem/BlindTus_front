@@ -12,10 +12,10 @@ import {
   AlertTitle,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { usersActions } from '../actions';
-import { useTextfield } from '../hooks/formHooks';
-import { updateTitle } from '../lib/document';
-import { Copyright } from '../components/Footer';
+import { usersActions } from '../../actions';
+import { useTextfield } from '../../hooks/formHooks';
+import { updateTitle } from '../../lib/document';
+import { Copyright } from '../../components/Footer';
 
 function AskNewPassword(props) {
   const [email, updateEmail] = useTextfield();
@@ -23,7 +23,7 @@ function AskNewPassword(props) {
   const [serverErrors, setServerErrors] = useState(null);
 
   useEffect(() => {
-    updateTitle('Demande d\'un nouveau mot de passe');
+    updateTitle("Demande d'un nouveau mot de passe");
   }, []);
 
   const handleSubmit = async function (event) {
@@ -57,18 +57,33 @@ function AskNewPassword(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography component="h1" variant="h5">
+      <Typography
+        component="h1"
+        variant="h5"
+      >
         Mot de passe perdu ?
       </Typography>
-      {openSuccess &&
-        <Alert severity="success" sx={{ marginBottom: '24px' }}>
+      {openSuccess && (
+        <Alert
+          severity="success"
+          sx={{ marginBottom: '24px' }}
+        >
           <AlertTitle>Demande de nouveau mot de passe</AlertTitle>
-          Un email vient de vous etre envoyé. La demande sera supprimer dans 48h.
+          Un email vient de vous etre envoyé. La demande sera supprimer dans
+          48h.
         </Alert>
-      }
-      <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+      )}
+      <Box
+        component="form"
+        noValidate
+        onSubmit={handleSubmit}
+        sx={{ mt: 1 }}
+      >
         {renderError()}
-        <Typography variant="body">Nous allons vous envoyer un lien pour vous aider à récupérer vos identifiants.</Typography>
+        <Typography variant="body">
+          Nous allons vous envoyer un lien pour vous aider à récupérer vos
+          identifiants.
+        </Typography>
 
         <TextField
           margin="normal"
@@ -94,7 +109,7 @@ function AskNewPassword(props) {
 
         <Copyright sx={{ mt: 5 }} />
       </Box>
-    </Box >
+    </Box>
   );
 
   function renderError() {
@@ -103,26 +118,32 @@ function AskNewPassword(props) {
     }
 
     return (
-      <Fade in timeout={{ enter: 500 }}>
-        <Alert severity="error" sx={{ marginBottom: '24px' }}>
+      <Fade
+        in
+        timeout={{ enter: 500 }}
+      >
+        <Alert
+          severity="error"
+          sx={{ marginBottom: '24px' }}
+        >
           <AlertTitle>Error</AlertTitle>
           {serverErrors}
         </Alert>
       </Fade>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     users: state.users,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AskNewPassword)
+export default connect(mapStateToProps, mapDispatchToProps)(AskNewPassword);

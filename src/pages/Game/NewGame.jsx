@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
 import {
   CssBaseline,
   Grid,
@@ -12,35 +11,30 @@ import {
   AlertTitle,
   Button,
 } from '@mui/material';
-
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-
 import {
   musicsActions,
   scoresActions,
-  gameSettingsActions,
   gamesActions,
   historyActions,
-} from '../actions';
-
-import { shuffle } from '../lib/array';
-import { checkSimilarity } from '../lib/check';
-import { updateTitle } from '../lib/document';
-
-import { GamePlayer } from '../components/Game';
-import { Timer } from '../components/Timer';
-import { Result } from '../components/Results';
-import { Scores } from '../components/Scores';
-import { GameProposals } from '../components/Game';
+} from '../../actions';
+import { shuffle } from '../../lib/array';
+import { checkSimilarity } from '../../lib/check';
+import { updateTitle } from '../../lib/document';
+import { GamePlayer } from '../../components/Game';
+import { Timer } from '../../components/Timer';
+import { Result } from '../../components/Results';
+import { Scores } from '../../components/Scores';
+import { GameProposals } from '../../components/Game';
 import {
   GameSettings,
   GameSettingsResume,
   MovieTextField,
-} from '../components/Forms';
-import { useTextfield } from '../hooks/formHooks';
-import { UserContext } from '../contexts/userContext';
-import './Page.scss';
+} from '../../components/Forms';
+import { useTextfield } from '../../hooks/formHooks';
+import { UserContext } from '../../contexts/userContext';
+import '../Page.scss';
 
 // const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
@@ -463,7 +457,6 @@ function mapDispatchToProps(dispatch) {
   return {
     musicsActions: bindActionCreators(musicsActions, dispatch),
     scoresActions: bindActionCreators(scoresActions, dispatch),
-    gameSettingsActions: bindActionCreators(gameSettingsActions, dispatch),
     gamesActions: bindActionCreators(gamesActions, dispatch),
     historyActions: bindActionCreators(historyActions, dispatch),
   };
