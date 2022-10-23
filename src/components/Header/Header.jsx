@@ -1,5 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useNavigate,
+  NavLink as RouterLink,
+  useLocation,
+} from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
 import { useLocalStorage } from 'usehooks-ts';
@@ -16,9 +20,13 @@ import {
   Button,
   Tooltip,
   MenuItem,
+  Divider,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AddIcon from '@mui/icons-material/Add';
+import GroupIcon from '@mui/icons-material/Group';
 import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
 import { GameVolume } from '../Game';
@@ -29,21 +37,24 @@ import './Header.scss';
 const pages = [
   {
     label: 'Démarer une partie',
-    url: '/new-game'
+    url: '/game',
+    icon: <PlayArrowIcon />,
   },
   {
     label: 'Partie du jour',
     url: '/playtoday',
+    icon: <CalendarMonthIcon />,
   },
   {
     label: 'Multijoueur',
     url: '/lobby',
+    icon: <GroupIcon />,
   },
   {
     label: 'Suggérer un film',
     url: '/suggest-movie',
-    color: '#af79ff'
-  }
+    icon: <AddIcon />,
+  },
 ];
 
 const settings = [
@@ -70,9 +81,9 @@ const ResponsiveAppBar = (props) => {
   const [volume, setVolume] = useLocalStorage('player_volume', 70);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-  }, [user]);
+  useEffect(() => {}, [user]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -82,22 +93,18 @@ const ResponsiveAppBar = (props) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = page => {
-    if (page.url) {
-      navigate(page.url);
-
-      // if (page.url === '/lobby') {
-      //   navigate(0);
-      // }
-    }
+  const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = setting => {
+  const handleCloseUserMenu = (setting) => {
     if (setting.id === 'logout') {
       setCookie('user', '', {
         days: 0,
-        domain: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? '' : '.cl3tus.com',
+        domain:
+          !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+            ? ''
+            : '.cl3tus.com',
       });
     }
     navigate(setting.url);
@@ -106,14 +113,17 @@ const ResponsiveAppBar = (props) => {
 
   const onClickLogo = () => {
     navigate('/');
-  }
+  };
 
   if (!props.user) {
     return;
   }
 
   return (
-    <AppBar position="sticky" className="Header">
+    <AppBar
+      position="sticky"
+      className="Header"
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -146,39 +156,68 @@ const ResponsiveAppBar = (props) => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.label} onClick={() => handleCloseNavMenu(page)}>
-                  <Typography textAlign="center">{page.label}</Typography>
+                <MenuItem
+                  key={page.label}
+                  onClick={() => handleCloseNavMenu()}
+                  className="Header__nav_mobile"
+                >
+                  <RouterLink
+                    key={page.label}
+                    to={page.url}
+                    style={{
+                      color:
+                        location.pathname.indexOf(page.url) > -1
+                          ? '#af79ff'
+                          : 'white',
+                    }}
+                  >
+                    {page.icon && page.icon}
+                    {page.label}
+                  </RouterLink>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
           <Box sx={{ flexGrow: { xs: 1, md: 0 } }}>
-            <img src={logo} className="Header__logo" alt="BlindTus logo" onClick={() => onClickLogo()} />
+            <img
+              src={logo}
+              className="Header__logo"
+              alt="BlindTus logo"
+              onClick={() => onClickLogo()}
+            />
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
                 key={page.label}
-                onClick={() => handleCloseNavMenu(page)}
-                sx={{ my: 2, color: page.color || 'white', display: 'block' }}
+                component={RouterLink}
+                to={page.url}
+                startIcon={page.icon && page.icon}
+                sx={{
+                  my: 2,
+                  mr: '12px',
+                  color:
+                    location.pathname.indexOf(page.url) > -1
+                      ? '#af79ff'
+                      : 'white',
+                }}
+                size="small"
               >
                 {page.label}
               </Button>
             ))}
           </Box>
-          {!isMobileDevice() &&
-            <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
-              <GameVolume
-                className="Header__volume"
-                onChange={(event, newValue) => setVolume(newValue)}
-                value={volume}
-              />
-            </div>
-          }
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Utilisateur">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={props.user.username} src={user.avatar} sx={{ width: 50, height: 50 }} />
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{ p: 0 }}
+              >
+                <Avatar
+                  alt={props.user.username}
+                  src={user.avatar}
+                  sx={{ width: 50, height: 50 }}
+                />
               </IconButton>
             </Tooltip>
             <Menu
@@ -197,8 +236,26 @@ const ResponsiveAppBar = (props) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              {!isMobileDevice() && (
+                <div>
+                  <div
+                    style={{ flexGrow: 0, display: 'flex' }}
+                    className="Header__volume-container"
+                  >
+                    <GameVolume
+                      className="Header__volume"
+                      onChange={(event, newValue) => setVolume(newValue)}
+                      value={volume}
+                    />
+                  </div>
+                  <Divider sx={{ mt: '4px' }} />
+                </div>
+              )}
               {settings.map((setting) => (
-                <MenuItem key={setting.id} onClick={() => handleCloseUserMenu(setting)}>
+                <MenuItem
+                  key={setting.id}
+                  onClick={() => handleCloseUserMenu(setting)}
+                >
                   <Typography textAlign="center">{setting.label}</Typography>
                 </MenuItem>
               ))}
@@ -213,7 +270,7 @@ const ResponsiveAppBar = (props) => {
 function mapStateToProps(state) {
   return {
     user: state.users.me,
-  }
+  };
 }
 
 export default connect(mapStateToProps, null)(ResponsiveAppBar);
