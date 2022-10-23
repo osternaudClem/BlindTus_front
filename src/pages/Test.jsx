@@ -1,16 +1,10 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import {
-  CssBaseline,
-  Box,
-  Container,
-  Typography,
-} from '@mui/material';
+import { CssBaseline, Box, Container, Typography } from '@mui/material';
 
 import { updateTitle } from '../lib/document';
 import { Loading } from '../components/UI';
-
 
 function Test() {
   useEffect(() => {
@@ -26,17 +20,15 @@ function Test() {
         <Loading />
       </Container>
     </Box>
-  )
+  );
 }
 
 function mapStateToProps(state) {
-  return {
-  };
+  return {};
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Test);

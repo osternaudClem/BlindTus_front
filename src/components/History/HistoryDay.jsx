@@ -1,5 +1,4 @@
 import {
-  Paper,
   Box,
   Grid,
   Typography,
@@ -17,9 +16,18 @@ import { PaperBox } from '../UI';
 function HistoryDay({ history }) {
   return (
     <PaperBox className="Scores">
-      <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-        <Grid container alignItems="center">
-          <Grid item xs>
+      <Box
+        sx={{ p: 2 }}
+        style={{ marginTop: '-8px' }}
+      >
+        <Grid
+          container
+          alignItems="center"
+        >
+          <Grid
+            item
+            xs
+          >
             <Typography variant="h5">Essais</Typography>
           </Grid>
           <Grid item>
@@ -27,27 +35,29 @@ function HistoryDay({ history }) {
           </Grid>
         </Grid>
         <List dense>
-          {history.attempts && history.attempts.map((attempt, index) => (
-            <div key={`${attempt}-${index}`}>
-              <ListItem>
-                <ListItemIcon>
-                  {history.isWin && index === history.attempts.length - 1
-                    ? <CheckIcon sx={{ color: green[300] }} />
-                    : <ClearIcon sx={{ color: red[500] }} />
-                  }
-                </ListItemIcon>
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true }}
-                  primary={attempt}
-                />
-              </ListItem>
-              <Divider variant="middle" />
-            </div>
-          ))}
+          {history.attempts &&
+            history.attempts.map((attempt, index) => (
+              <div key={`${attempt}-${index}`}>
+                <ListItem>
+                  <ListItemIcon>
+                    {history.isWin && index === history.attempts.length - 1 ? (
+                      <CheckIcon sx={{ color: green[300] }} />
+                    ) : (
+                      <ClearIcon sx={{ color: red[500] }} />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText
+                    primaryTypographyProps={{ noWrap: true }}
+                    primary={attempt}
+                  />
+                </ListItem>
+                <Divider variant="middle" />
+              </div>
+            ))}
         </List>
       </Box>
     </PaperBox>
-  )
+  );
 }
 
 export default HistoryDay;

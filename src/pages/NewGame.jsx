@@ -7,7 +7,6 @@ import {
   CssBaseline,
   Grid,
   Box,
-  Paper,
   Typography,
   Alert,
   AlertTitle,
@@ -29,13 +28,16 @@ import { shuffle } from '../lib/array';
 import { checkSimilarity } from '../lib/check';
 import { updateTitle } from '../lib/document';
 
-import { PaperBox } from '../components/UI';
 import { GamePlayer } from '../components/Game';
 import { Timer } from '../components/Timer';
 import { Result } from '../components/Results';
 import { Scores } from '../components/Scores';
 import { GameProposals } from '../components/Game';
-import { GameSettings, GameSettingsResume, MovieTextField } from '../components/Forms';
+import {
+  GameSettings,
+  GameSettingsResume,
+  MovieTextField,
+} from '../components/Forms';
 import { useTextfield } from '../hooks/formHooks';
 import { UserContext } from '../contexts/userContext';
 import './Page.scss';
@@ -82,34 +84,38 @@ function NewGame(props) {
           }
           navigate('/new-game');
         } catch (error) {
-          navigate('/new-game')
+          navigate('/new-game');
         }
       })();
     }
 
     return () => {
       props.gamesActions.reset();
-    }
-
+    };
   }, [props.scoresActions, props.gamesActions, code, navigate]);
 
   useEffect(() => {
     if (!inputDisabled && answerField.current) {
       answerField.current.focus();
     }
-  }, [inputDisabled])
+  }, [inputDisabled]);
 
   const getMusics = async function (limit) {
     const allMusics = await props.musicsActions.getMusics(limit);
 
     return allMusics;
-  }
+  };
 
   useEffect(() => {
     const currentGame = props.games.currentGame;
 
     if (currentGame.proposals && musicNumber < totalMusics) {
-      setProposals(shuffle([currentGame.musics[musicNumber].movie.title_fr, ...currentGame.proposals[musicNumber].slice(0, 7)]));
+      setProposals(
+        shuffle([
+          currentGame.musics[musicNumber].movie.title_fr,
+          ...currentGame.proposals[musicNumber].slice(0, 7),
+        ])
+      );
     }
   }, [musicNumber, props.games.currentGame, totalMusics]);
 
@@ -125,12 +131,12 @@ function NewGame(props) {
 
     setIsStarted(true);
     setDisplayTimer(true);
-  }
+  };
 
   const handleClickStart = function () {
     setIsStarted(true);
     setDisplayTimer(true);
-  }
+  };
 
   const onSettingsSaved = function (settings) {
     setTimeLimit(settings.time);
@@ -138,7 +144,7 @@ function NewGame(props) {
     setTotalMusics(settings.movieNumber);
 
     onStartGame(settings);
-  }
+  };
 
   function onTimerFinished(count, sending = true) {
     setTimeLeft(count);
@@ -158,22 +164,22 @@ function NewGame(props) {
           scores: props.scores.currentGame,
           user: user,
           game: props.games.currentGame,
-        })
+        });
         setIsEndGame(true);
       }
     }
-  };
+  }
 
   const handleClickShowResults = function () {
     navigate('/end-game');
-  }
+  };
 
   const handleClickStartMusic = function () {
     setInputDisabled(false);
     setTimer(timeLimit);
     setIsCorrect(null);
     setDisplayGame(true);
-  }
+  };
 
   const handleClickAnswer = function (answer) {
     const music = musicNumber;
@@ -189,7 +195,7 @@ function NewGame(props) {
     setIsCorrect(isAnswerCorrect);
 
     if (isAnswerCorrect) {
-      score = timeLeft * 100 / timeLimit;
+      score = (timeLeft * 100) / timeLimit;
     }
 
     setScore(score);
@@ -204,8 +210,7 @@ function NewGame(props) {
     });
 
     onTimerFinished(0, false);
-
-  }
+  };
 
   const onSendAnswer = (event, timeOut = false) => {
     const music = musicNumber;
@@ -229,12 +234,12 @@ function NewGame(props) {
     if (!isAnswerCorrect && !timeOut) {
       window.setTimeout(() => {
         setIsCorrect(null);
-      }, 500)
+      }, 500);
       return updateAnswer('');
     }
 
     if (isAnswerCorrect) {
-      score = timeLeft * 100 / timeLimit;
+      score = (timeLeft * 100) / timeLimit;
     }
 
     setScore(score);
@@ -249,10 +254,15 @@ function NewGame(props) {
     });
 
     onTimerFinished(0, false);
-  }
+  };
 
   return (
-    <Grid container spacing={12} component="main" className="LoginPage">
+    <Grid
+      container
+      spacing={12}
+      component="main"
+      className="LoginPage"
+    >
       <CssBaseline />
       <Grid
         item
@@ -269,12 +279,10 @@ function NewGame(props) {
         sm={6}
         md={4}
       >
-        {isStarted &&
-          <Scores />
-        }
+        {isStarted && <Scores />}
       </Grid>
     </Grid>
-  )
+  );
 
   function renderButton() {
     if (isStarted) {
@@ -294,47 +302,61 @@ function NewGame(props) {
 
     return (
       <div>
-        <Typography component="h2" variant="h3" marginBottom={4}>Nouvelle partie</Typography>
-        <GameSettings onSettingsSaved={onSettingsSaved} redirect="new-game" />
+        <Typography
+          component="h2"
+          variant="h3"
+          marginBottom={4}
+        >
+          Nouvelle partie
+        </Typography>
+        <GameSettings
+          onSettingsSaved={onSettingsSaved}
+          redirect="new-game"
+        />
       </div>
     );
   }
 
   function game() {
-    if (!isStarted || !props.games.currentGame.musics || props.games.currentGame.musics.length === 0) {
+    if (
+      !isStarted ||
+      !props.games.currentGame.musics ||
+      props.games.currentGame.musics.length === 0
+    ) {
       return;
     }
 
     return (
       <div>
-        <div>{musicNumber} / {props.games.currentGame.musics.length}</div>
+        <div>
+          {musicNumber} / {props.games.currentGame.musics.length}
+        </div>
 
         {renderTimer()}
 
-        {difficulty === 'difficult'
-          ? (
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-              }}
-              mb={4}
-              component="form"
-              noValidate
-              autoComplete="off"
-              onSubmit={event => onSendAnswer(event)}
-            >
-              <MovieTextField
-                onChange={updateAnswer}
-                value={answer}
-                disabled={inputDisabled}
-                inputRef={answerField}
-                isCorrect={isCorrect}
-              />
-            </Box>
-          )
-          : renderProposals()
-        }
+        {difficulty === 'difficult' ? (
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '100%',
+            }}
+            mb={4}
+            component="form"
+            noValidate
+            autoComplete="off"
+            onSubmit={(event) => onSendAnswer(event)}
+          >
+            <MovieTextField
+              onChange={updateAnswer}
+              value={answer}
+              disabled={inputDisabled}
+              inputRef={answerField}
+              isCorrect={isCorrect}
+            />
+          </Box>
+        ) : (
+          renderProposals()
+        )}
 
         {renderStart()}
 
@@ -350,22 +372,15 @@ function NewGame(props) {
 
     return (
       <Button
-        onClick={
-          isEndGame
-            ? handleClickShowResults
-            : handleClickStartMusic
-        }
+        onClick={isEndGame ? handleClickShowResults : handleClickStartMusic}
         variant="contained"
         size="large"
-        startIcon={isEndGame
-          ? <SportsScoreIcon />
-          : <PlayArrowIcon />
-        }
+        startIcon={isEndGame ? <SportsScoreIcon /> : <PlayArrowIcon />}
         sx={{ marginBottom: '16px' }}
       >
         {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
-      </ Button>
-    )
+      </Button>
+    );
   }
 
   function renderProposals() {
@@ -378,7 +393,7 @@ function NewGame(props) {
         proposals={proposals}
         onClick={handleClickAnswer}
       />
-    )
+    );
   }
 
   function renderPlayer() {
@@ -386,14 +401,24 @@ function NewGame(props) {
       if (musicNumber > 0) {
         return (
           <React.Fragment>
-            <Alert variant="outlined" icon={false} severity={isCorrect ? 'success' : 'error'} sx={{ marginBottom: '16px' }}>
-              <AlertTitle>Réponse {isCorrect ? 'correct' : 'fausse'} !</AlertTitle>
+            <Alert
+              variant="outlined"
+              icon={false}
+              severity={isCorrect ? 'success' : 'error'}
+              sx={{ marginBottom: '16px' }}
+            >
+              <AlertTitle>
+                Réponse {isCorrect ? 'correct' : 'fausse'} !
+              </AlertTitle>
               + {Math.round(score)} points !
             </Alert>
 
-            <Result movie={props.games.currentGame.musics[musicNumber - 1].movie} music={props.games.currentGame.musics[musicNumber - 1]} />
+            <Result
+              movie={props.games.currentGame.musics[musicNumber - 1].movie}
+              music={props.games.currentGame.musics[musicNumber - 1]}
+            />
           </React.Fragment>
-        )
+        );
       }
       return;
     }
@@ -415,7 +440,12 @@ function NewGame(props) {
 
     return (
       <div>
-        <Timer limit={timer} onFinished={(count) => onTimerFinished(count)} key={timer} className="NewGame__timer" />
+        <Timer
+          limit={timer}
+          onFinished={(count) => onTimerFinished(count)}
+          key={timer}
+          className="NewGame__timer"
+        />
       </div>
     );
   }
@@ -426,7 +456,7 @@ function mapStateToProps(state) {
     musics: state.musics,
     scores: state.scores,
     games: state.games,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -436,7 +466,7 @@ function mapDispatchToProps(dispatch) {
     gameSettingsActions: bindActionCreators(gameSettingsActions, dispatch),
     gamesActions: bindActionCreators(gamesActions, dispatch),
     historyActions: bindActionCreators(historyActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewGame)
+export default connect(mapStateToProps, mapDispatchToProps)(NewGame);

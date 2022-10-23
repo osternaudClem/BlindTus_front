@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import { CircleButton } from '../components/Buttons';
-import cinema from '../assets/images/cinema.png';
 import { updateTitle } from '../lib/document';
 
 function Home() {

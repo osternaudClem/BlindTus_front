@@ -407,16 +407,26 @@ function Today({ onSaveHistory, game, history }) {
           </DialogContentText>
           <DialogContentText>
             Le mode de jeu est en "Facile". C'est-à-dire que le nom du film peut
-            être un raccourci.
+            être un raccourci. Les accents et majuscules de ne sont également
+            pas pris en compte.
           </DialogContentText>
           <DialogContentText>Examples:</DialogContentText>
           <ul>
             <li>
-              2001, l'Odyssée de l'espace <ArrowForwardIcon /> 2001
+              2001, l'Odyssée de l'espace{' '}
+              <ArrowForwardIcon
+                style={{ transform: 'translateY(2px)' }}
+                fontSize="12px"
+              />{' '}
+              2001
             </li>
             <li>
               Le Seigneur des anneaux : La Communauté de l'anneau{' '}
-              <ArrowForwardIcon /> Le Seigneur des anneaux
+              <ArrowForwardIcon
+                style={{ transform: 'translateY(2px)' }}
+                fontSize="12px"
+              />{' '}
+              Le Seigneur des anneaux
             </li>
           </ul>
 
@@ -429,6 +439,17 @@ function Today({ onSaveHistory, game, history }) {
             <li>{TIMERS[2]} secondes</li>
             <li>{TIMERS[3]} secondes</li>
             <li>{TIMERS[4]} secondes</li>
+          </ol>
+
+          <DialogContentText>
+            À chaque étapes egalement, vous aurez un nouvel indice:
+          </DialogContentText>
+          <ol>
+            <li>Aucun indice</li>
+            <li>Date de réalisation</li>
+            <li>Réalisateurs</li>
+            <li>Casting principal</li>
+            <li>Synopsis</li>
           </ol>
         </DialogContent>
         <Divider />

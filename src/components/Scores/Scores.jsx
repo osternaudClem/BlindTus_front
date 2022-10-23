@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import {
   Box,
   Grid,
-  Paper,
   Typography,
   List,
   ListItem,
@@ -25,9 +24,18 @@ function Scores(props) {
 
   return (
     <PaperBox className="Scores">
-      <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-        <Grid container alignItems="center">
-          <Grid item xs>
+      <Box
+        sx={{ p: 2 }}
+        style={{ marginTop: '-8px' }}
+      >
+        <Grid
+          container
+          alignItems="center"
+        >
+          <Grid
+            item
+            xs
+          >
             <Typography variant="h5">Score</Typography>
           </Grid>
           <Grid item>
@@ -35,41 +43,39 @@ function Scores(props) {
           </Grid>
         </Grid>
         <List dense>
-          {props.scores.currentGame.slice(0).reverse().map(score => (
-            <div key={`${score.movie} - ${score.score}`}>
-              <ListItem
-                key={score.movie}
-                secondaryAction={
-                  <Typography variant="body">{score.score}</Typography>
-                }
-              >
-                <ListItemIcon>
-                  {score.isCorrect && (
-                    <CheckIcon color="success" />
-                  )}
-                  {!score.isCorrect && (
-                    <ClearIcon sx={{ color: red[500] }} />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true }}
-                  primary={score.movie}
-                />
-
-              </ListItem>
-              <Divider variant="middle" />
-            </div>
-          ))}
+          {props.scores.currentGame
+            .slice(0)
+            .reverse()
+            .map((score) => (
+              <div key={`${score.movie} - ${score.score}`}>
+                <ListItem
+                  key={score.movie}
+                  secondaryAction={
+                    <Typography variant="body">{score.score}</Typography>
+                  }
+                >
+                  <ListItemIcon>
+                    {score.isCorrect && <CheckIcon color="success" />}
+                    {!score.isCorrect && <ClearIcon sx={{ color: red[500] }} />}
+                  </ListItemIcon>
+                  <ListItemText
+                    primaryTypographyProps={{ noWrap: true }}
+                    primary={score.movie}
+                  />
+                </ListItem>
+                <Divider variant="middle" />
+              </div>
+            ))}
         </List>
       </Box>
     </PaperBox>
-  )
+  );
 }
 
 function mapStateToProps(state) {
   return {
     scores: state.scores,
-  }
+  };
 }
 
-export default connect(mapStateToProps, null)(Scores)
+export default connect(mapStateToProps, null)(Scores);
