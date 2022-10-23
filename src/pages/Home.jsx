@@ -12,7 +12,7 @@ function Home() {
   }, []);
 
   const handleClickNewGame = function () {
-    navigate('/new-game');
+    navigate('/game');
   };
 
   return (

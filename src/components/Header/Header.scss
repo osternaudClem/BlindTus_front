@@ -17,6 +17,17 @@
   }
 }
 
+.Header__nav_mobile {
+  a {
+    text-decoration: none;
+  }
+
+  a .MuiSvgIcon-root {
+    margin-right: 16px;  
+    transform: translateY(6px);
+  }
+}
+
 @media screen and (max-width: 600px) {
   .Header__logo {
     height: 16px;

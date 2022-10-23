@@ -158,9 +158,22 @@ const ResponsiveAppBar = (props) => {
               {pages.map((page) => (
                 <MenuItem
                   key={page.label}
-                  onClick={() => handleCloseNavMenu(page)}
+                  onClick={() => handleCloseNavMenu()}
+                  className="Header__nav_mobile"
                 >
-                  <Typography textAlign="center">{page.label}</Typography>
+                  <RouterLink
+                    key={page.label}
+                    to={page.url}
+                    style={{
+                      color:
+                        location.pathname.indexOf(page.url) > -1
+                          ? '#af79ff'
+                          : 'white',
+                    }}
+                  >
+                    {page.icon && page.icon}
+                    {page.label}
+                  </RouterLink>
                 </MenuItem>
               ))}
             </Menu>
