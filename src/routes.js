@@ -65,11 +65,11 @@ const RoutesUrl = () => (
             element={<HomePage />}
           />
           <Route
-            path="/new-game"
+            path="/game"
             element={<NewGamePage />}
           />
           <Route
-            path="/end-game"
+            path="/game/end"
             element={<EndGamePage />}
           />
           <Route

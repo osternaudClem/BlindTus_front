@@ -76,9 +76,9 @@ function NewGame(props) {
           if (game._id) {
             return setGameWithCode(true);
           }
-          navigate('/new-game');
+          navigate('/game');
         } catch (error) {
-          navigate('/new-game');
+          navigate('/game');
         }
       })();
     }
@@ -165,7 +165,7 @@ function NewGame(props) {
   }
 
   const handleClickShowResults = function () {
-    navigate('/end-game');
+    navigate('/game/end');
   };
 
   const handleClickStartMusic = function () {

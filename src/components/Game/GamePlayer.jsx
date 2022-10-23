@@ -9,7 +9,7 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
   const volume = useReadLocalStorage('player_volume');
 
   useEffect(() => {
-    audioRef.current.volume = volume === null ? .7 : volume / 100;
+    audioRef.current.volume = volume === null ? 0.7 : volume / 100;
   }, [volume]);
 
   useEffect(() => {
@@ -18,32 +18,14 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
     }
   }, [isReady]);
 
-  const onAudioProgress = function() {
-    const duration = audioRef.current.duration;
-    console.log('>>> duration', duration);
-    console.log('>>> audioRef.current.buffered.length', audioRef.current.buffered.length);
-    if (duration > 0) {
-      for (let i = 0; i < audioRef.current.buffered.length; i++) {
-        if (
-          audioRef.current.buffered.start(audioRef.current.buffered.length - 1 - i) <
-          audioRef.current.currentTime
-        ) {
-          console.log((audioRef.current.buffered.end(audioRef.current.buffered.length - 1 - i) * 100) / duration);
-          break;
-        }
-      }
-    }
-  }
-
   return (
     <audio
       src={`${API}/api/audio/${audioName}.mp3#t=${timecode}`}
       loop
-      // autoPlay
+      autoPlay
       controls={showControl}
       ref={audioRef}
       onCanPlayThrough={canPlay}
-      onProgress={onAudioProgress}
     />
   );
 }
@@ -57,7 +39,7 @@ GamePlayer.propTypes = {
 };
 
 GamePlayer.defaultProps = {
-  canPlay: () => { },
+  canPlay: () => {},
   isReady: true,
   showControl: false,
   timecode: 0,

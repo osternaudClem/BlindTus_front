@@ -1,14 +1,20 @@
 .Header__logo {
   align-items: center;
   cursor: pointer;
-  height: 40px;
+  height: 28px;
   margin-right: 24px;
   transform: translateY(4px);
 }
 
 .Header__volume {
-  margin-right: 16px;
+  margin: 0 8px;
   width: 160px;
+}
+
+.Header__button {
+  &.active {
+    color: red;
+  }
 }
 
 @media screen and (max-width: 600px) {
