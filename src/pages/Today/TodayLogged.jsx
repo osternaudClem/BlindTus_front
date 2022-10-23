@@ -2,19 +2,13 @@ import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getCookie } from 'react-use-cookie';
+import { todayActions, historyTodayActions } from '../../actions';
+import { UserContext } from '../../contexts/userContext';
+import { updateTitle } from '../../lib/document';
+import { Today } from '../../components/Today';
+import { Loading } from '../../components/UI';
 
-import {
-  todayActions,
-  historyTodayActions,
-} from '../actions';
-
-import { UserContext } from '../contexts/userContext';
-import { updateTitle } from '../lib/document';
-
-import { Today } from '../components/Today';
-import { Loading } from '../components/UI';
-
-function GameOfTheDay(props) {
+function TodayLogged(props) {
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
 
@@ -39,10 +33,19 @@ function GameOfTheDay(props) {
         }
       }
     })();
-  }, [props.today.game, props.historyToday.today, userId, props.historyTodayActions, props.todayActions]);
+  }, [
+    props.today.game,
+    props.historyToday.today,
+    userId,
+    props.historyTodayActions,
+    props.todayActions,
+  ]);
 
   const saveHistory = async function (answer, isCorrect) {
-    const attempts = props.historyToday.today && props.historyToday.today.attempts ? JSON.parse(JSON.stringify(props.historyToday.today.attempts)) : [];
+    const attempts =
+      props.historyToday.today && props.historyToday.today.attempts
+        ? JSON.parse(JSON.stringify(props.historyToday.today.attempts))
+        : [];
     attempts.push(answer);
 
     props.historyTodayActions.saveHistory({
@@ -51,12 +54,19 @@ function GameOfTheDay(props) {
       user: user._id,
       attempts,
       isWin: isCorrect,
-      isCompleted: isCorrect || (props.historyToday.today && props.historyToday.today.attempts.length === 4),
+      isCompleted:
+        isCorrect ||
+        (props.historyToday.today &&
+          props.historyToday.today.attempts.length === 4),
     });
-  }
+  };
 
-  if (!props.today.game || !props.historyToday.today || !props.historyToday.today._id) {
-    return <Loading />
+  if (
+    !props.today.game ||
+    !props.historyToday.today ||
+    !props.historyToday.today._id
+  ) {
+    return <Loading />;
   }
 
   return (
@@ -65,21 +75,21 @@ function GameOfTheDay(props) {
       game={props.today.game}
       history={props.historyToday.today}
     />
-  )
+  );
 }
 
 function mapStateToProps(state) {
   return {
     today: state.today,
     historyToday: state.historyToday,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     todayActions: bindActionCreators(todayActions, dispatch),
     historyTodayActions: bindActionCreators(historyTodayActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameOfTheDay)
+export default connect(mapStateToProps, mapDispatchToProps)(TodayLogged);

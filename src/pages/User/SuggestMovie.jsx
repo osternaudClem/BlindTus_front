@@ -23,17 +23,22 @@ import {
   Alert,
   Slide,
 } from '@mui/material';
-import { UserContext } from '../contexts/userContext';
-import { useTextfield } from '../hooks/formHooks';
-import { moviesActions } from '../actions';
-import { isMovieAlreadyAdded } from '../lib/check';
-import { updateTitle } from '../lib/document';
-import { tmdb } from '../config';
+import { UserContext } from '../../contexts/userContext';
+import { useTextfield } from '../../hooks/formHooks';
+import { moviesActions } from '../../actions';
+import { isMovieAlreadyAdded } from '../../lib/check';
+import { updateTitle } from '../../lib/document';
+import { tmdb } from '../../config';
 
 const steps = ['Rechercher un film', 'Séléctionner le film', 'Sauvergarder'];
 
 function SlideTransition(props) {
-  return <Slide {...props} direction="down" />;
+  return (
+    <Slide
+      {...props}
+      direction="down"
+    />
+  );
 }
 
 function SuggestMovie(props) {
@@ -81,12 +86,12 @@ function SuggestMovie(props) {
     if (query !== '') {
       navigate(`/suggest-movie/${query}`);
     }
-  }
+  };
 
   const handleClickMovie = async function (movie) {
     await props.moviesActions.saveSelectedMovie(movie.id);
     navigate(`/suggest-movie/${query}/${movie.id}`);
-  }
+  };
 
   const handleClickSaveMovie = async function (movie) {
     movie.verified = false;
@@ -103,7 +108,7 @@ function SuggestMovie(props) {
         navigate(`/suggest-movie`);
       }, 2000);
     }
-  }
+  };
 
   return (
     <div>
@@ -125,26 +130,33 @@ function SuggestMovie(props) {
         </Alert>
       </Snackbar>
 
-      <Typography variant="h1" component="h1" gutterBottom>Suggérer un film</Typography>
+      <Typography
+        variant="h1"
+        component="h1"
+        gutterBottom
+      >
+        Suggérer un film
+      </Typography>
 
       <Stepper activeStep={currentStep - 1}>
-        {steps.map(label => {
+        {steps.map((label) => {
           const stepProps = {};
           const labelProps = {};
 
           return (
-            <Step key={label} {...stepProps}>
+            <Step
+              key={label}
+              {...stepProps}
+            >
               <StepLabel {...labelProps}>{label}</StepLabel>
             </Step>
           );
         })}
       </Stepper>
 
-      <Box sx={{ margin: '48px 0' }}>
-        {renderSections()}
-      </Box>
+      <Box sx={{ margin: '48px 0' }}>{renderSections()}</Box>
     </div>
-  )
+  );
 
   function renderSections() {
     switch (currentStep) {
@@ -153,19 +165,42 @@ function SuggestMovie(props) {
         return (
           <div>
             <form onSubmit={onSearchMovies}>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <TextField label="Tapez le nom d'un film" variant="outlined" onChange={onChangeQuery} />
+              <FormControl
+                fullWidth
+                sx={{ mb: 4 }}
+              >
+                <TextField
+                  label="Tapez le nom d'un film"
+                  variant="outlined"
+                  onChange={onChangeQuery}
+                />
               </FormControl>
             </form>
-            <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 16 }}>
-              {props.movies.search.map(movie => {
-                const isAlreadyAdded = isMovieAlreadyAdded(props.movies.all, movie);
+            <Grid
+              container
+              spacing={{ xs: 2, md: 3 }}
+              columns={{ xs: 4, sm: 8, md: 16 }}
+            >
+              {props.movies.search.map((movie) => {
+                const isAlreadyAdded = isMovieAlreadyAdded(
+                  props.movies.all,
+                  movie
+                );
 
                 return (
-                  <Grid item xs={2} sm={4} md={4} key={movie.id}>
-                    <Card sx={{ maxWidth: 365 }} className={classnames('MovieCard', {
-                      'MovieCard--exist': isAlreadyAdded,
-                    })}>
+                  <Grid
+                    item
+                    xs={2}
+                    sm={4}
+                    md={4}
+                    key={movie.id}
+                  >
+                    <Card
+                      sx={{ maxWidth: 365 }}
+                      className={classnames('MovieCard', {
+                        'MovieCard--exist': isAlreadyAdded,
+                      })}
+                    >
                       <CardMedia
                         component="img"
                         height="480"
@@ -174,30 +209,47 @@ function SuggestMovie(props) {
                       />
 
                       <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
+                        <Typography
+                          gutterBottom
+                          variant="h5"
+                          component="div"
+                        >
                           {movie.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Year: {movie.release_date && movie.release_date.slice(0, 4)}
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          Year:{' '}
+                          {movie.release_date && movie.release_date.slice(0, 4)}
                         </Typography>
                       </CardContent>
 
                       <CardActions>
-                        <Button size="small" onClick={() => handleClickMovie(movie)}>Select this movie</Button>
+                        <Button
+                          size="small"
+                          onClick={() => handleClickMovie(movie)}
+                        >
+                          Select this movie
+                        </Button>
                       </CardActions>
 
                       {isAlreadyAdded && (
-                        <Alert variant="outlined" severity="info" className="MovieCard__info">
+                        <Alert
+                          variant="outlined"
+                          severity="info"
+                          className="MovieCard__info"
+                        >
                           Movie already added !
                         </Alert>
                       )}
                     </Card>
                   </Grid>
-                )
+                );
               })}
             </Grid>
           </div>
-        )
+        );
       case 3:
         if (!movie_id || !props.movies.search.length) {
           return;
@@ -205,10 +257,12 @@ function SuggestMovie(props) {
 
         const movie = props.movies.selected;
 
-        const directors = movie.credits.crew.filter(person => person.job === 'Director');
+        const directors = movie.credits.crew.filter(
+          (person) => person.job === 'Director'
+        );
         const directorNames = [];
 
-        directors.map(director => {
+        directors.map((director) => {
           return directorNames.push(director.name);
         });
 
@@ -217,20 +271,36 @@ function SuggestMovie(props) {
             direction="row"
             spacing={2}
           >
-            <img src={tmdb.image_path + movie.poster_path} alt={`poster of ${movie.title} movie`} className="MovieCard__poster" />
-            <Stack className="MovieCard__content" justifyContent="space-between">
+            <img
+              src={tmdb.image_path + movie.poster_path}
+              alt={`poster of ${movie.title} movie`}
+              className="MovieCard__poster"
+            />
+            <Stack
+              className="MovieCard__content"
+              justifyContent="space-between"
+            >
               <div>
-                <Typography variant="h2">{movie.title} - {movie.release_date && movie.release_date.slice(0, 4)}</Typography>
-                <Typography variant="h4">{directorNames.map(director => director)}</Typography>
+                <Typography variant="h2">
+                  {movie.title} -{' '}
+                  {movie.release_date && movie.release_date.slice(0, 4)}
+                </Typography>
+                <Typography variant="h4">
+                  {directorNames.map((director) => director)}
+                </Typography>
                 <Typography variant="body1">{movie.overview}</Typography>
               </div>
               <div>
-                <Button variant="contained" onClick={() => handleClickSaveMovie(movie)}>Suggérer ce film</Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleClickSaveMovie(movie)}
+                >
+                  Suggérer ce film
+                </Button>
               </div>
             </Stack>
-          </Stack >
-
-        )
+          </Stack>
+        );
       default:
         break;
     }

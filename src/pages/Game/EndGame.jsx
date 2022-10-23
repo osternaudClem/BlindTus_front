@@ -11,16 +11,16 @@ import {
   Grid,
 } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { updateTitle } from '../lib/document';
-import { scoresActions, musicsActions } from '../actions';
-import { ScoresDetails } from '../components/Scores';
-import { PaperBox } from '../components/UI';
+import { updateTitle } from '../../lib/document';
+import { scoresActions, musicsActions } from '../../actions';
+import { ScoresDetails } from '../../components/Scores';
+import { PaperBox } from '../../components/UI';
 
 function EndGame(props) {
   const [, copyToClipBoard] = useCopyToClipboard();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
-  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
+  const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
 
   useEffect(() => {
     updateTitle('Fin de partie');
@@ -33,7 +33,7 @@ function EndGame(props) {
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
-  }
+  };
 
   const handleClickShareResults = async function () {
     const scores = props.scores.currentGame;
@@ -43,7 +43,7 @@ function EndGame(props) {
       return accumulator + game.score;
     }, 0);
 
-    const correctAnswer = scores.filter(s => s.isCorrect).length;
+    const correctAnswer = scores.filter((s) => s.isCorrect).length;
 
     const { resultsEmotes } = generateResults();
 
@@ -56,14 +56,13 @@ function EndGame(props) {
     const isCopied = await copyToClipBoard(header);
 
     if (isCopied) {
-      setAlertTitle('Résumé copié dans le presse-papier.')
-    }
-    else {
-      setAlertTitle('Votre navigateur n\'est pas compatible.');
+      setAlertTitle('Résumé copié dans le presse-papier.');
+    } else {
+      setAlertTitle("Votre navigateur n'est pas compatible.");
     }
 
     setIsAlertOpen(true);
-  }
+  };
 
   const generateResults = function () {
     const scores = props.scores.currentGame;
@@ -77,25 +76,42 @@ function EndGame(props) {
     });
 
     return { resultsEmotes, resultsScores };
-  }
+  };
 
   return (
     <div>
       <CssBaseline />
       {renderAlert()}
-      <Grid container alignItems={largeScreen ? 'center' : 'left'} direction={largeScreen ? 'row' : 'column'}>
-        <Grid item xs>
-          <Typography variant="h2" marginBottom={2}>Fin de partie</Typography>
+      <Grid
+        container
+        alignItems={largeScreen ? 'center' : 'left'}
+        direction={largeScreen ? 'row' : 'column'}
+      >
+        <Grid
+          item
+          xs
+        >
+          <Typography
+            variant="h2"
+            marginBottom={2}
+          >
+            Fin de partie
+          </Typography>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={handleClickShareResults}>Partager le résultat</Button>
+          <Button
+            variant="contained"
+            onClick={handleClickShareResults}
+          >
+            Partager le résultat
+          </Button>
         </Grid>
       </Grid>
       <PaperBox>
         <ScoresDetails />
       </PaperBox>
     </div>
-  )
+  );
 
   function renderAlert() {
     return (
@@ -105,11 +121,15 @@ function EndGame(props) {
         open={isAlertOpen}
         onClose={handleCloseAlert}
       >
-        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleCloseAlert}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
           {alertTitle}
         </Alert>
       </Snackbar>
-    )
+    );
   }
 }
 
@@ -117,14 +137,14 @@ function mapStateToProps(state) {
   return {
     scores: state.scores,
     games: state.games,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     scoresActions: bindActionCreators(scoresActions, dispatch),
     musicsActions: bindActionCreators(musicsActions, dispatch),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EndGame)
+export default connect(mapStateToProps, mapDispatchToProps)(EndGame);

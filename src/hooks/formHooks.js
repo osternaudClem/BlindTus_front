@@ -1,5 +1,10 @@
 import { useState } from 'react';
 
+/**
+ * @name useTextfield
+ * @param {string} defaultValue
+ * @returns {Array}
+ */
 export function useTextfield(defaultValue = '') {
   const [field, setField] = useState(defaultValue);
 
@@ -9,36 +14,37 @@ export function useTextfield(defaultValue = '') {
       return;
     }
     setField(event);
-  }
+  };
 
-  return [
-    field,
-    updateField,
-  ];
+  return [field, updateField];
 }
 
+/**
+ * @name useSlider
+ * @param {number} defaultValue
+ * @returns {Array}
+ */
 export function useSlider(defaultValue = 0) {
   const [field, setField] = useState(defaultValue);
 
   const updateField = function (event, newValue) {
     setField(newValue);
-  }
+  };
 
-  return [
-    field,
-    updateField,
-  ];
+  return [field, updateField];
 }
 
+/**
+ * @name useToggle
+ * @param {boolean} defaultValue
+ * @returns {Array}
+ */
 export function useToggle(defaultValue = false) {
   const [toggle, setToggle] = useState(defaultValue);
 
   const updateToggle = function () {
-    setToggle(t => !t);
-  }
+    setToggle((t) => !t);
+  };
 
-  return [
-    toggle,
-    updateToggle,
-  ];
+  return [toggle, updateToggle];
 }

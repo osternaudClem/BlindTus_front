@@ -2,7 +2,6 @@ module.exports = {
   musicsActions: require('./musics'),
   usersActions: require('./users'),
   scoresActions: require('./scores'),
-  gameSettingsActions: require('./gameSettings'),
   historyActions: require('./history'),
   gamesActions: require('./games'),
   moviesActions: require('./movies'),

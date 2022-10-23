@@ -1,79 +1,85 @@
 import { callApi } from '../lib/axios';
 import * as types from '../datas/actionTypes';
 
+/**
+ * @name getFullHistory
+ * @returns {string|Object[]}
+ */
 export function getFullHistory() {
   return async function (dispatch) {
-    function onSuccess(success) {
-      dispatch({ type: types.GET_ALL_HISTORY_TODAY_SUCCESS, history: success.data });
-      return success.data;
-    }
-
-    function onError(error) {
-      throw error.response;
-    }
-
     try {
       const success = await callApi.get('/historytoday');
-      return onSuccess(success);
-    } catch (error) {
-      return onError(error);
-    }
-  };
-}
-
-export function getHistory(historyId) {
-  return async function (dispatch) {
-    function onSuccess(success) {
-      dispatch({ type: types.GET_HISTORY_TODAY_SUCCESS, history: success.data });
+      dispatch({
+        type: types.GET_ALL_HISTORY_TODAY_SUCCESS,
+        history: success.data,
+      });
       return success.data;
-    }
-
-    function onError(error) {
-      throw error.response;
-    }
-
-    try {
-      const success = await callApi.get(`/historytoday/${historyId}`);
-      return onSuccess(success);
     } catch (error) {
-      return onError(error);
+      return error.response;
     }
   };
 }
 
-export function getTodayUser(userId) {
+/**
+ * @name getHistory
+ * @param {string} history_id
+ * @returns {string|Object}
+ */
+export function getHistory(history_id) {
   return async function (dispatch) {
-    function onSuccess(success) {
-      dispatch({ type: types.GET_HISTORY_TODAY_SUCCESS, history: success.data });
-      return success.data;
-    }
-
-    function onError(error) {
-      throw error.response;
-    }
-
     try {
-      const success = await callApi.get(`/historytoday/user/${userId}`);
-      return onSuccess(success);
+      const success = await callApi.get(`/historytoday/${history_id}`);
+      dispatch({
+        type: types.GET_HISTORY_TODAY_SUCCESS,
+        history: success.data,
+      });
+      return success.data;
     } catch (error) {
-      return onError(error);
+      return error.response;
     }
   };
 }
 
+/**
+ * @name getTodayUser
+ * @param {string} user_id
+ * @returns {string|Object}
+ */
+export function getTodayUser(user_id) {
+  return async function (dispatch) {
+    try {
+      const success = await callApi.get(`/historytoday/user/${user_id}`);
+      dispatch({
+        type: types.GET_HISTORY_TODAY_SUCCESS,
+        history: success.data,
+      });
+      return success.data;
+    } catch (error) {
+      return error.response;
+    }
+  };
+}
+
+/**
+ * @name saveHistory
+ * @param {Object} history
+ * @returns {string|Object}
+ */
 export function saveHistory(history) {
   return async function (dispatch) {
     try {
       const success = await callApi.post('/historytoday', {
-        ...history
+        ...history,
       });
 
-      dispatch({ type: types.SAVE_HISTORY_TODAY_SUCCESS, history: success.data });
-
+      dispatch({
+        type: types.SAVE_HISTORY_TODAY_SUCCESS,
+        history: success.data,
+      });
 
       return success.data;
     } catch (error) {
       throw error.response;
     }
-  }
+  };
 }
