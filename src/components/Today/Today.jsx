@@ -32,6 +32,7 @@ import { HistoryDay } from '../History';
 import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
 import { MovieTextField } from '../Forms';
+import { addSpaces } from '../../lib/array';
 
 const TIMERS = [10, 25, 40, 70, 120];
 // const TIMERS = [3, 3, 3, 3, 3];
@@ -43,7 +44,7 @@ const STEPS = {
 };
 
 function Today({ onSaveHistory, game, history }) {
-  const [step, setStep] = useState(STEPS['BEGINING'])
+  const [step, setStep] = useState(STEPS['BEGINING']);
   const [open, setOpen] = useState(false);
   const [tries, setTries] = useState(0);
   const [answer, updateAnswer] = useTextfield();
@@ -69,7 +70,7 @@ function Today({ onSaveHistory, game, history }) {
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
-  }
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -86,7 +87,7 @@ function Today({ onSaveHistory, game, history }) {
     setDisplayTimer(true);
     setIsCorrect(null);
     answerField.current.focus();
-  }
+  };
 
   const onTimerTick = function (tick) {
     if (tick === 0) {
@@ -95,11 +96,11 @@ function Today({ onSaveHistory, game, history }) {
       setInputDisabled(true);
       setDisplayTimer(false);
       setDisplayGame(false);
-      setTries(s => s + 1);
+      setTries((s) => s + 1);
     }
-  }
+  };
 
-  const onSendAnswer = event => {
+  const onSendAnswer = (event) => {
     if (event) {
       event.preventDefault();
     }
@@ -122,12 +123,21 @@ function Today({ onSaveHistory, game, history }) {
     updateAnswer('');
     setDisplayTimer(false);
     setDisplayGame(false);
-    setTries(s => s + 1);
+    setTries((s) => s + 1);
 
     if (tries === 4) {
       setStep(STEPS['ENDED']);
     }
-  }
+  };
+
+  const handleCliclSkipRound = function () {
+    onSaveHistory('', false);
+    setTries((s) => s + 1);
+
+    if (tries === 4) {
+      setStep(STEPS['ENDED']);
+    }
+  };
 
   const handleClickShareResult = async function () {
     let header = `🎬 BlindTus 🍿 #${addLeadingZeros(game.totalTodays, 3)}\n\n`;
@@ -140,8 +150,7 @@ function Today({ onSaveHistory, game, history }) {
 
       if (history.attempts.length === i + 1) {
         emote = '✅';
-      }
-      else if (history.attempts.length > i + 1) {
+      } else if (history.attempts.length > i + 1) {
         emote = '❌';
       }
 
@@ -153,17 +162,25 @@ function Today({ onSaveHistory, game, history }) {
     const isCopied = await copyToClipBoard(header);
 
     if (isCopied) {
-      setAlertTitle('Résumé copié dans le presse-papier.')
-    }
-    else {
-      setAlertTitle('Votre navigateur n\'est pas compatible.');
+      setAlertTitle('Résumé copié dans le presse-papier.');
+    } else {
+      setAlertTitle("Votre navigateur n'est pas compatible.");
     }
 
     setIsAlertOpen(true);
+  };
+
+  if (!game) {
+    return;
   }
 
   return (
-    <Grid container spacing={12} component="main" className="LoginPage">
+    <Grid
+      container
+      spacing={12}
+      component="main"
+      className="LoginPage"
+    >
       <CssBaseline />
       {renderAlert()}
       <Grid
@@ -172,14 +189,26 @@ function Today({ onSaveHistory, game, history }) {
         sm={6}
         md={8}
       >
-        <Typography component="h1" variant="h3" align="center" marginBottom={2}>
+        <Typography
+          component="h1"
+          variant="h3"
+          align="center"
+          marginBottom={2}
+        >
           Musique du jour
           <IconButton onClick={handleClickOpen}>
             <HelpIcon />
           </IconButton>
         </Typography>
 
-        <Typography component="p" variant="subtitle2" align="center" marginBottom={10}>Vous ne pouvez entrer le nom du film que pendant la lecture</Typography>
+        <Typography
+          component="p"
+          variant="subtitle2"
+          align="center"
+          marginBottom={10}
+        >
+          Vous ne pouvez entrer le nom du film que pendant la lecture
+        </Typography>
 
         {endedGame()}
         {renderGame()}
@@ -196,7 +225,7 @@ function Today({ onSaveHistory, game, history }) {
         <HistoryDay history={history} />
       </Grid>
     </Grid>
-  )
+  );
 
   function renderGame() {
     if (history.isCompleted) {
@@ -205,10 +234,22 @@ function Today({ onSaveHistory, game, history }) {
 
     return (
       <div>
-        <Steps steps={[1, 2, 3, 4, 5]} active={tries} correct={history.today && history.today.isWin && history.today.attempts.length} />
-        {displayTimer && step !== 'ENDED' &&
-          <Timer limit={TIMERS[tries]} key={`timer-${tries}`} onFinished={onTimerTick} />
-        }
+        <Steps
+          steps={[1, 2, 3, 4, 5]}
+          active={tries}
+          correct={
+            history.today &&
+            history.today.isWin &&
+            history.today.attempts.length
+          }
+        />
+        {displayTimer && step !== 'ENDED' && (
+          <Timer
+            limit={TIMERS[tries]}
+            key={`timer-${tries}`}
+            onFinished={onTimerTick}
+          />
+        )}
         <Box
           sx={{
             width: '100%',
@@ -218,7 +259,7 @@ function Today({ onSaveHistory, game, history }) {
           component="form"
           noValidate
           autoComplete="off"
-          onSubmit={event => onSendAnswer(event)}
+          onSubmit={(event) => onSendAnswer(event)}
         >
           <MovieTextField
             inputRef={answerField}
@@ -226,9 +267,11 @@ function Today({ onSaveHistory, game, history }) {
             value={answer}
             isCorrect={isCorrect}
             disabled={inputDisabled}
+            addSkipButton
+            onSkipRound={handleCliclSkipRound}
           />
         </Box>
-        {!displayGame &&
+        {!displayGame && (
           <Box align="center">
             <Button
               onClick={handleClickNext}
@@ -238,12 +281,12 @@ function Today({ onSaveHistory, game, history }) {
               sx={{ marginBottom: '16px' }}
             >
               Lancer la musique
-            </ Button>
+            </Button>
           </Box>
-        }
+        )}
         {renderClues()}
       </div>
-    )
+    );
   }
 
   function endedGame() {
@@ -253,13 +296,23 @@ function Today({ onSaveHistory, game, history }) {
 
     return (
       <div>
-        <Alert variant="outlined">La partie est finie pour aujourd'hui. Revenez demain !</Alert>
+        <Alert variant="outlined">
+          La partie est finie pour aujourd'hui. Revenez demain !
+        </Alert>
         <Box sx={{ margin: '24px 0' }}>
-          <Button variant="contained" onClick={handleClickShareResult}>Partager le résultat</Button>
+          <Button
+            variant="contained"
+            onClick={handleClickShareResult}
+          >
+            Partager le résultat
+          </Button>
         </Box>
-        <Result movie={game.music.movie} music={game.music} />
+        <Result
+          movie={game.music.movie}
+          music={game.music}
+        />
       </div>
-    )
+    );
   }
 
   function renderPlayer() {
@@ -271,7 +324,7 @@ function Today({ onSaveHistory, game, history }) {
       <GamePlayer
         audioName={game.music.audio_name}
         timecode={game.music.timecode}
-       />
+      />
     );
   }
 
@@ -284,11 +337,11 @@ function Today({ onSaveHistory, game, history }) {
     }
 
     if (tries > 1) {
-      clues.push({ key: 'Réalisateur', value: movie.directors[0] });
+      clues.push({ key: 'Réalisateur', value: addSpaces(movie.directors) });
     }
 
     if (tries > 2) {
-      clues.push({ key: 'Acteurs', value: movie.casts });
+      clues.push({ key: 'Acteurs', value: addSpaces(movie.casts) });
     }
 
     if (tries > 3) {
@@ -300,20 +353,27 @@ function Today({ onSaveHistory, game, history }) {
     }
 
     return (
-      <Paper elevation={2} sx={{ padding: '16px' }}>
+      <Paper
+        elevation={2}
+        sx={{ padding: '16px' }}
+      >
         <Typography variant="h5">Indices</Typography>
         <Box>
           {clues.map((clue, index) => {
             return (
-              <Stack direction="row" sx={{ margin: '16px 0' }} key={index}>
+              <Stack
+                direction="row"
+                sx={{ margin: '16px 0' }}
+                key={index}
+              >
                 <div style={{ width: '180px' }}>{clue.key}</div>
                 <div style={{ flex: 1 }}>{clue.value}</div>
               </Stack>
-            )
+            );
           })}
         </Box>
       </Paper>
-    )
+    );
   }
 
   function renderAlert() {
@@ -324,11 +384,15 @@ function Today({ onSaveHistory, game, history }) {
         open={isAlertOpen}
         onClose={handleCloseAlert}
       >
-        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleCloseAlert}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
           {alertTitle}
         </Alert>
       </Snackbar>
-    )
+    );
   }
 
   function renderDialogExplication() {
@@ -337,23 +401,25 @@ function Today({ onSaveHistory, game, history }) {
         open={open}
         onClose={handleClose}
       >
-        <DialogTitle>
-          Règles
-        </DialogTitle>
+        <DialogTitle>Règles</DialogTitle>
         <Divider />
         <DialogContent>
           <DialogContentText>
             Vous avez <b>5</b> essaie pour trouver la musique du jour.
           </DialogContentText>
           <DialogContentText>
-            Le mode de jeu est en "Facile". C'est-à-dire que le nom du film peut être un raccourci.
+            Le mode de jeu est en "Facile". C'est-à-dire que le nom du film peut
+            être un raccourci.
           </DialogContentText>
-          <DialogContentText>
-            Examples:
-          </DialogContentText>
+          <DialogContentText>Examples:</DialogContentText>
           <ul>
-            <li>2001, l'Odyssée de l'espace <ArrowForwardIcon /> 2001</li>
-            <li>Le Seigneur des anneaux : La Communauté de l'anneau <ArrowForwardIcon /> Le Seigneur des anneaux</li>
+            <li>
+              2001, l'Odyssée de l'espace <ArrowForwardIcon /> 2001
+            </li>
+            <li>
+              Le Seigneur des anneaux : La Communauté de l'anneau{' '}
+              <ArrowForwardIcon /> Le Seigneur des anneaux
+            </li>
           </ul>
 
           <DialogContentText>
@@ -369,12 +435,16 @@ function Today({ onSaveHistory, game, history }) {
         </DialogContent>
         <Divider />
         <DialogActions>
-          <Button onClick={handleClose} autoFocus variant="contained">
+          <Button
+            onClick={handleClose}
+            autoFocus
+            variant="contained"
+          >
             Fermer
           </Button>
         </DialogActions>
       </Dialog>
-    )
+    );
   }
 }
 
@@ -385,7 +455,7 @@ Today.propTypes = {
 };
 
 Today.defaultProps = {
-  onSaveHistory: () => { },
+  onSaveHistory: () => {},
   game: null,
   history: null,
 };

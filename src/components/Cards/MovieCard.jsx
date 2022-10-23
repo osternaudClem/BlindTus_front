@@ -9,6 +9,7 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { tmdb } from '../../config';
+import { addSpaces } from '../../lib/array.js'
 import './Cards.scss';
 
 function MovieCard({ movie, music, hideGenres }) {
@@ -27,7 +28,7 @@ function MovieCard({ movie, music, hideGenres }) {
       <div className="MovieCard__content">
         <Divider textAlign={largeScreen ? 'left' : 'center'} sx={{ marginBottom: '16px' }}>A propos du film</Divider>
         <Typography variant="h4" gutterBottom>{movie.title_fr}</Typography>
-        <Typography variant="h5" gutterBottom>{movie.directors}</Typography>
+        <Typography variant="h5" gutterBottom>{addSpaces(movie.directors)}</Typography>
         <Typography variant="h6" gutterBottom>{movie.release_date}</Typography>
         {renderGenres()}
 

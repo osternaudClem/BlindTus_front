@@ -14,6 +14,6 @@ module.exports = {
     image_path: 'https://image.tmdb.org/t/p/original',
   },
   requestHeader: {
-    headers: { Authorization: `Bearer ${process.env.REACT_APP_API_TOKEN}` }
-  }
+    headers: { Authorization: `Bearer ${process.env.REACT_APP_API_TOKEN}` },
+  },
 };
