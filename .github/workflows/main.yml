@@ -19,3 +19,4 @@ jobs:
             git pull origin main
             git status
             yarn build
+            pm2 reload all
