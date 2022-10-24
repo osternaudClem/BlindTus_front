@@ -1,21 +1,21 @@
 name: Deployment Workflow
 on:
   push:
-    branches: [ main ]
-    
+    branches: [main]
+
 jobs:
   build:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: 195.15.223.247
-        username: debian
-        password: ${{ secrets.RSA_KEY }}
-        port: 22
-        script: |
-          cd /home/debian/www/blindtus/client
-          git pull origin main
-          git status
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: 195.15.223.247
+          username: debian
+          password: ${{ secrets.RSA_KEY }}
+          port: 22
+          script: |
+            cd /home/debian/www/blindtus/client
+            git pull origin main
+            git status
