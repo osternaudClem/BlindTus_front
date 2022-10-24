@@ -11,10 +11,11 @@ jobs:
       - name: executing remote ssh commands using password
         uses: fifsky/ssh-action@master
         with:
-          host: 195.15.223.247
-          user: debian
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USER }}
           key: ${{ secrets.RSA_KEY }}
           command: |
             cd /home/debian/www/blindtus/client
             git pull origin main
             git status
+            yarn build
