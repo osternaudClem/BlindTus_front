@@ -193,6 +193,7 @@ const ResponsiveAppBar = (props) => {
                 component={RouterLink}
                 to={page.url}
                 startIcon={page.icon && page.icon}
+                className="Header__nav_desktop"
                 sx={{
                   my: 2,
                   mr: '12px',
