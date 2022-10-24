@@ -15,9 +15,6 @@ jobs:
           user: debian
           key: ${{ secrets.RSA_KEY }}
           command: |
-            cd /tmp
-            ls -a
-          # script: |
-          #   cd /home/debian/www/blindtus/client
-          #   git pull origin main
-          #   git status
+            cd /home/debian/www/blindtus/client
+            git pull origin main
+            git status
