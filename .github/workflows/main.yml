@@ -13,7 +13,7 @@ jobs:
         with:
           host: 195.15.223.247
           user: debian
-          password: ${{ secrets.RSA_KEY }}
+          key: ${{ secrets.RSA_KEY }}
           command: |
             cd /tmp
             ls -a
