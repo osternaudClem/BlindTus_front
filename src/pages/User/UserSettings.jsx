@@ -11,6 +11,7 @@ import {
 } from '../../components/Settings';
 import { usersActions } from '../../actions';
 import { updateTitle } from '../../lib/document';
+import { Heading } from '../../components/UI';
 
 function UserSettings(props) {
   const [tab, setTab] = useState(0);
@@ -36,13 +37,7 @@ function UserSettings(props) {
   return (
     <Container>
       <CssBaseline />
-      <Typography
-        variant="h1"
-        component="h1"
-        mb={4}
-      >
-        Parametres
-      </Typography>
+      <Heading>Parametres</Heading>
       <Tabs
         value={tab}
         onChange={(event, value) => updateTab(value)}
@@ -51,6 +46,7 @@ function UserSettings(props) {
           '& .MuiTabs-flexContainer': {
             flexWrap: 'wrap',
           },
+          mb: '16px',
         }}
       >
         <Tab label="Avatar" />

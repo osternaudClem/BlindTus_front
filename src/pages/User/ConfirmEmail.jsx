@@ -16,6 +16,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import { usersActions } from '../../actions';
 import { updateTitle } from '../../lib/document';
 import '../Page.scss';
+import { Heading } from '../../components/UI';
 
 function ConmfirmEmail(props) {
   const [, setUserToken] = useCookie('user', {});
@@ -66,12 +67,7 @@ function ConmfirmEmail(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <EmailOutlinedIcon />
       </Avatar>
-      <Typography
-        component="h1"
-        variant="h3"
-      >
-        Validez votre e-mail
-      </Typography>
+      <Heading>Validez votre e-mail</Heading>
       {renderError()}
       <Typography
         component="p"

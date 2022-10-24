@@ -26,6 +26,7 @@ import { useTextfield, useToggle } from '../../hooks/formHooks';
 import { updateTitle } from '../../lib/document';
 import { Copyright } from '../../components/Footer';
 import '../Page.scss';
+import { Heading } from '../../components/UI';
 
 function NewPassword(props) {
   // eslint-disable-next-line
@@ -89,12 +90,7 @@ function NewPassword(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography
-        component="h1"
-        variant="h5"
-      >
-        Nouveau mot de passe
-      </Typography>
+      <Heading>Nouveau mot de passe</Heading>
       <Box
         component="form"
         noValidate

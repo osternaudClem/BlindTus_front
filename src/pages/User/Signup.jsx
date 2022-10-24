@@ -26,6 +26,7 @@ import { useTextfield, useToggle } from '../../hooks/formHooks';
 import { updateTitle } from '../../lib/document';
 import { Copyright } from '../../components/Footer';
 import '../Page.scss';
+import { Heading } from '../../components/UI';
 
 function Signup(props) {
   // eslint-disable-next-line
@@ -99,12 +100,7 @@ function Signup(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography
-        component="h1"
-        variant="h5"
-      >
-        Créer un compte
-      </Typography>
+      <Heading>Créer un compte</Heading>
       <Box
         component="form"
         noValidate

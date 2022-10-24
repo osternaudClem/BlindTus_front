@@ -22,6 +22,7 @@ import {
   GameProposals,
   GameRoundResults,
 } from '../../components/Game';
+import { Heading, PaperBox } from '../../components/UI';
 
 const TIMER_GAME = 10;
 
@@ -346,22 +347,14 @@ function Play({
     }
 
     return (
-      <Paper
-        elevation={2}
-        style={{ padding: '8px 16px', marginBottom: '16px' }}
-      >
-        <Typography
-          component="h3"
-          variant="h5"
-        >
-          Résultat de la manche
-        </Typography>
+      <PaperBox style={{ marginBottom: '16px' }}>
+        <Heading type="subtitle">Résultat de la manche</Heading>
         <GameRoundResults
           game={game}
           players={players}
           musicNumber={musicNumber}
         />
-      </Paper>
+      </PaperBox>
     );
   }
 }

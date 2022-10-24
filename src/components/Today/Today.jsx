@@ -33,6 +33,7 @@ import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
 import { MovieTextField } from '../Forms';
 import { addSpaces } from '../../lib/array';
+import { Heading } from '../UI';
 
 const TIMERS = [10, 25, 40, 70, 120];
 // const TIMERS = [3, 3, 3, 3, 3];
@@ -189,16 +190,12 @@ function Today({ onSaveHistory, game, history }) {
         sm={6}
         md={8}
       >
-        <Typography
-          component="h1"
-          variant="h3"
-          marginBottom={2}
-        >
+        <Heading>
           Musique du jour
           <IconButton onClick={handleClickOpen}>
             <HelpIcon />
           </IconButton>
-        </Typography>
+        </Heading>
 
         <Typography
           component="p"

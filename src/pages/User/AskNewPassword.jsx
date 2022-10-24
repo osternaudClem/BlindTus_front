@@ -16,6 +16,7 @@ import { usersActions } from '../../actions';
 import { useTextfield } from '../../hooks/formHooks';
 import { updateTitle } from '../../lib/document';
 import { Copyright } from '../../components/Footer';
+import { Heading } from '../../components/UI';
 
 function AskNewPassword(props) {
   const [email, updateEmail] = useTextfield();
@@ -57,12 +58,7 @@ function AskNewPassword(props) {
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography
-        component="h1"
-        variant="h5"
-      >
-        Mot de passe perdu ?
-      </Typography>
+      <Heading>Mot de passe perdu ?</Heading>
       {openSuccess && (
         <Alert
           severity="success"

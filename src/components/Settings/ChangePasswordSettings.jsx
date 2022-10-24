@@ -24,9 +24,15 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { usersActions } from '../../actions';
 import { useTextfield, useToggle } from '../../hooks/formHooks';
 import { UserContext } from '../../contexts/userContext';
+import { Heading, PaperBox } from '../UI';
 
 function SlideTransition(props) {
-  return <Slide {...props} direction="down" />;
+  return (
+    <Slide
+      {...props}
+      direction="down"
+    />
+  );
 }
 
 function ChangePasswordSettings(props) {
@@ -45,25 +51,30 @@ function ChangePasswordSettings(props) {
     setServerErrors(null);
 
     // Check password
-    const passwordError = newPassword === '' || !isStrongPassword(newPassword, {
-      minSymbols: 0,
-    });
+    const passwordError =
+      newPassword === '' ||
+      !isStrongPassword(newPassword, {
+        minSymbols: 0,
+      });
     // Check confirm password
     const confirmPasswordError = newPassword !== confirmNewPassword;
 
-    setErrors(errors => {
+    setErrors((errors) => {
       return {
         ...errors,
         newPassword: passwordError,
         confirmNewPassword: confirmPasswordError,
-      }
+      };
     });
 
     if (passwordError || confirmPasswordError) {
       return;
     }
 
-    const response = await props.usersActions.changePassword(user._id, { password: currentPassword, newPassword });
+    const response = await props.usersActions.changePassword(user._id, {
+      password: currentPassword,
+      newPassword,
+    });
 
     if (response.error) {
       return setServerErrors(response.messages);
@@ -96,8 +107,11 @@ function ChangePasswordSettings(props) {
         </Alert>
       </Snackbar>
 
-      <Typography variant="h3" component="h2" mb={2}>Modifier votre mot de passe</Typography>
-      <Paper sx={{ padding: '2rem' }} component="form" onSubmit={handleSubmit}>
+      <PaperBox
+        component="form"
+        onSubmit={handleSubmit}
+      >
+        <Heading type="subtitle">Modifier votre mot de passe</Heading>
         <Stack
           spacing={4}
           sx={{ marginBottom: '1rem' }}
@@ -111,8 +125,8 @@ function ChangePasswordSettings(props) {
             onChange={updateCurrentPassword}
             error={errors && errors.currentPassword}
             InputProps={{
-              endAdornment:
-                <InputAdornment position="end" >
+              endAdornment: (
+                <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={toggleShowPassword}
@@ -121,6 +135,7 @@ function ChangePasswordSettings(props) {
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
+              ),
             }}
           />
 
@@ -133,8 +148,8 @@ function ChangePasswordSettings(props) {
               onChange={updateNewPassword}
               error={errors && errors.newPassword}
               InputProps={{
-                endAdornment:
-                  <InputAdornment position="end" >
+                endAdornment: (
+                  <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
                       onClick={toggleShowNewPassword}
@@ -143,10 +158,12 @@ function ChangePasswordSettings(props) {
                       {showNewPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
+                ),
               }}
             />
             <FormHelperText>
-              Le mot de passe doit faire au minimum 8 charactères et contenir au moins 1 majuscule, 1 minuscule et 1 chiffre.
+              Le mot de passe doit faire au minimum 8 charactères et contenir au
+              moins 1 majuscule, 1 minuscule et 1 chiffre.
             </FormHelperText>
           </FormControl>
 
@@ -173,8 +190,8 @@ function ChangePasswordSettings(props) {
             Modifier
           </Button>
         </Stack>
-      </Paper >
-    </React.Fragment >
+      </PaperBox>
+    </React.Fragment>
   );
 
   function renderError() {
@@ -187,14 +204,14 @@ function ChangePasswordSettings(props) {
         <AlertTitle>Error</AlertTitle>
         {serverErrors}
       </Alert>
-    )
+    );
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
 export default connect(null, mapDispatchToProps)(ChangePasswordSettings);

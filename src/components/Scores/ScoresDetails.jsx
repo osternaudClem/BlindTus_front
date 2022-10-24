@@ -22,10 +22,18 @@ function ScoresDetails(props) {
   }, 0);
 
   return (
-
-    <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-      <Grid container alignItems="center">
-        <Grid item xs>
+    <Box
+      sx={{ p: 2 }}
+      style={{ marginTop: '-8px' }}
+    >
+      <Grid
+        container
+        alignItems="center"
+      >
+        <Grid
+          item
+          xs
+        >
           <Typography variant="h5">Score</Typography>
         </Grid>
         <Grid item>
@@ -33,7 +41,7 @@ function ScoresDetails(props) {
         </Grid>
       </Grid>
       <List dense>
-        {props.scores.currentGame.map(score => (
+        {props.scores.currentGame.map((score) => (
           <div key={`${score.movie} - ${score.score}`}>
             <ListItem
               key={score.movie}
@@ -42,32 +50,27 @@ function ScoresDetails(props) {
               }
             >
               <ListItemIcon>
-                {score.isCorrect && (
-                  <CheckIcon color="success" />
-                )}
-                {!score.isCorrect && (
-                  <ClearIcon sx={{ color: red[500] }} />
-                )}
+                {score.isCorrect && <CheckIcon color="success" />}
+                {!score.isCorrect && <ClearIcon sx={{ color: red[500] }} />}
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ noWrap: true }}
                 primary={score.movie}
                 secondary={`Votre reponse: ${score.playerAnswer}`}
               />
-
             </ListItem>
             <Divider variant="middle" />
           </div>
         ))}
       </List>
     </Box>
-  )
+  );
 }
 
 function mapStateToProps(state) {
   return {
     scores: state.scores,
-  }
+  };
 }
 
-export default connect(mapStateToProps, null)(ScoresDetails)
+export default connect(mapStateToProps, null)(ScoresDetails);

@@ -32,6 +32,7 @@ import {
   GameSettingsResume,
   MovieTextField,
 } from '../../components/Forms';
+import { Heading } from '../../components/UI';
 import { useTextfield } from '../../hooks/formHooks';
 import { UserContext } from '../../contexts/userContext';
 import '../Page.scss';
@@ -296,13 +297,7 @@ function NewGame(props) {
 
     return (
       <div>
-        <Typography
-          component="h2"
-          variant="h3"
-          marginBottom={4}
-        >
-          Nouvelle partie
-        </Typography>
+        <Heading>Nouvelle partie</Heading>
         <GameSettings
           onSettingsSaved={onSettingsSaved}
           redirect="new-game"

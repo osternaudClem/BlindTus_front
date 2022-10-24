@@ -35,13 +35,19 @@ function valuetext(value) {
   return `${value} secondes`;
 }
 
-function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode, ...props }) {
+function GameSettings({
+  onSettingsSaved,
+  onSettingsChange,
+  redirect,
+  noGameCode,
+  ...props
+}) {
   const [errorCode, setErrorCode] = useState(null);
   const [time, updateTime] = useSlider(30);
   const [movieNumber, updateMovieNumber] = useTextfield(NOVIE_NUMBER);
   const [difficulty, updateDifficulty] = useTextfield('easy');
   const [code, updateCode] = useTextfield('');
-  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('md'));
+  const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
 
   const handleClickSettings = async function (event) {
@@ -52,32 +58,32 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
     if (code && code !== '' && redirect) {
       const game = await props.gamesActions.getGame(code);
       if (!game._id) {
-        return setErrorCode('La partie correspondante à ce code n\'existe pas');
+        return setErrorCode("La partie correspondante à ce code n'existe pas");
       }
       return navigate(`/${redirect}?code=${code}`);
     }
 
     onSettingsSaved({ time, movieNumber, difficulty });
-  }
+  };
 
   const handleClickResetCode = function () {
     updateCode('');
-  }
+  };
 
   const onTimeChange = function (event, value) {
     updateTime(event, value);
     sendChangeSettings({ updatedTime: value });
-  }
+  };
 
   const onMovieNumberChange = function (event) {
     updateMovieNumber(event);
     sendChangeSettings({ updatedMovieNumber: event.target.value });
-  }
+  };
 
   const onDifficultyChange = function (event) {
     updateDifficulty(event);
     sendChangeSettings({ updatedDifficulty: event.target.value });
-  }
+  };
 
   const sendChangeSettings = function (settings) {
     if (onSettingsChange) {
@@ -87,16 +93,29 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
         difficulty: settings.updatedDifficulty || difficulty,
       });
     }
-  }
+  };
 
   return (
     <PaperBox>
-      <Box sx={{ width: '100%' }} component="form" onSubmit={handleClickSettings}>
-        <Grid container spacing={3}>
-          {!noGameCode &&
-            <Grid item xs={12}>
+      <Box
+        sx={{ width: '100%' }}
+        component="form"
+        onSubmit={handleClickSettings}
+      >
+        <Grid
+          container
+          spacing={3}
+        >
+          {!noGameCode && (
+            <Grid
+              item
+              xs={12}
+            >
               {errorCode && (
-                <Alert severity="error" sx={{ marginBottom: '24px' }}>
+                <Alert
+                  severity="error"
+                  sx={{ marginBottom: '24px' }}
+                >
                   <AlertTitle>Erreur</AlertTitle>
                   {errorCode}
                 </Alert>
@@ -107,7 +126,7 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
                   value={code}
                   onChange={updateCode}
                   InputProps={{
-                    endAdornment:
+                    endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="erase text field"
@@ -117,6 +136,7 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
                           <ClearIcon />
                         </IconButton>
                       </InputAdornment>
+                    ),
                   }}
                 />
               </FormControl>
@@ -137,8 +157,11 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
                 Ou Créez votre partie sur mesure
               </Divider>
             </Grid>
-          }
-          <Grid item xs={12}>
+          )}
+          <Grid
+            item
+            xs={12}
+          >
             <Typography gutterBottom>
               Durée de chaques manches: {time} secondes
             </Typography>
@@ -154,10 +177,11 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
               onChange={onTimeChange}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Typography gutterBottom>
-              Nombre de films
-            </Typography>
+          <Grid
+            item
+            xs={12}
+          >
+            <Typography gutterBottom>Nombre de films</Typography>
             <TextField
               type="number"
               defaultValue={movieNumber}
@@ -165,35 +189,52 @@ function GameSettings({ onSettingsSaved, onSettingsChange, redirect, noGameCode,
                 inputProps: {
                   min: MOVIE_MIN,
                   max: MOVIE_MAX,
-                }
+                },
               }}
               onChange={onMovieNumberChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+          >
             <FormControl>
-              <Typography gutterBottom>
-                Difficulté de la partie
-              </Typography>
+              <Typography gutterBottom>Difficulté de la partie</Typography>
               <RadioGroup
                 defaultValue={difficulty}
                 value={difficulty}
                 onChange={onDifficultyChange}
               >
-                <FormControlLabel value="easy" control={<Radio />} label="Facile (réponse parmis plusieurs)" />
-                <FormControlLabel value="difficult" control={<Radio />} label="Difficile (tapez la bonne réponse)" />
-                <Typography variant="subtitle1"></Typography>
+                <FormControlLabel
+                  value="easy"
+                  control={<Radio />}
+                  label="Facile (réponse parmis plusieurs)"
+                />
+                <FormControlLabel
+                  value="difficult"
+                  control={<Radio />}
+                  label="Difficile (tapez la bonne réponse)"
+                />
               </RadioGroup>
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
-            <Button variant="contained" onClick={handleClickSettings} type="submit">Lancer la partie</Button>
+          <Grid
+            item
+            xs={12}
+          >
+            <Button
+              variant="contained"
+              onClick={handleClickSettings}
+              type="submit"
+            >
+              Lancer la partie
+            </Button>
           </Grid>
         </Grid>
       </Box>
     </PaperBox>
-  )
+  );
 }
 
 GameSettings.propTypes = {
