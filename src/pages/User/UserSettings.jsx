@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Container, CssBaseline, Tab, Tabs, Typography } from '@mui/material';
+import { Container, CssBaseline, Tab, Tabs } from '@mui/material';
 
 import {
   AvatarSettings,

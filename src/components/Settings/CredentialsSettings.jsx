@@ -2,8 +2,6 @@ import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  Typography,
-  Paper,
   TextField,
   Stack,
   Divider,

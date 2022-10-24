@@ -16,7 +16,6 @@ import {
   Grid,
   Alert,
   Snackbar,
-  Paper,
   Stack,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
@@ -33,7 +32,7 @@ import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
 import { MovieTextField } from '../Forms';
 import { addSpaces } from '../../lib/array';
-import { Heading } from '../UI';
+import { Heading, PaperBox } from '../UI';
 
 const TIMERS = [10, 25, 40, 70, 120];
 // const TIMERS = [3, 3, 3, 3, 3];
@@ -348,10 +347,7 @@ function Today({ onSaveHistory, game, history }) {
     }
 
     return (
-      <Paper
-        elevation={2}
-        sx={{ padding: '16px' }}
-      >
+      <PaperBox>
         <Typography variant="h5">Indices</Typography>
         <Box>
           {clues.map((clue, index) => {
@@ -367,7 +363,7 @@ function Today({ onSaveHistory, game, history }) {
             );
           })}
         </Box>
-      </Paper>
+      </PaperBox>
     );
   }
 

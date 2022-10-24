@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types';
 import {
   Grid,
-  Box,
   Button,
   Typography,
   List,
   ListItem,
   ListItemText,
   Divider,
-  Paper,
   Stack,
   Avatar,
 } from '@mui/material';

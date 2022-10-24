@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isStrongPassword } from 'validator';
 import {
-  Typography,
-  Paper,
   TextField,
   Stack,
   Divider,

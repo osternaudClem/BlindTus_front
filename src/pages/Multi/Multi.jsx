@@ -13,7 +13,6 @@ import {
   Divider,
   Stack,
   CircularProgress,
-  Paper,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { callApi } from '../../lib/axios';
@@ -23,6 +22,7 @@ import Lobby from './Lobby';
 import Play from './Play';
 import Results from './Results';
 import { UserAvatar } from '../../components/Avatar';
+import { PaperBox } from '../../components/UI';
 
 const TIMER_GAME = 30;
 const NOVIE_NUMBER = 10;
@@ -340,10 +340,7 @@ function Multi(props) {
   function renderSide() {
     if (!isStarted && code) {
       return (
-        <Paper
-          elevation={2}
-          style={{ padding: '8px 16px' }}
-        >
+        <PaperBox>
           <Typography
             variant="h4"
             gutterBottom
@@ -372,7 +369,7 @@ function Multi(props) {
               );
             })}
           </Stack>
-        </Paper>
+        </PaperBox>
       );
     }
 
@@ -401,10 +398,7 @@ function Multi(props) {
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
-      <Paper
-        elevation={2}
-        style={{ padding: '8px 16px' }}
-      >
+      <PaperBox>
         <Typography
           variant="h4"
           gutterBottom
@@ -431,7 +425,7 @@ function Multi(props) {
             );
           })}
         </Stack>
-      </Paper>
+      </PaperBox>
     );
   }
 
@@ -464,10 +458,7 @@ function Multi(props) {
     usersScore = usersScore.sort((a, b) => b.score - a.score);
 
     return (
-      <Paper
-        sx={{ p: 2 }}
-        style={{ marginTop: '-8px' }}
-      >
+      <PaperBox>
         <Grid
           container
           alignItems="center"
@@ -509,7 +500,7 @@ function Multi(props) {
             );
           })}
         </List>
-      </Paper>
+      </PaperBox>
     );
   }
 }

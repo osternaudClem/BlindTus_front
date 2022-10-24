@@ -2,14 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useCopyToClipboard } from 'usehooks-ts';
-import {
-  CssBaseline,
-  Button,
-  Typography,
-  Snackbar,
-  Alert,
-  Grid,
-} from '@mui/material';
+import { CssBaseline, Button, Snackbar, Alert, Grid } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { updateTitle } from '../../lib/document';
 import { scoresActions, musicsActions } from '../../actions';

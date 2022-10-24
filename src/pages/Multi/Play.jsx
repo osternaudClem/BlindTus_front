@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  Box,
-  Alert,
-  AlertTitle,
-  Button,
-  Paper,
-  Typography,
-} from '@mui/material';
+import { Box, Alert, AlertTitle, Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 

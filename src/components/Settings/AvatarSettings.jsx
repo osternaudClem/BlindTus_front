@@ -6,8 +6,6 @@ import * as style from '@dicebear/avatars-bottts-sprites';
 
 import {
   Divider,
-  Typography,
-  Paper,
   Grid,
   Stack,
   Box,
