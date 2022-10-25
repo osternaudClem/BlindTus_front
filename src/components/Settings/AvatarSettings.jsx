@@ -6,8 +6,6 @@ import * as style from '@dicebear/avatars-bottts-sprites';
 
 import {
   Divider,
-  Typography,
-  Paper,
   Grid,
   Stack,
   Box,
@@ -25,6 +23,7 @@ import { UserContext } from '../../contexts/userContext';
 import { usersActions } from '../../actions';
 import { objectToArray } from '../../lib/array';
 import colors from '../../datas/colors/index';
+import { Heading, PaperBox } from '../UI';
 import './Settings.scss';
 
 const COLORS = objectToArray(colors);
@@ -32,14 +31,19 @@ const COLORS = objectToArray(colors);
 function AvatarSettings(props) {
   const [avatar, setAvatar] = useState({});
   const { updateUser } = useContext(UserContext);
-  const avatarSvg = createAvatar(style, { dataUri: true, backgroundColor: '#4f4f4f', radius: 100, scale: 80, ...avatar });
-  const largeScreen = useMediaQuery(theme => theme.breakpoints.up('sm'));
-  
+  const avatarSvg = createAvatar(style, {
+    dataUri: true,
+    backgroundColor: '#4f4f4f',
+    radius: 100,
+    scale: 80,
+    ...avatar,
+  });
+  const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
+
   useEffect(() => {
     if (props.user.avatarSettings && props.user.avatarSettings.seed) {
       setAvatar(props.user.avatarSettings);
-    }
-    else {
+    } else {
       setAvatar({
         seed: props.user._id,
         textureChance: 100,
@@ -52,7 +56,7 @@ function AvatarSettings(props) {
 
   const handleCancelUpdate = function () {
     if (!props.user.avatar || props.user.avatar === '') {
-      setAvatar(a => ({
+      setAvatar((a) => ({
         seed: props.user.username,
         colors: '',
         textureChance: 100,
@@ -60,24 +64,25 @@ function AvatarSettings(props) {
         sidesChance: 100,
         topChance: 100,
       }));
+    } else {
+      setAvatar((a) => props.user.avatarSettings);
     }
-    else {
-      setAvatar(a => (props.user.avatarSettings));
-    }
-  }
+  };
 
   const handleUpdateAvatar = function (key, value) {
-    setAvatar(a => ({
+    setAvatar((a) => ({
       ...a,
       [key]: value,
     }));
-  }
+  };
 
   const handleClickSave = async function () {
-    const updatedUser = await props.usersActions.updateUser(props.user._id, { avatar: avatarSvg, avatarSettings: avatar });
+    const updatedUser = await props.usersActions.updateUser(props.user._id, {
+      avatar: avatarSvg,
+      avatarSettings: avatar,
+    });
     updateUser(updatedUser);
-  }
-
+  };
 
   if (!avatar.seed) {
     return;
@@ -85,9 +90,12 @@ function AvatarSettings(props) {
 
   return (
     <React.Fragment>
-      <Typography variant="h3" component="h2" mb={2}>Avatar</Typography>
-      <Paper sx={{ padding: '2rem' }}>
-        <Grid container className="SettingsAvatar">
+      <PaperBox>
+        <Heading type="subtitle">Avatar</Heading>
+        <Grid
+          container
+          className="SettingsAvatar"
+        >
           <Grid
             item
             xs={12}
@@ -111,18 +119,30 @@ function AvatarSettings(props) {
               sx={{ height: '100%' }}
             >
               <Box sx={{ flex: 1 }}>
-                <Stack direction="row" spacing={{ xs: 2 }} sx={{ marginBottom: '1rem' }} className="SettingsAvatar__buttons">
+                <Stack
+                  direction="row"
+                  spacing={{ xs: 2 }}
+                  sx={{ marginBottom: '1rem' }}
+                  className="SettingsAvatar__buttons"
+                >
                   <Button
                     variant="contained"
                     startIcon={<ShuffleIcon />}
-                    onClick={() => handleUpdateAvatar('seed', `${props.user.username}-${Math.random() * 1000}`)}>
+                    onClick={() =>
+                      handleUpdateAvatar(
+                        'seed',
+                        `${props.user.username}-${Math.random() * 1000}`
+                      )
+                    }
+                  >
                     Nouvel avatar aléatoire
                   </Button>
                   <Button
                     variant="outlined"
                     color="warning"
                     startIcon={<ShuffleIcon />}
-                    onClick={handleCancelUpdate}>
+                    onClick={handleCancelUpdate}
+                  >
                     Réinitialiser
                   </Button>
                 </Stack>
@@ -131,16 +151,22 @@ function AvatarSettings(props) {
                     <span key={index}>
                       <IconButton
                         sx={{ color: color[600] }}
-                        onClick={() => handleUpdateAvatar('colors', Object.keys(colors)[index])}
-                      >
-                        {avatar.colors === Object.keys(colors)[index]
-                          ? <AdjustIcon />
-                          : <CircleIcon />
+                        onClick={() =>
+                          handleUpdateAvatar(
+                            'colors',
+                            Object.keys(colors)[index]
+                          )
                         }
+                      >
+                        {avatar.colors === Object.keys(colors)[index] ? (
+                          <AdjustIcon />
+                        ) : (
+                          <CircleIcon />
+                        )}
                       </IconButton>
                       {index === 8 && <br />}
                     </span>
-                  )
+                  );
                 })}
 
                 <Stack
@@ -150,39 +176,70 @@ function AvatarSettings(props) {
                 >
                   <FormControlLabel
                     control={
-                      <Switch color="primary" checked={parseInt(avatar.textureChance) === 100}
+                      <Switch
+                        color="primary"
+                        checked={parseInt(avatar.textureChance) === 100}
                       />
                     }
                     label="Texture"
                     labelPlacement="top"
-                    onChange={() => handleUpdateAvatar('textureChance', parseInt(avatar.textureChance) === 100 ? 0 : 100)}
+                    onChange={() =>
+                      handleUpdateAvatar(
+                        'textureChance',
+                        parseInt(avatar.textureChance) === 100 ? 0 : 100
+                      )
+                    }
                   />
 
                   <FormControlLabel
                     control={
-                      <Switch color="primary" checked={parseInt(avatar.mouthChance) === 100} />
+                      <Switch
+                        color="primary"
+                        checked={parseInt(avatar.mouthChance) === 100}
+                      />
                     }
                     label="Bouche"
                     labelPlacement="top"
-                    onChange={() => handleUpdateAvatar('mouthChance', parseInt(avatar.mouthChance) === 100 ? 1 : 100)}
+                    onChange={() =>
+                      handleUpdateAvatar(
+                        'mouthChance',
+                        parseInt(avatar.mouthChance) === 100 ? 1 : 100
+                      )
+                    }
                   />
 
                   <FormControlLabel
                     control={
-                      <Switch color="primary" checked={parseInt(avatar.sidesChance) === 100} />
+                      <Switch
+                        color="primary"
+                        checked={parseInt(avatar.sidesChance) === 100}
+                      />
                     }
                     label="Oreilles"
                     labelPlacement="top"
-                    onChange={() => handleUpdateAvatar('sidesChance', parseInt(avatar.sidesChance) === 100 ? 1 : 100)}
+                    onChange={() =>
+                      handleUpdateAvatar(
+                        'sidesChance',
+                        parseInt(avatar.sidesChance) === 100 ? 1 : 100
+                      )
+                    }
                   />
 
                   <FormControlLabel
                     control={
-                      <Switch color="primary" checked={parseInt(avatar.topChance) === 100} />
+                      <Switch
+                        color="primary"
+                        checked={parseInt(avatar.topChance) === 100}
+                      />
                     }
                     label="Chapeau"
                     labelPlacement="top"
-                    onChange={() => handleUpdateAvatar('topChance', parseInt(avatar.topChance) === 100 ? 1 : 100)}
+                    onChange={() =>
+                      handleUpdateAvatar(
+                        'topChance',
+                        parseInt(avatar.topChance) === 100 ? 1 : 100
+                      )
+                    }
                   />
                 </Stack>
               </Box>
@@ -193,15 +250,21 @@ function AvatarSettings(props) {
                   justifyContent="flex-end"
                   spacing={{ xs: 2 }}
                 >
-                  <Button onClick={handleClickSave} align="right" variant="contained">Enregister</Button>
+                  <Button
+                    onClick={handleClickSave}
+                    align="right"
+                    variant="contained"
+                  >
+                    Enregister
+                  </Button>
                 </Stack>
               </Box>
             </Stack>
           </Grid>
         </Grid>
-      </Paper >
-    </React.Fragment >
-  )
+      </PaperBox>
+    </React.Fragment>
+  );
 }
 
 function mapStateToProps(state) {

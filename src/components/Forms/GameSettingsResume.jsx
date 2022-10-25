@@ -1,99 +1,126 @@
 import PropTypes from 'prop-types';
 import {
   Grid,
-  Box,
   Button,
   Typography,
   List,
   ListItem,
   ListItemText,
   Divider,
-  Paper,
   Stack,
   Avatar,
 } from '@mui/material';
+import { Heading, PaperBox } from '../UI';
 
 function GameSettingsResume({ game, displayStart, code, onClickStart }) {
   return (
-    <Paper elevation={2} sx={{ width: '600px' }}>
-      <Box sx={{ p: 2, }} style={{ marginTop: '-8px' }}>
-        <Grid container alignItems="center">
-          <Grid item xs>
-            <Typography variant="h5">Parametre de la partie</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="h4">{code}</Typography>
-          </Grid>
+    <PaperBox>
+      <Grid
+        container
+        alignItems="center"
+      >
+        <Grid
+          item
+          xs
+        >
+          <Heading
+            type="subtitle"
+            marginBottom={0}
+          >
+            Parametre de la partie
+          </Heading>
         </Grid>
-        <List>
-          <div>
-            {game.created_by && (
-              <ListItem
-                secondaryAction={
-                  <div>
-                    <Stack direction="row" alignItems="center">
-                      <Typography variant="body" marginRight={2}>{game.created_by.username}</Typography>
-                      <Avatar src={game.created_by.avatar} alt={game.created_by.username} />
-                    </Stack>
-                  </div>
-                }
-              >
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true }}
-                  primary="Généré par"
-                />
-              </ListItem>
-            )}
-            <Divider variant="middle" />
-          </div>
-          <div>
+        <Grid item>
+          <Typography variant="h4">{code}</Typography>
+        </Grid>
+      </Grid>
+      <List>
+        <div>
+          {game.created_by && (
             <ListItem
               secondaryAction={
-                <Typography variant="body">{game.round_time}</Typography>
+                <div>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="body"
+                      marginRight={2}
+                    >
+                      {game.created_by.username}
+                    </Typography>
+                    <Avatar
+                      src={game.created_by.avatar}
+                      alt={game.created_by.username}
+                    />
+                  </Stack>
+                </div>
               }
             >
               <ListItemText
                 primaryTypographyProps={{ noWrap: true }}
-                primary="Temps des manches"
+                primary="Généré par"
               />
             </ListItem>
-            <Divider variant="middle" />
-          </div>
+          )}
+          <Divider variant="middle" />
+        </div>
+        <div>
+          <ListItem
+            secondaryAction={
+              <Typography variant="body">{game.round_time}</Typography>
+            }
+          >
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary="Temps des manches"
+            />
+          </ListItem>
+          <Divider variant="middle" />
+        </div>
 
-          <div>
-            <ListItem
-              secondaryAction={
-                <Typography variant="body">{game.difficulty}</Typography>
-              }
-            >
-              <ListItemText
-                primaryTypographyProps={{ noWrap: true }}
-                primary="Difficulté"
-              />
-            </ListItem>
-            <Divider variant="middle" />
-          </div>
+        <div>
+          <ListItem
+            secondaryAction={
+              <Typography variant="body">{game.difficulty}</Typography>
+            }
+          >
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary="Difficulté"
+            />
+          </ListItem>
+          <Divider variant="middle" />
+        </div>
 
-          <div>
-            <ListItem
-              secondaryAction={
-                <Typography variant="body">{game.totalMusics || (game.musics && game.musics.length)}</Typography>
-              }
-            >
-              <ListItemText
-                primaryTypographyProps={{ noWrap: true }}
-                primary="Nombre de musiques"
-              />
-            </ListItem>
-            <Divider variant="middle" />
-          </div>
-        </List>
-        {displayStart &&
-          <Button onClick={onClickStart} variant="contained" sx={{ marginTop: '24px' }}>Lancer la partie</Button>
-        }
-      </Box>
-    </Paper >
-  )
+        <div>
+          <ListItem
+            secondaryAction={
+              <Typography variant="body">
+                {game.totalMusics || (game.musics && game.musics.length)}
+              </Typography>
+            }
+          >
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary="Nombre de musiques"
+            />
+          </ListItem>
+          <Divider variant="middle" />
+        </div>
+      </List>
+      {displayStart && (
+        <Button
+          onClick={onClickStart}
+          variant="contained"
+          sx={{ marginTop: '24px' }}
+        >
+          Lancer la partie
+        </Button>
+      )}
+    </PaperBox>
+  );
 }
 
 GameSettingsResume.propTypes = {

@@ -1,0 +1,169 @@
+import classnames from 'classnames';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  FormControl,
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+
+import { useTextfield } from '../../hooks/formHooks';
+import { moviesActions } from '../../actions';
+import { isMovieAlreadyAdded } from '../../lib/check';
+import { tmdb } from '../../config';
+
+function SuggestMovie({ moviesActions, movies, onAddMovie }) {
+  const [query, onChangeQuery, setField] = useTextfield();
+
+  const onSearchMovies = async function (event) {
+    event.preventDefault();
+
+    if (query !== '') {
+      await moviesActions.findMovies(query);
+    }
+  };
+
+  const handleClickResetCode = function () {
+    setField('');
+  };
+
+  const handleClickClear = function () {
+    moviesActions.reset();
+    handleClickResetCode();
+  };
+
+  return (
+    <Box sx={{ margin: '48px 0' }}>
+      <form onSubmit={onSearchMovies}>
+        <FormControl
+          fullWidth
+          sx={{ mb: 4 }}
+        >
+          <TextField
+            label="Tapez le nom d'un film"
+            variant="outlined"
+            value={query}
+            onChange={onChangeQuery}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="erase text field"
+                    onClick={handleClickResetCode}
+                    edge="end"
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </FormControl>
+        {movies.search.length > 0 && (
+          <Button
+            variant="contained"
+            onClick={handleClickClear}
+            sx={{ mb: 2 }}
+          >
+            Effacer la selection
+          </Button>
+        )}
+      </form>
+
+      <Grid
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 4, sm: 8, md: 16 }}
+      >
+        {movies.search.map((movie) => {
+          const isAlreadyAdded = isMovieAlreadyAdded(movies.all, movie);
+
+          return (
+            <Grid
+              item
+              xs={2}
+              sm={4}
+              md={4}
+              key={movie.id}
+            >
+              <Card
+                sx={{ maxWidth: 365 }}
+                className={classnames('MovieCard', {
+                  'MovieCard--exist': isAlreadyAdded,
+                })}
+              >
+                <CardMedia
+                  component="img"
+                  height="480"
+                  image={tmdb.image_path + movie.poster_path}
+                  alt={`Poster of ${movie.title} movie`}
+                />
+
+                <CardContent>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                  >
+                    {movie.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    Date de sortie:{' '}
+                    {movie.release_date && movie.release_date.slice(0, 4)}
+                  </Typography>
+                </CardContent>
+
+                <CardActions>
+                  <Button
+                    size="small"
+                    onClick={() => onAddMovie(movie)}
+                  >
+                    Ajouter ce film
+                  </Button>
+                </CardActions>
+
+                {isAlreadyAdded && (
+                  <Alert
+                    variant="outlined"
+                    severity="info"
+                    className="MovieCard__info"
+                  >
+                    Film déjà ajouté !
+                  </Alert>
+                )}
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+    </Box>
+  );
+}
+
+function mapStateToProps(state) {
+  return {
+    movies: state.movies,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    moviesActions: bindActionCreators(moviesActions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SuggestMovie);

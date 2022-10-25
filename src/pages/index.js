@@ -16,7 +16,7 @@ export { default as ConfirmEmailPage } from './User/ConfirmEmail';
 export { default as AskNewPasswordPage } from './User/AskNewPassword';
 export { default as HistoryPage } from './User/History';
 export { default as NewPasswordPage } from './User/NewPassword';
-export { default as SuggestMoviePage } from './User/SuggestMovie';
+export { default as SuggestPage } from './User/Suggest';
 export { default as UserSettingsPage } from './User/UserSettings';
 
 // Multi

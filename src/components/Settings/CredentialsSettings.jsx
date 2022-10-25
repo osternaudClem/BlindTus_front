@@ -2,8 +2,6 @@ import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  Typography,
-  Paper,
   TextField,
   Stack,
   Divider,
@@ -18,9 +16,15 @@ import { isEmail } from 'validator';
 import { usersActions } from '../../actions';
 import { useTextfield, useToggle } from '../../hooks/formHooks';
 import { UserContext } from '../../contexts/userContext';
+import { Heading, PaperBox } from '../UI';
 
 function SlideTransition(props) {
-  return <Slide {...props} direction="down" />;
+  return (
+    <Slide
+      {...props}
+      direction="down"
+    />
+  );
 }
 
 function CredentialsSettings(props) {
@@ -35,23 +39,27 @@ function CredentialsSettings(props) {
     event.preventDefault();
     setServerErrors(null);
     // Check username
-    const usernameError = username === '' || !/^[a-zA-Z0-9\-_$@*!]{3,30}$/.test(username);
+    const usernameError =
+      username === '' || !/^[a-zA-Z0-9\-_$@*!]{3,30}$/.test(username);
     // Check email
     const emailError = email === '' || !isEmail(email);
 
-    setErrors(errors => {
+    setErrors((errors) => {
       return {
         ...errors,
         username: usernameError,
         email: emailError,
-      }
+      };
     });
 
     if (usernameError || emailError) {
       return;
     }
 
-    const response = await props.usersActions.updateUser(user._id, { username, email });
+    const response = await props.usersActions.updateUser(user._id, {
+      username,
+      email,
+    });
 
     if (response.error) {
       return setServerErrors(response.messages);
@@ -81,8 +89,11 @@ function CredentialsSettings(props) {
         </Alert>
       </Snackbar>
 
-      <Typography variant="h3" component="h2" mb={2}>Informations du compte</Typography>
-      <Paper sx={{ padding: '2rem' }} component="form" onSubmit={handleSubmit}>
+      <PaperBox
+        component="form"
+        onSubmit={handleSubmit}
+      >
+        <Heading type="subtitle">Informations du compte</Heading>
         <Stack
           spacing={4}
           sx={{ marginBottom: '1rem' }}
@@ -119,8 +130,8 @@ function CredentialsSettings(props) {
             Enregister
           </Button>
         </Stack>
-      </Paper >
-    </React.Fragment >
+      </PaperBox>
+    </React.Fragment>
   );
 
   function renderError() {
@@ -133,14 +144,14 @@ function CredentialsSettings(props) {
         <AlertTitle>Error</AlertTitle>
         {serverErrors}
       </Alert>
-    )
+    );
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     usersActions: bindActionCreators(usersActions, dispatch),
-  }
+  };
 }
 
 export default connect(null, mapDispatchToProps)(CredentialsSettings);

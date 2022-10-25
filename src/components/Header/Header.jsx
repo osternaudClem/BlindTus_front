@@ -50,11 +50,6 @@ const pages = [
     url: '/lobby',
     icon: <GroupIcon />,
   },
-  {
-    label: 'Suggérer un film',
-    url: '/suggest-movie',
-    icon: <AddIcon />,
-  },
 ];
 
 const settings = [
@@ -67,6 +62,12 @@ const settings = [
     id: 'history',
     label: 'Historique',
     url: '/history',
+  },
+  {
+    id: 'suggest',
+    label: 'Suggérer...',
+    url: '/suggest',
+    icon: <AddIcon />,
   },
   {
     id: 'logout',

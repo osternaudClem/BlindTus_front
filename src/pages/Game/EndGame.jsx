@@ -2,19 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useCopyToClipboard } from 'usehooks-ts';
-import {
-  CssBaseline,
-  Button,
-  Typography,
-  Snackbar,
-  Alert,
-  Grid,
-} from '@mui/material';
+import { CssBaseline, Button, Snackbar, Alert, Grid } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { updateTitle } from '../../lib/document';
 import { scoresActions, musicsActions } from '../../actions';
 import { ScoresDetails } from '../../components/Scores';
-import { PaperBox } from '../../components/UI';
+import { Heading, PaperBox } from '../../components/UI';
 
 function EndGame(props) {
   const [, copyToClipBoard] = useCopyToClipboard();
@@ -91,12 +84,7 @@ function EndGame(props) {
           item
           xs
         >
-          <Typography
-            variant="h2"
-            marginBottom={2}
-          >
-            Fin de partie
-          </Typography>
+          <Heading>Fin de partie</Heading>
         </Grid>
         <Grid item>
           <Button

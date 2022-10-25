@@ -19,7 +19,7 @@ import {
   HistoryPage,
   ConfirmEmailPage,
   UserSettingsPage,
-  SuggestMoviePage,
+  SuggestPage,
   NewPasswordPage,
   AskNewPasswordPage,
   // Others
@@ -89,16 +89,8 @@ const RoutesUrl = () => (
             element={<MultiPage />}
           />
           <Route
-            path="/suggest-movie"
-            element={<SuggestMoviePage />}
-          />
-          <Route
-            path="/suggest-movie/:movie_query"
-            element={<SuggestMoviePage />}
-          />
-          <Route
-            path="/suggest-movie/:movie_query/:movie_id"
-            element={<SuggestMoviePage />}
+            path="/suggest"
+            element={<SuggestPage />}
           />
           <Route
             path="/test"

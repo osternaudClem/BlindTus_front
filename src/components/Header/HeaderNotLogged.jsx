@@ -22,7 +22,7 @@ import logo from '../../assets/logo_light.png';
 const pages = [
   {
     label: 'Démarer une partie',
-    url: '/new-game'
+    url: '/game',
   },
   {
     label: 'Partie du jour',
@@ -43,7 +43,7 @@ const ResponsiveAppBar = (props) => {
     setAnchorElNav(event.currentTarget);
   };
 
-  const handleCloseNavMenu = page => {
+  const handleCloseNavMenu = (page) => {
     if (page.url) {
       navigate(page.url);
     }
@@ -52,7 +52,7 @@ const ResponsiveAppBar = (props) => {
 
   const onClickLogo = () => {
     navigate('/');
-  }
+  };
 
   return (
     <AppBar position="sticky">
@@ -85,11 +85,14 @@ const ResponsiveAppBar = (props) => {
               onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: 'block', md: 'none' },
-                width: { xs: '100%', md: 'auto' }
+                width: { xs: '100%', md: 'auto' },
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.label} onClick={() => handleCloseNavMenu(page)}>
+                <MenuItem
+                  key={page.label}
+                  onClick={() => handleCloseNavMenu(page)}
+                >
                   <Typography textAlign="center">{page.label}</Typography>
                 </MenuItem>
               ))}
@@ -130,17 +133,19 @@ const ResponsiveAppBar = (props) => {
                 {page.label}
               </Button>
             ))}
-
           </Box>
-          {!isMobileDevice() &&
-            <div style={{ flexGrow: 0, display: 'flex' }} className="Header__volume-container">
+          {!isMobileDevice() && (
+            <div
+              style={{ flexGrow: 0, display: 'flex' }}
+              className="Header__volume-container"
+            >
               <GameVolume
                 className="Header__volume"
                 onChange={(event, newValue) => setVolume(newValue)}
                 value={volume}
               />
             </div>
-          }
+          )}
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             <Button
               onClick={() => handleCloseNavMenu({ url: '/login' })}

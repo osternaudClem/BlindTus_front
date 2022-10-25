@@ -61,3 +61,19 @@ export function isMobileDevice() {
     navigator.userAgent
   );
 }
+
+/**
+ * @name isYoutubeUrl
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isYoutubeUrl(url) {
+  if (url) {
+    var regExp =
+      /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtube\.com\/(v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    if (url.match(regExp)) {
+      return true;
+    }
+  }
+  return false;
+}

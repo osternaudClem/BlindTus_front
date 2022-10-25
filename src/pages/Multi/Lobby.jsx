@@ -6,7 +6,6 @@ import { useCopyToClipboard } from 'usehooks-ts';
 import {
   Button,
   Box,
-  Typography,
   TextField,
   Divider,
   Stack,
@@ -18,11 +17,21 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
-import { PaperBox } from '../../components/UI';
+import { Heading, PaperBox } from '../../components/UI';
 
 const URL = 'https://blindtus.cl3tus.com';
 
-function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator, code, settings, ...props }) {
+function Lobby({
+  socket,
+  onCreate,
+  onJoin,
+  onUpdateSettings,
+  players,
+  isCreator,
+  code,
+  settings,
+  ...props
+}) {
   const [, copyToClipBoard] = useCopyToClipboard();
   const [customRoom, updateCustomRoom] = useTextfield();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -30,12 +39,12 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
-  }
+  };
 
   const handleClickCreate = function () {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     onCreate(code);
-  }
+  };
 
   const handleSubmitRoom = function (event) {
     event.preventDefault();
@@ -44,34 +53,31 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
     }
 
     onJoin(customRoom);
-  }
+  };
 
   const handleChangeSettings = function (settings) {
-    onUpdateSettings(settings)
-  }
+    onUpdateSettings(settings);
+  };
 
   const handleStartGame = function () {
     socket.emit('INIT_GAME');
-  }
+  };
 
   const handleClickCopyUrl = async function (event) {
     const isCopied = await copyToClipBoard(`${URL}/lobby?code=${code}`);
 
     if (isCopied) {
-      setAlertTitle('Lien copié dans le presse-papier.')
-    }
-    else {
-      setAlertTitle('Votre navigateur n\'est pas compatible.');
+      setAlertTitle('Lien copié dans le presse-papier.');
+    } else {
+      setAlertTitle("Votre navigateur n'est pas compatible.");
     }
 
     setIsAlertOpen(true);
-  }
+  };
 
   return (
     <div>
-      <Typography component="h1" variant="h3" marginBottom={6}>
-        Multijoueur {code && `Room #${code}`}
-      </Typography>
+      <Heading>Multijoueur {code && `Room #${code}`}</Heading>
       {renderAlert()}
       {code && (
         <Box marginBottom={4}>
@@ -80,8 +86,8 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
             disabled
             fullWidth
             InputProps={{
-              endAdornment:
-                <InputAdornment position="end" >
+              endAdornment: (
+                <InputAdornment position="end">
                   <Button
                     color="inherit"
                     onClick={handleClickCopyUrl}
@@ -90,6 +96,7 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
                     Copy
                   </Button>
                 </InputAdornment>
+              ),
             }}
           />
         </Box>
@@ -97,7 +104,7 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
       {renderCreateGame()}
       {renderGameSettings()}
     </div>
-  )
+  );
 
   function renderCreateGame() {
     if (code) {
@@ -106,9 +113,22 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
 
     return (
       <PaperBox>
-        <Button variant="contained" onClick={handleClickCreate}>Créer une partie</Button>
-        <Divider textAlign="left" sx={{ margin: '12px 0' }}>Ou</Divider>
-        <Box component="form" onSubmit={handleSubmitRoom}>
+        <Button
+          variant="contained"
+          onClick={handleClickCreate}
+        >
+          Créer une partie
+        </Button>
+        <Divider
+          textAlign="left"
+          sx={{ margin: '12px 0' }}
+        >
+          Ou
+        </Divider>
+        <Box
+          component="form"
+          onSubmit={handleSubmitRoom}
+        >
           <Stack
             direction="row"
             spacing={2}
@@ -117,11 +137,16 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
               label="Rejoindre une room"
               onChange={updateCustomRoom}
             />
-            <Button variant="contained" onClick={handleSubmitRoom}>Rejoindre</Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmitRoom}
+            >
+              Rejoindre
+            </Button>
           </Stack>
         </Box>
       </PaperBox>
-    )
+    );
   }
 
   function renderGameSettings() {
@@ -131,20 +156,24 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
 
     return (
       <div>
-        {
-          isCreator
-            ? <GameSettings onSettingsChange={handleChangeSettings} onSettingsSaved={handleStartGame} noGameCode />
-            : <GameSettingsResume
-              game={{
-                round_time: settings.timeLimit,
-                difficulty: settings.difficulty,
-                totalMusics: settings.totalMusics,
-              }}
-              code={code}
-            />
-        }
+        {isCreator ? (
+          <GameSettings
+            onSettingsChange={handleChangeSettings}
+            onSettingsSaved={handleStartGame}
+            noGameCode
+          />
+        ) : (
+          <GameSettingsResume
+            game={{
+              round_time: settings.timeLimit,
+              difficulty: settings.difficulty,
+              totalMusics: settings.totalMusics,
+            }}
+            code={code}
+          />
+        )}
       </div>
-    )
+    );
   }
 
   function renderAlert() {
@@ -155,24 +184,26 @@ function Lobby({ socket, onCreate, onJoin, onUpdateSettings, players, isCreator,
         open={isAlertOpen}
         onClose={handleCloseAlert}
       >
-        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleCloseAlert}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
           {alertTitle}
         </Alert>
       </Snackbar>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     user: state.users.me,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-
-  }
+  return {};
 }
 
 Lobby.propTypes = {
@@ -182,8 +213,8 @@ Lobby.propTypes = {
 };
 
 Lobby.defaultProps = {
-  onCreate: () => { },
-  onJoin: () => { },
+  onCreate: () => {},
+  onJoin: () => {},
   players: [],
 };
 

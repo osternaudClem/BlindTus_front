@@ -19,6 +19,22 @@ export function getMusics(limit) {
 }
 
 /**
+ * @name suggestMusic
+ * @param {Object} music
+ * @returns {string|Object}
+ */
+export function suggestMusic(music) {
+  return async function () {
+    try {
+      const success = await callApi.post(`/musics`, { music });
+      return success.data;
+    } catch (error) {
+      throw error.response;
+    }
+  };
+}
+
+/**
  * @name reset
  * @returns {Object}
  */

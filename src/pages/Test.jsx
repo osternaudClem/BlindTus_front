@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { CssBaseline, Box, Container, Typography, Button } from '@mui/material';
+import { CssBaseline, Box, Container, Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { updateTitle } from '../lib/document';
-import { Loading } from '../components/UI';
+import { Heading } from '../components/UI';
 
 function Test() {
   useEffect(() => {
@@ -16,7 +16,7 @@ function Test() {
     <Box>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Typography variant="h3">Test</Typography>
+        <Heading>Test</Heading>
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           <Button
             startIcon={<PlayArrowIcon />}

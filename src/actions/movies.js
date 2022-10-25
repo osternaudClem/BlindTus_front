@@ -71,11 +71,11 @@ export function saveSelectedMovie(movie_id) {
 }
 
 /**
- * @name saveMovie
+ * @name suggestMovie
  * @param {Object} movie
  * @returns {string|Object}
  */
-export function saveMovie(movie) {
+export function suggestMovie(movie) {
   return async function () {
     try {
       const success = await callApi.post('/movies', {
@@ -95,7 +95,7 @@ export function saveMovie(movie) {
 export function reset() {
   return async function (dispatch) {
     try {
-      dispatch({ type: types.RESET_SELECTED_MOVIE_SUCCESS, movie: [] });
+      dispatch({ type: types.RESET_MOVIE_SEARCH_SUCCESS, movie: [] });
       return {};
     } catch (error) {
       throw error.response;

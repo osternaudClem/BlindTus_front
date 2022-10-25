@@ -8,6 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Stack } from '@mui/system';
 import { historyActions } from '../../actions';
 import { updateTitle } from '../../lib/document';
+import { Heading } from '../../components/UI';
 
 const columns = [
   {
@@ -117,13 +118,7 @@ function History(props) {
   return (
     <div>
       <CssBaseline />
-      <Typography
-        component="h1"
-        variant="h2"
-        gutterBottom
-      >
-        Historique des parties
-      </Typography>
+      <Heading>Historique des parties</Heading>
       <Box sx={{ width: '100%' }}>
         <DataGrid
           autoHeight
