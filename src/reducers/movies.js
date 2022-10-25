@@ -6,11 +6,11 @@ export default function moviesReducers(state = initialState.movies, action) {
   switch (action.type) {
     case types.SAVE_COVER_SUCCESS: {
       const movies = shuffle(action.movies);
-      
+
       return {
         ...state,
         cover: movies[0].backdrop_path,
-      }
+      };
     }
 
     case types.GET_ALL_MOVIES: {
@@ -19,7 +19,7 @@ export default function moviesReducers(state = initialState.movies, action) {
       return {
         ...state,
         all: movies,
-      }
+      };
     }
 
     case types.FIND_MOVIES_SUCCESS: {
@@ -27,7 +27,7 @@ export default function moviesReducers(state = initialState.movies, action) {
       return {
         ...state,
         search: movies.results,
-      }
+      };
     }
 
     case types.SAVE_SELECTED_MOVIE_SUCCESS: {
@@ -37,11 +37,11 @@ export default function moviesReducers(state = initialState.movies, action) {
       };
     }
 
-    case types.RESET_SELECTED_MOVIE_SUCCESS: {
+    case types.RESET_MOVIE_SEARCH_SUCCESS: {
       return {
         ...state,
         search: [],
-      }
+      };
     }
 
     default:

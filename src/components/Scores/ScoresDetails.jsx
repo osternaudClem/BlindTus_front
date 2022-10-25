@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 
 import {
   Box,
+  Divider,
   Grid,
-  Typography,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
+  Typography,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 

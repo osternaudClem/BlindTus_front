@@ -16,7 +16,7 @@ export function useTextfield(defaultValue = '') {
     setField(event);
   };
 
-  return [field, updateField];
+  return [field, updateField, setField];
 }
 
 /**
