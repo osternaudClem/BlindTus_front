@@ -21,6 +21,10 @@ input:-webkit-autofill:active {
   overflow: hidden;
 }
 
+.CookieConsent__overlay {
+  z-index: 1200 !important;
+}
+
 @media screen and (max-width: 600px) {
   .MuiFormControl-root,
   .MuiTextField-root,

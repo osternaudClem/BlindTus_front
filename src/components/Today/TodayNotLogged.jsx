@@ -1,36 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useLocalStorage } from 'usehooks-ts';
-import { getCookie } from 'react-use-cookie';
 import { Container } from '@mui/material';
-import { HeaderNotLogged } from '../../components/Header';
-import { Today } from '../../components/Today';
 import { isToday } from '../../lib/date';
 import { encrypt, decrypt } from '../../lib/crypt';
-import { updateTitle } from '../../lib/document';
 import { todayActions } from '../../actions';
-import { Loading } from '../../components/UI';
+import { Loading } from '../UI';
+import { Today } from './';
 
-function TodayNotLoggedPage(props) {
+function TodayNotLogged(props) {
   const [todayGames, setTodayGames] = useLocalStorage('todayGames', null);
   const [todayStats, setTodayStats] = useLocalStorage('todayStats', null);
   const [todayGamesLocal, setTodayGamesLocal] = useState(null);
   const [todayStatsLocal, setTodayStatsLocal] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    updateTitle('Partie du jour');
-  }, []);
-
-  useEffect(() => {
-    const userId = getCookie('user');
-
-    if (userId && userId !== '') {
-      navigate('/playtoday');
-    }
-  }, [navigate]);
 
   useEffect(() => {
     if (todayGames) {
@@ -135,7 +118,6 @@ function TodayNotLoggedPage(props) {
 
   return (
     <div>
-      <HeaderNotLogged />
       <Container
         maxWidth="xl"
         className="Page"
@@ -162,4 +144,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TodayNotLoggedPage);
+export default connect(mapStateToProps, mapDispatchToProps)(TodayNotLogged);

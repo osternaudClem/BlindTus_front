@@ -4,17 +4,12 @@ import { bindActionCreators } from 'redux';
 import { getCookie } from 'react-use-cookie';
 import { todayActions, historyTodayActions } from '../../actions';
 import { UserContext } from '../../contexts/userContext';
-import { updateTitle } from '../../lib/document';
-import { Today } from '../../components/Today';
-import { Loading } from '../../components/UI';
+import { Today } from './';
+import { Loading } from '../UI';
 
 function TodayLogged(props) {
   const { user } = useContext(UserContext);
   const userId = getCookie('user');
-
-  useEffect(() => {
-    updateTitle('Partie du jour');
-  }, []);
 
   useEffect(() => {
     (async function () {

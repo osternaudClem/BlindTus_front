@@ -6,8 +6,7 @@ export { default as NewGamePage } from './Game/NewGame';
 export { default as EndGamePage } from './Game/EndGame';
 
 // Today
-export { default as TodayLoggedPage } from './Today/TodayLogged';
-export { default as TodayNotLoggedPage } from './Today/TodayNotLogged';
+export { default as TodayPage } from './Today/Today';
 
 // User
 export { default as LoginPage } from './User/Login';
@@ -24,3 +23,7 @@ export { default as MultiPage } from './Multi/Multi';
 export { default as LobbyPage } from './Multi/Lobby';
 export { default as PlayPage } from './Multi/Play';
 export { default as ResultsPage } from './Multi/Results';
+
+// Privacy
+export { default as PrivacyPage } from './Privacy/Privacy';
+export { default as TermsPage } from './Privacy/Terms';
