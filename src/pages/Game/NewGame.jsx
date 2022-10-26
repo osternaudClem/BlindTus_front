@@ -65,7 +65,8 @@ function NewGame(props) {
 
   useEffect(() => {
     updateTitle('Nouvelle partie');
-  }, []);
+    props.scoresActions.reset();
+  }, [props.scoresActions]);
 
   useEffect(() => {
     props.scoresActions.reset();
@@ -82,10 +83,6 @@ function NewGame(props) {
         }
       })();
     }
-
-    return () => {
-      props.gamesActions.reset();
-    };
   }, [props.scoresActions, props.gamesActions, code, navigate]);
 
   useEffect(() => {
