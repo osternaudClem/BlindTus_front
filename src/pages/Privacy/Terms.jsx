@@ -22,7 +22,6 @@ function Terms() {
 
   useEffect(() => {
     const titles = contentRef.current.parentElement.getElementsByTagName('h3');
-
     if (summary.length === 0 && titles.length > 0) {
       // Get all h3 and add them to summary
       for (const property in titles) {
@@ -37,7 +36,7 @@ function Terms() {
         }
       }
     }
-  }, [contentRef, terms, summary.length]);
+  }, [contentRef, termsFile, terms, summary.length]);
 
   return (
     <div className="PrivacyPage">

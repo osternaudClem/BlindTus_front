@@ -18,7 +18,7 @@ matière de fichiers "cookies".
 cette politique de confidentialité
 complète les mentions légales et les conditions générales d'utilisation
 que les utilisateurs peuvent consulter à l'adresse ci-après :
-https://blintus.cl3tus.com/terms
+https://blindtus.cl3tus.com/terms
 
 ## Article 2 : Principes généraux en matière de collecte et de traitement de données
 
@@ -246,7 +246,7 @@ utilisés lors de sa navigation :
 - user : informations pour garder la session de l'utilisateur active quand il quitte la page.
 - todayGames : permet d'enregistrer localement l'avancée de l'utilisateur durant la "partie du jour".
 - todayStats : permet d'enregistrer localement les statistiques de l'utilisateur concernant les "parties du jour".
-- \_ga : cookie généré par Google pour tracker les données analytiques du site.
+- \_ga, \_gat et \_gid : cookies générés par Google pour tracker les données analytiques du site.
 
 ## Article 7 : Conditions de modification de la politique de confidentialité
 
