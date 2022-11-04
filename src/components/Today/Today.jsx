@@ -132,6 +132,8 @@ function Today({ onSaveHistory, game, history }) {
 
   const handleCliclSkipRound = function () {
     onSaveHistory('', false);
+    setDisplayTimer(false);
+    setDisplayGame(false);
     setTries((s) => s + 1);
 
     if (tries === 4) {
