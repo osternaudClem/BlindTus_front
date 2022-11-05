@@ -42,7 +42,7 @@ const pages = [
   },
   {
     label: 'Partie du jour',
-    url: '/playtoday',
+    url: '/today',
     icon: <CalendarMonthIcon />,
   },
   {
@@ -69,6 +69,22 @@ const settings = [
     url: '/suggest',
     icon: <AddIcon />,
   },
+];
+
+const settingsMiddle = [
+  {
+    id: 'terms',
+    label: 'Mentions légales',
+    url: '/terms',
+  },
+  {
+    id: 'privacy',
+    label: 'Confidentialité',
+    url: '/privacy',
+  },
+];
+
+const settingsBottom = [
   {
     id: 'logout',
     label: 'Se déconnecter',
@@ -254,6 +270,24 @@ const ResponsiveAppBar = (props) => {
                 </div>
               )}
               {settings.map((setting) => (
+                <MenuItem
+                  key={setting.id}
+                  onClick={() => handleCloseUserMenu(setting)}
+                >
+                  <Typography textAlign="center">{setting.label}</Typography>
+                </MenuItem>
+              ))}
+              <Divider sx={{ mt: '4px' }} />
+              {settingsMiddle.map((setting) => (
+                <MenuItem
+                  key={setting.id}
+                  onClick={() => handleCloseUserMenu(setting)}
+                >
+                  <Typography textAlign="center">{setting.label}</Typography>
+                </MenuItem>
+              ))}
+              <Divider sx={{ mt: '4px' }} />
+              {settingsBottom.map((setting) => (
                 <MenuItem
                   key={setting.id}
                   onClick={() => handleCloseUserMenu(setting)}
