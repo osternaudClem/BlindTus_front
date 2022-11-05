@@ -19,7 +19,7 @@ import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 import { Heading, PaperBox } from '../../components/UI';
 
-const URL = 'https://blindtus.cl3tus.com';
+const URL = 'https://blindtus.com';
 
 function Lobby({
   socket,

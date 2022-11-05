@@ -13,7 +13,7 @@ function Copyright(props) {
         {'Copyright © '}
         <Link
           color="inherit"
-          href="https://blindtus.cl3tus.com/"
+          href="https://blindtus.com/"
         >
           BlindTus
         </Link>{' '}

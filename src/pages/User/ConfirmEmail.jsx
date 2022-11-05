@@ -44,7 +44,7 @@ function ConmfirmEmail(props) {
             days: 365,
             SameSite: 'Strict',
             Secure: true,
-            domain: isDev ? '' : '.cl3tus.com',
+            domain: isDev ? '' : '.blindtus.com',
           });
           navigate('/');
         }
