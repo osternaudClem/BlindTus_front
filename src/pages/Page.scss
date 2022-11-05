@@ -60,7 +60,7 @@
   &__illustration {
     height: 100vh;
     object-fit: contain;
-    opacity: .2;
+    opacity: 0.2;
     width: 100%;
   }
 
@@ -71,11 +71,22 @@
     left: 50%;
     transform-origin: 0 0;
     transform: scale(1) translate(-50%, -50%);
-    transition: all .15s ease-in-out !important;
-    
+    transition: all 0.15s ease-in-out !important;
+
     &:hover {
       background: #101010 !important;
       transform: scale(1.1) translate(-50%, -50%);
     }
+  }
+}
+
+.ErrorPage {
+  &__container {
+    margin-top: 60px;
+    text-align: center;
+  }
+
+  &__image {
+    margin: 40px 0;
   }
 }
