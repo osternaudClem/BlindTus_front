@@ -48,7 +48,6 @@ function Today({ onSaveHistory, game, history }) {
   const [open, setOpen] = useState(false);
   const [tries, setTries] = useState(0);
   const [answer, updateAnswer] = useTextfield();
-  const [inputDisabled, setInputDisabled] = useState(true);
   const [displayGame, setDisplayGame] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -63,10 +62,10 @@ function Today({ onSaveHistory, game, history }) {
   }, [history]);
 
   useEffect(() => {
-    if (!inputDisabled) {
+    if (!displayTimer && answerField.current) {
       answerField.current.focus();
     }
-  }, [inputDisabled]);
+  }, [displayTimer]);
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
@@ -82,7 +81,6 @@ function Today({ onSaveHistory, game, history }) {
 
   const handleClickNext = function () {
     setStep(STEPS['PLAYING']);
-    setInputDisabled(false);
     setDisplayGame(true);
     setDisplayTimer(true);
     setIsCorrect(null);
@@ -93,7 +91,6 @@ function Today({ onSaveHistory, game, history }) {
     if (tick === 0) {
       updateAnswer('');
       onSaveHistory('', false);
-      setInputDisabled(true);
       setDisplayTimer(false);
       setDisplayGame(false);
       setTries((s) => s + 1);
@@ -106,11 +103,9 @@ function Today({ onSaveHistory, game, history }) {
     }
 
     const movie = game.music.movie;
-    if (inputDisabled) {
+    if (answer.trim().length === 0) {
       return;
     }
-
-    setInputDisabled(true);
 
     const titles = [movie.title, movie.title_fr, ...movie.simple_title];
 
@@ -262,7 +257,6 @@ function Today({ onSaveHistory, game, history }) {
             onChange={updateAnswer}
             value={answer}
             isCorrect={isCorrect}
-            disabled={inputDisabled}
             addSkipButton
             onSkipRound={handleCliclSkipRound}
           />
