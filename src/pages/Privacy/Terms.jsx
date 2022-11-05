@@ -4,6 +4,8 @@ import { Stack, Typography, Grid, Link } from '@mui/material';
 import { Heading, PaperBox } from '../../components/UI';
 import termsFile from '../../datas/pages/terms.md';
 
+const UPDATE_DATE = 'samedi 05 Novembre 2022';
+
 function Terms() {
   const [terms, setTerms] = useState(null);
   const [summary, setSummary] = useState([]);
@@ -93,7 +95,7 @@ function Terms() {
                   variant="subtitle1"
                   color="secondary"
                 >
-                  Dernière révision : mardi 25 octobre 2022
+                  Dernière révision : {UPDATE_DATE}
                 </Typography>
               </Stack>
               <div

@@ -4,6 +4,8 @@ import { Stack, Typography, Grid, Link } from '@mui/material';
 import { Heading, PaperBox } from '../../components/UI';
 import privacyFile from '../../datas/pages/privacy.md';
 
+const UPDATE_DATE = 'samedi 05 Novembre 2022';
+
 function Privacy() {
   const [privacy, setPrivacy] = useState(null);
   const [summary, setSummary] = useState([]);
@@ -94,7 +96,7 @@ function Privacy() {
                   variant="subtitle1"
                   color="secondary"
                 >
-                  Dernière révision : mardi 25 octobre 2022
+                  Dernière révision : {UPDATE_DATE}
                 </Typography>
               </Stack>
               <div

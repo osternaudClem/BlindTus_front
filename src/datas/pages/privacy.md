@@ -1,7 +1,7 @@
 ## Article 1 : Préambule
 
 cette politique de confidentialité s'applique au
-site : blindtus.cl3tus.com. la présente politique de confidentialité a pour but
+site : blindtus.com. la présente politique de confidentialité a pour but
 d'exposer aux utilisateurs du site : la manière dont sont collectées et
 traitées leurs données à caractère personnel.
 
@@ -18,7 +18,7 @@ matière de fichiers "cookies".
 cette politique de confidentialité
 complète les mentions légales et les conditions générales d'utilisation
 que les utilisateurs peuvent consulter à l'adresse ci-après :
-https://blindtus.cl3tus.com/terms
+https://blindtus.com/terms
 
 ## Article 2 : Principes généraux en matière de collecte et de traitement de données
 
@@ -62,7 +62,7 @@ responsable du traitement ou par un tiers.
 ### A. Données collectées et traitées et mode de collecte
 
 Les données à caractère personnel collectées sur le site
-blindtus.cl3tus.com.com sont les suivantes :
+blindtus.com.com sont les suivantes :
 
 - Adresse e-mail
 
@@ -83,7 +83,7 @@ Les données à caractère personnel collectées par le site ne sont transmises 
 
 ### C. Hébergement des données
 
-Le site blindtus.cl3tus.com est hébergé par : infomaniak, dont le siège est situé à
+Le site blindtus.com est hébergé par : infomaniak, dont le siège est situé à
 l'adresse ci-après : Rue Eugène-Marziano 25, 1227 Genève - Suisse.
 L'hébergeur peut être contacté au numéro de téléphone suivant : +41 22 820 35 55
 
@@ -137,7 +137,7 @@ L'utilisateur peut prendre connaissance, mettre à jour, modifier ou demander la
 données le concernant, en respectant la procédure ci-après énoncée :
 L'utilisateur peut se connecter puis modifier ou demander la suppression
 des données le concernant à l'adresse suivante :
-https://blindtus.cl3tus.com/settings.
+https://blindtus.com/settings.
 
 L'utilisateur peut aussi envoyer un e-mail
 au responsable du traitement des données personnelles, en précisant
@@ -146,7 +146,7 @@ S'il en possède un, l'utilisateur a le
 droit de demander la suppression de son espace personnel en suivant la
 procédure suivante : L'utilisateur peut se connecter puis demander la
 suppression des données le concernant à l'adresse suivante :
-https://blindtus.cl3tus.com/settings. L'utilisateur peut aussi envoyer un e-mail
+https://blindtus.com/settings. L'utilisateur peut aussi envoyer un e-mail
 au responsable du traitement des données personnelles, en précisant
 l'objet de sa demande .
 
@@ -251,7 +251,7 @@ utilisés lors de sa navigation :
 ## Article 7 : Conditions de modification de la politique de confidentialité
 
 La présente politique de confidentialité peut être consultée à tout moment à l'adresse
-ci-après indiquée : https://blindtus.cl3tus.com/privacy
+ci-après indiquée : https://blindtus.com/privacy
 
 L'éditeur du site se réserve le droit de la modifier afin de garantir sa
 conformité avec le droit en vigueur. Par conséquent, l'utilisateur est

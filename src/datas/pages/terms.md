@@ -10,7 +10,7 @@ Blindtus ne contrôle pas les sites en connexion avec le sien, et ne saurait don
 
 L’utilisateur du présent site reconnaît disposer de la compétence et des moyens nécessaires pour accéder et utiliser ce site, et avoir vérifié que la configuration informatique utilisée ne contient aucun virus et qu’elle est en parfait état de fonctionnement.
 
-La collecte, le traitement et la conservation de vos données par blindtus.cl3tus.com sont réalisés dans le respect des dispositions de la loi Informatique et Libertés du 6 janvier 1978.
+La collecte, le traitement et la conservation de vos données par blindtus.com sont réalisés dans le respect des dispositions de la loi Informatique et Libertés du 6 janvier 1978.
 
 Lorsque vous visitez ce site web, nous pouvons recueillir des données nominatives vous concernant : soit directement, lorsqu'il vous est demandé de nous transmettre vos coordonnées, soit indirectement, par les systèmes de connexion à Internet.
 
