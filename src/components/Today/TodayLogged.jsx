@@ -59,7 +59,8 @@ function TodayLogged(props) {
   if (
     !props.today.game ||
     !props.historyToday.today ||
-    !props.historyToday.today._id
+    !props.historyToday.today._id ||
+    !props.historyToday.today
   ) {
     return <Loading />;
   }
