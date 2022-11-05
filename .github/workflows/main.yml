@@ -18,5 +18,6 @@ jobs:
             cd /home/debian/www/blindtus/client
             git pull origin main
             git status
+            yarn
             yarn build
             pm2 reload all
