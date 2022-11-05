@@ -20,7 +20,7 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
 
   return (
     <audio
-      src={`${API}/api/audio/${audioName}.mp3#t=${timecode}`}
+      src={`${API}/audio/${audioName}.mp3#t=${timecode}`}
       loop
       autoPlay
       controls={showControl}

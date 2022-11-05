@@ -29,6 +29,7 @@ import {
   TestPage,
   PrivacyPage,
   TermsPage,
+  NotFoundPage,
 } from './pages';
 import { CssBaseline } from '@mui/material';
 
@@ -152,6 +153,10 @@ const RoutesUrl = () => {
                 />
               </Route>
             </Route>
+            <Route
+              path="*"
+              element={<NotFoundPage />}
+            />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

@@ -3,9 +3,8 @@ import { useNavigate, Outlet, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ReactGA from 'react-ga';
-import { Button, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { getCookie } from 'react-use-cookie';
-import CookieConsent from 'react-cookie-consent';
 import {
   CookieConsentBanner,
   triggerCookieConsentBanner,
@@ -54,6 +53,9 @@ function App(props) {
     user,
     userId,
     acceptedCookies,
+    gat,
+    ga,
+    gid,
   ]);
 
   const initConsent = ({ acceptedCategories }) => {
@@ -76,39 +78,11 @@ function App(props) {
     <UserContext.Provider value={{ user, updateUser }}>
       <div className={displayCookieConstent ? 'overlay-cookie' : ''}>
         <CssBaseline />
-        {/* <CookieConsent
-        location="bottom"
-        buttonText="Accepter"
-        cookieName="acceptCookie"
-        overlay
-        overlayClasses="CookieConsent__overlay"
-        ButtonComponent={Button}
-        customButtonProps={{
-          variant: 'contained',
-          style: { marginRight: '10px' },
-        }}
-        style={{ background: '#2B373B' }}
-        expires={5}
-      >
-        Ce site utilise des cookies. <br />
-        Il en utilise exactement 4 : pour garder la session active, pour
-        enregistrer les progrès et enregistrer les statistiques de la "partie du
-        jour" si vous n'avez pas de compte, et un dernier pour Google Analytics.
-        <br />
-        Vous pouvez retrouver ces informations sur la page{' '}
-        <Link
-          to="/privacy"
-          style={{ color: 'inherit' }}
-        >
-          confidentialité
-        </Link>
-        .
-      </CookieConsent> */}
         {userId ? <Header user={user} /> : <HeaderNotLogged />}
         <Outlet />
         <CookieConsentBanner
           className="CookieConsentBanner"
-          headline="Coucou"
+          headline="Politique concernant les cookies"
           handlePreferencesUpdated={initConsent}
           handlePreferencesRestored={initConsent}
           btnLabelAcceptAndContinue="Accepter et continuer"

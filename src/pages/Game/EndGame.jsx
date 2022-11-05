@@ -21,7 +21,6 @@ function EndGame(props) {
 
   useEffect(() => {
     props.musicsActions.reset();
-    props.musicsActions.reset();
   }, [props.musicsActions]);
 
   const handleCloseAlert = function () {
@@ -44,7 +43,7 @@ function EndGame(props) {
 
     header = header + resultsEmotes.join('\t') + '\n\n';
     header = header + `Score total: ${totalPoint}\n\n`;
-    header = header + `https://blindtus.cl3tus.com/new-game?code=${game.code}`;
+    header = header + `https://blindtus.com/game?code=${game.code}`;
 
     const isCopied = await copyToClipBoard(header);
 

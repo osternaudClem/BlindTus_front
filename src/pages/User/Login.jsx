@@ -58,7 +58,7 @@ function Login(props) {
         days: 365,
         SameSite: 'Strict',
         Secure: !isDev,
-        domain: isDev ? '' : '.cl3tus.com',
+        domain: isDev ? '' : '.blindtus.com',
       });
 
       navigate('/');

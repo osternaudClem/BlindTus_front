@@ -78,8 +78,8 @@ const columns = [
     headerName: 'Date de création',
     minWidth: 150,
     flex: 1,
-    renderCell: (params) => {
-      return format(new Date(params.value), "ii MMM yy @ kk'h'mm");
+    valueGetter: (params) => {
+      return format(new Date(params.value), "dd MMM yy @ kk'h'mm");
     },
   },
 ];

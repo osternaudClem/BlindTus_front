@@ -36,7 +36,7 @@ function Terms() {
         }
       }
     }
-  }, [contentRef, termsFile, terms, summary.length]);
+  }, [contentRef, terms, summary.length]);
 
   return (
     <div className="PrivacyPage">

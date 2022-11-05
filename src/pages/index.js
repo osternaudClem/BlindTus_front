@@ -27,3 +27,6 @@ export { default as ResultsPage } from './Multi/Results';
 // Privacy
 export { default as PrivacyPage } from './Privacy/Privacy';
 export { default as TermsPage } from './Privacy/Terms';
+
+// Others
+export { default as NotFoundPage } from './404';
