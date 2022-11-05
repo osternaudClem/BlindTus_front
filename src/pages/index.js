@@ -24,3 +24,6 @@ export { default as MultiPage } from './Multi/Multi';
 export { default as LobbyPage } from './Multi/Lobby';
 export { default as PlayPage } from './Multi/Play';
 export { default as ResultsPage } from './Multi/Results';
+
+// Others
+export { default as NotFoundPage } from './404';

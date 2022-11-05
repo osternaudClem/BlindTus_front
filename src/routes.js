@@ -25,6 +25,7 @@ import {
   // Others
   HomePage,
   TestPage,
+  NotFoundPage,
 } from './pages';
 import { CssBaseline } from '@mui/material';
 
@@ -125,6 +126,10 @@ const RoutesUrl = () => (
         <Route
           path="/today"
           element={<TodayNotLoggedPage />}
+        />
+        <Route
+          path="*"
+          element={<NotFoundPage />}
         />
       </Routes>
     </BrowserRouter>

@@ -159,7 +159,7 @@ function Today({ onSaveHistory, game, history }) {
       header = header + `${emote}`;
     }
 
-    header = header + `\n\nhttps://blindtus.cl3tus.com/today`;
+    header = header + `\n\nhttps://blindtus.com/today`;
 
     const isCopied = await copyToClipBoard(header);
 
