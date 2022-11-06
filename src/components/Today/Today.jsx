@@ -34,8 +34,8 @@ import { MovieTextField } from '../Forms';
 import { addSpaces } from '../../lib/array';
 import { Heading, PaperBox } from '../UI';
 
-const TIMERS = [10, 25, 40, 70, 120];
-// const TIMERS = [3, 3, 3, 3, 3];
+// const TIMERS = [10, 25, 40, 70, 120];
+const TIMERS = [3, 3, 3, 3, 3];
 
 const STEPS = {
   BEGINING: 'begining',
@@ -48,6 +48,7 @@ function Today({ onSaveHistory, game, history }) {
   const [open, setOpen] = useState(false);
   const [tries, setTries] = useState(0);
   const [answer, updateAnswer] = useTextfield();
+  const [answerSent, setAnswerSent] = useState(true);
   const [displayGame, setDisplayGame] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -81,6 +82,10 @@ function Today({ onSaveHistory, game, history }) {
 
   const handleClickNext = function () {
     setStep(STEPS['PLAYING']);
+    if (!answerSent) {
+      setTries((s) => s + 1);
+    }
+    setAnswerSent(false);
     setDisplayGame(true);
     setDisplayTimer(true);
     setIsCorrect(null);
@@ -89,11 +94,8 @@ function Today({ onSaveHistory, game, history }) {
 
   const onTimerTick = function (tick) {
     if (tick === 0) {
-      updateAnswer('');
-      onSaveHistory('', false);
       setDisplayTimer(false);
       setDisplayGame(false);
-      setTries((s) => s + 1);
     }
   };
 
@@ -116,6 +118,7 @@ function Today({ onSaveHistory, game, history }) {
     onSaveHistory(answer, isCorrect);
 
     updateAnswer('');
+    setAnswerSent(true);
     setDisplayTimer(false);
     setDisplayGame(false);
     setTries((s) => s + 1);
@@ -192,14 +195,6 @@ function Today({ onSaveHistory, game, history }) {
             <HelpIcon />
           </IconButton>
         </Heading>
-
-        <Typography
-          component="p"
-          variant="subtitle2"
-          marginBottom={10}
-        >
-          Vous ne pouvez entrer le nom du film que pendant la lecture
-        </Typography>
 
         {endedGame()}
         {renderGame()}
