@@ -121,7 +121,7 @@ const ResponsiveAppBar = (props) => {
         domain:
           !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
             ? ''
-            : '.cl3tus.com',
+            : '.blindtus.com',
       });
     }
     navigate(setting.url);

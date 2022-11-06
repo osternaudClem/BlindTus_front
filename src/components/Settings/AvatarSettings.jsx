@@ -103,7 +103,7 @@ function AvatarSettings(props) {
           >
             <Avatar
               src={avatarSvg}
-              alt="Cl3tus"
+              alt="User avatar"
               className="AvatarSettings__avatar"
             />
           </Grid>
