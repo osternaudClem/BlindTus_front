@@ -63,9 +63,8 @@ function GameRoundResults({ game, musicNumber, players }) {
 
   function renderSmall(index, user, player, isCorrect) {
     return (
-      <div>
+      <div key={index}>
         <Stack
-          key={index}
           direction="row"
           alignItems="center"
           style={{ marginTop: '16px' }}

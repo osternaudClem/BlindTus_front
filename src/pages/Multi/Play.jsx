@@ -239,11 +239,13 @@ function Play({
             />
           </Box>
         ) : (
-          renderProposals()
+          <div>
+            {renderPlayer()}
+            {renderProposals()}
+          </div>
         )}
         {renderStart()}
         {renderResult()}
-        {renderPlayer()}
       </div>
     );
   }

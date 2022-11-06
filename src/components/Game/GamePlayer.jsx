@@ -1,10 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useReadLocalStorage } from 'usehooks-ts';
 import { api } from '../../config';
+import { Button } from '@mui/material';
 const API = api[process.env.NODE_ENV];
 
-function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
+function GamePlayer({
+  audioName,
+  timecode,
+  canPlay,
+  showControl,
+  isReady,
+  onHasPlayed,
+}) {
+  const [hasPlayed, setHasPlayed] = useState(false);
   const audioRef = useRef();
   const volume = useReadLocalStorage('player_volume');
 
@@ -18,15 +27,31 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
     }
   }, [isReady]);
 
+  const handleFirstPlay = function (event) {
+    setHasPlayed(true);
+  };
+
   return (
-    <audio
-      src={`${API}/audio/${audioName}.mp3#t=${timecode}`}
-      loop
-      autoPlay
-      controls={showControl}
-      ref={audioRef}
-      onCanPlayThrough={canPlay}
-    />
+    <div>
+      {!hasPlayed && (
+        <Button
+          variant="outlined"
+          color="warning"
+          onClick={() => audioRef.current.play()}
+        >
+          Pas de son ? Click ici
+        </Button>
+      )}
+      <audio
+        src={`${API}/audio/${audioName}.mp3#t=${timecode}`}
+        loop
+        autoPlay
+        controls={showControl}
+        ref={audioRef}
+        onCanPlayThrough={canPlay}
+        onPlay={(event) => handleFirstPlay(event)}
+      />
+    </div>
   );
 }
 
