@@ -13,16 +13,17 @@ function TodayLogged(props) {
 
   useEffect(() => {
     (async function () {
-      if (!props.today.game) {
-        await props.todayActions.getMusic();
+      let today = props.today.game;
+      if (!today) {
+        today = await props.todayActions.getMusic();
       }
 
-      if (!props.historyToday.today._id) {
+      if (!props.historyToday.today || !props.historyToday.today._id) {
         const game = await props.historyTodayActions.getTodayUser(userId);
 
         if (!game) {
           await props.historyTodayActions.saveHistory({
-            today: props.today.game._id,
+            today: today._id,
             user: userId,
           });
         }
@@ -59,8 +60,7 @@ function TodayLogged(props) {
   if (
     !props.today.game ||
     !props.historyToday.today ||
-    !props.historyToday.today._id ||
-    !props.historyToday.today
+    !props.historyToday.today._id
   ) {
     return <Loading />;
   }
