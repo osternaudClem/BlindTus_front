@@ -34,8 +34,8 @@ import { MovieTextField } from '../Forms';
 import { addSpaces } from '../../lib/array';
 import { Heading, PaperBox } from '../UI';
 
-// const TIMERS = [10, 25, 40, 70, 120];
-const TIMERS = [3, 3, 3, 3, 3];
+const TIMERS = [10, 25, 40, 70, 120];
+// const TIMERS = [3, 3, 3, 3, 3];
 
 const STEPS = {
   BEGINING: 'begining',
