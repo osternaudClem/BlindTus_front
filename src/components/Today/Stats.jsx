@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { useReadLocalStorage } from 'usehooks-ts';
 import {
   Button,
   Dialog,
@@ -7,19 +9,27 @@ import {
   DialogTitle,
   Divider,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { callApi } from '../../lib/axios';
+import { UserContext } from '../../contexts/userContext';
+import { decrypt } from '../../lib/crypt';
 
 function Stats({ onClose }) {
-  const queryKey = ['history'];
-  const { isLoading, data } = useQuery(queryKey, () =>
-    callApi.get(`/historytoday/user/6329bcf462eb85395efa3320`)
-  );
+  const { user } = useContext(UserContext);
+  const storageStats = useReadLocalStorage('todayStats');
+  let todayStats = {
+    stats: {},
+  };
 
-  let games = [];
+  if (user._id) {
+    const games = user.historyToday;
+    for (let i = 1; i <= 5; i++) {
+      todayStats.stats[i] = games.filter((g) => g.attempts.length === i).length;
+    }
 
-  if (!isLoading) {
-    games = data.data || [];
+    todayStats.stats.notWin = games.filter((g) => !g.isCompleted).length;
+    todayStats.totalGames = games.length;
+    todayStats.totalWin = games.filter((g) => g.isWin).length;
+  } else {
+    todayStats = decrypt(storageStats);
   }
 
   return (
@@ -33,26 +43,14 @@ function Stats({ onClose }) {
       <Divider />
       <DialogContent>
         <DialogContentText>
-          Parties : {games.filter((g) => g.isWin).length} / {games.length}
+          Parties : {todayStats.totalWin} / {todayStats.totalGames}
         </DialogContentText>
-        <DialogContentText>
-          1/5 : {games.filter((g) => g.attempts.length === 1).length}
-        </DialogContentText>
-        <DialogContentText>
-          2/5 : {games.filter((g) => g.attempts.length === 2).length}
-        </DialogContentText>
-        <DialogContentText>
-          3/5 : {games.filter((g) => g.attempts.length === 3).length}
-        </DialogContentText>
-        <DialogContentText>
-          4/5 : {games.filter((g) => g.attempts.length === 4).length}
-        </DialogContentText>
-        <DialogContentText>
-          5/5 : {games.filter((g) => g.attempts.length === 5).length}
-        </DialogContentText>
-        <DialogContentText>
-          -/5 : {games.filter((g) => !g.isCompleted).length}
-        </DialogContentText>
+        <DialogContentText>1/5 : {todayStats.stats[1]}</DialogContentText>
+        <DialogContentText>2/5 : {todayStats.stats[2]}</DialogContentText>
+        <DialogContentText>3/5 : {todayStats.stats[3]}</DialogContentText>
+        <DialogContentText>4/5 : {todayStats.stats[4]}</DialogContentText>
+        <DialogContentText>5/5 : {todayStats.stats[5]}</DialogContentText>
+        <DialogContentText>-/5 : {todayStats.stats.notWin}</DialogContentText>
       </DialogContent>
       <Divider />
       <DialogActions>

@@ -9,7 +9,7 @@ import './Cards.scss';
 
 function MovieCard({ movie, music, hideGenres, size }) {
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
-  console.log('>>> size', size);
+
   return (
     <Stack
       direction={largeScreen && size === 'large' ? 'row' : 'column'}
