@@ -185,7 +185,7 @@ function Play({
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = (timeLeft * 100) / room.settings.timeLimit;
+      score = Math.round((timeLeft * 100) / room.settings.timeLimit / 10);
     }
 
     setScore(score);
