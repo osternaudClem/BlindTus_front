@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useCopyToClipboard } from 'usehooks-ts';
+import { useQuery } from '@tanstack/react-query';
 import {
   Button,
   CssBaseline,
@@ -12,6 +13,7 @@ import {
   Snackbar,
   Stack,
   Tooltip,
+  useMediaQuery,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -20,6 +22,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import { addLeadingZeros } from '../../lib/number';
 import { checkSimilarity } from '../../lib/check';
 import { addSpaces } from '../../lib/array';
+import { callApi } from '../../lib/axios';
 import { GamePlayer } from '../Game';
 import { Timer } from '../Timer';
 import { Steps } from '../Steps';
@@ -29,6 +32,7 @@ import { useTextfield } from '../../hooks/formHooks';
 import { MovieTextField } from '../Forms';
 import { Heading, PaperBox } from '../UI';
 import { Rules, Stats } from './';
+import { MovieCard } from '../Cards';
 
 const TIMERS = [10, 25, 40, 70, 120];
 // const TIMERS = [3, 3, 3, 3, 3];
@@ -53,6 +57,12 @@ function Today({ onSaveHistory, game, history }) {
   const [alertTitle, setAlertTitle] = useState('');
   const [, copyToClipBoard] = useCopyToClipboard();
   const answerField = useRef(null);
+  const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
+  const queryKey = ['yesteray'];
+  const { isLoading, data } = useQuery(queryKey, () =>
+    callApi.get(`/musicsday/yesterday`)
+  );
 
   useEffect(() => {
     setIsCorrect(history.isWin);
@@ -180,7 +190,7 @@ function Today({ onSaveHistory, game, history }) {
       >
         <Stack
           direction="row"
-          alignItems="center"
+          alignItems={largeScreen ? 'center' : 'flex-end'}
         >
           <Heading style={{ flexGrow: 1 }}>
             Musique du jour
@@ -220,6 +230,7 @@ function Today({ onSaveHistory, game, history }) {
         md={4}
       >
         <HistoryDay history={history} />
+        {renderYesterday()}
       </Grid>
     </Grid>
   );
@@ -365,6 +376,23 @@ function Today({ onSaveHistory, game, history }) {
             );
           })}
         </Box>
+      </PaperBox>
+    );
+  }
+
+  function renderYesterday() {
+    if (isLoading) {
+      return;
+    }
+
+    return (
+      <PaperBox style={{ marginTop: '24px' }}>
+        <Heading type="subtitle">Film d'hier</Heading>
+        <MovieCard
+          movie={data.data.music.movie}
+          music={data.data.music}
+          size="small"
+        />
       </PaperBox>
     );
   }

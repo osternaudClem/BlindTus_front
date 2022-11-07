@@ -28,16 +28,12 @@
 }
 
 .MovieMusicCard__poster__image {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
   height: 100%;
   width: 100%;
 }
 
 .MovieCard {
   &__poster {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
     margin: 0;
     width: 300px;
   }
@@ -46,6 +42,12 @@
     flex: 1;
     padding: 12px;
     padding-right: 24px;
+  }
+
+  &--small {
+    .MovieCard__poster {
+      width: 100%;
+    }
   }
 }
 
