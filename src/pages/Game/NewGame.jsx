@@ -75,6 +75,7 @@ function NewGame(props) {
         try {
           const game = await props.gamesActions.getGame(code);
           if (game._id) {
+            setTotalMusics(game.musics.length);
             return setGameWithCode(true);
           }
           navigate('/game');
