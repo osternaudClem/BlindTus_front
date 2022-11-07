@@ -6,15 +6,15 @@ import Box from '@mui/material/Box';
 import './Timer.scss';
 
 const Timer = ({ limit, onFinished, className }) => {
-  const [timeLeft, setTimeLeft] = useState(limit);
+  const [timeLeft, setTimeLeft] = useState(limit * 10);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (timeLeft === 0) {     
+    if (timeLeft === 0) {
       setTimeout(function () {
         onFinished(0);
-        setTimeLeft(limit);
-      }, 1000);
+        setTimeLeft(limit * 10);
+      }, 100);
     }
 
     // exit early when we reach 0
@@ -26,8 +26,7 @@ const Timer = ({ limit, onFinished, className }) => {
       setTimeLeft(timeLeft - 1);
       createProgress(timeLeft);
       onFinished(timeLeft);
-    }, 1000);
-
+    }, 100);
 
     // clear interval on re-render to avoid memory leaks
     return () => clearInterval(intervalId);
@@ -41,23 +40,32 @@ const Timer = ({ limit, onFinished, className }) => {
     <div className={classnames('Timer', className)}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', mr: 1 }}>
-          <LinearProgress variant="determinate" value={progress} classes={{ root: "Timer__bar" }} />
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            classes={{ root: 'Timer__bar' }}
+          />
         </Box>
         <Box sx={{ minWidth: 35 }}>
-          <Typography variant="body2" color="text.secondary">{timeLeft}</Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+          >
+            {Math.round(timeLeft / 10)}
+          </Typography>
         </Box>
       </Box>
     </div>
-  )
+  );
 
   function createProgress(timeLeft) {
     if (timeLeft === 0) {
-      setProgress(100)
+      setProgress(100);
     } else {
-      const pourcentage = (100 - (((timeLeft - 1) * 100)) / (limit));
+      const pourcentage = 100 - ((timeLeft - 1) * 10) / limit;
       setProgress(pourcentage);
     }
   }
-}
+};
 
 export default Timer;

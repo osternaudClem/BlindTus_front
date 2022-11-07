@@ -187,7 +187,7 @@ function NewGame(props) {
     setIsCorrect(isAnswerCorrect);
 
     if (isAnswerCorrect) {
-      score = (timeLeft * 100) / timeLimit;
+      score = Math.round((timeLeft * 100) / timeLimit / 10);
     }
 
     setScore(score);
