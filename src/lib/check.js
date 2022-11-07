@@ -10,7 +10,10 @@ export function isMovieAlreadyAdded(moviesList, movie) {
   let exist = false;
 
   moviesList.map((movieList) => {
-    if (movieList.title === movie.original_title) {
+    if (
+      movieList.title === movie.original_title &&
+      movieList.release_date.toString() === movie.release_date.substring(0, 4)
+    ) {
       exist = true;
     }
 
