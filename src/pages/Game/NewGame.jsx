@@ -296,7 +296,7 @@ function NewGame(props) {
         <Heading>Nouvelle partie</Heading>
         <GameSettings
           onSettingsSaved={onSettingsSaved}
-          redirect="new-game"
+          redirect="game"
         />
       </div>
     );
