@@ -48,7 +48,7 @@ export function getHistory(history_id) {
 export function getTodayUser(user_id) {
   return async function (dispatch) {
     try {
-      const success = await callApi.get(`/historytoday/user/${user_id}`);
+      const success = await callApi.get(`/historytoday/user/today/${user_id}`);
       dispatch({
         type: types.GET_HISTORY_TODAY_SUCCESS,
         history: success.data,
