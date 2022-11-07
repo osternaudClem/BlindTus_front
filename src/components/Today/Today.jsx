@@ -6,24 +6,20 @@ import {
   CssBaseline,
   Typography,
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   IconButton,
-  Divider,
   Grid,
   Alert,
   Snackbar,
   Stack,
+  Tooltip,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 import { addLeadingZeros } from '../../lib/number';
 import { checkSimilarity } from '../../lib/check';
+import { addSpaces } from '../../lib/array';
 import { GamePlayer } from '../Game';
 import { Timer } from '../Timer';
 import { Steps } from '../Steps';
@@ -31,8 +27,8 @@ import { HistoryDay } from '../History';
 import { Result } from '../Results';
 import { useTextfield } from '../../hooks/formHooks';
 import { MovieTextField } from '../Forms';
-import { addSpaces } from '../../lib/array';
 import { Heading, PaperBox } from '../UI';
+import { Rules, Stats } from './';
 
 const TIMERS = [10, 25, 40, 70, 120];
 // const TIMERS = [3, 3, 3, 3, 3];
@@ -45,7 +41,8 @@ const STEPS = {
 
 function Today({ onSaveHistory, game, history }) {
   const [step, setStep] = useState(STEPS['BEGINING']);
-  const [open, setOpen] = useState(false);
+  const [isRulesOpen, setRulesOpen] = useState(false);
+  const [isStatsOpen, setStatsOpen] = useState(false);
   const [tries, setTries] = useState(0);
   const [answer, updateAnswer] = useTextfield();
   const [answerSent, setAnswerSent] = useState(true);
@@ -70,14 +67,6 @@ function Today({ onSaveHistory, game, history }) {
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const handleClickNext = function () {
@@ -189,18 +178,40 @@ function Today({ onSaveHistory, game, history }) {
         sm={6}
         md={8}
       >
-        <Heading>
-          Musique du jour
-          <IconButton onClick={handleClickOpen}>
-            <HelpIcon />
-          </IconButton>
-        </Heading>
+        <Stack
+          direction="row"
+          alignItems="center"
+        >
+          <Heading style={{ flexGrow: 1 }}>
+            Musique du jour
+            <Tooltip
+              title="Règles"
+              placement="top"
+            >
+              <IconButton onClick={() => setRulesOpen(true)}>
+                <HelpIcon />
+              </IconButton>
+            </Tooltip>
+          </Heading>
+          <Tooltip
+            title="Statistiques"
+            placement="top"
+          >
+            <IconButton
+              onClick={() => setStatsOpen(true)}
+              style={{ marginBottom: '34px' }}
+            >
+              <BarChartIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
 
         {endedGame()}
         {renderGame()}
 
         {renderPlayer()}
         {renderDialogExplication()}
+        {renderDialogStats()}
       </Grid>
       <Grid
         item
@@ -378,76 +389,24 @@ function Today({ onSaveHistory, game, history }) {
   }
 
   function renderDialogExplication() {
+    if (!isRulesOpen) {
+      return;
+    }
+
     return (
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
-        <DialogTitle>Règles</DialogTitle>
-        <Divider />
-        <DialogContent>
-          <DialogContentText>
-            Vous avez <b>5</b> essaie pour trouver la musique du jour.
-          </DialogContentText>
-          <DialogContentText>
-            Le mode de jeu est en "Facile". C'est-à-dire que le nom du film peut
-            être un raccourci. Les accents et majuscules de ne sont également
-            pas pris en compte.
-          </DialogContentText>
-          <DialogContentText>Examples:</DialogContentText>
-          <ul>
-            <li>
-              2001, l'Odyssée de l'espace{' '}
-              <ArrowForwardIcon
-                style={{ transform: 'translateY(2px)' }}
-                fontSize="12px"
-              />{' '}
-              2001
-            </li>
-            <li>
-              Le Seigneur des anneaux : La Communauté de l'anneau{' '}
-              <ArrowForwardIcon
-                style={{ transform: 'translateY(2px)' }}
-                fontSize="12px"
-              />{' '}
-              Le Seigneur des anneaux
-            </li>
-          </ul>
-
-          <DialogContentText>
-            À chaque étape, vous avez du temps supplémentaires:
-          </DialogContentText>
-          <ol>
-            <li>{TIMERS[0]} secondes</li>
-            <li>{TIMERS[1]} secondes</li>
-            <li>{TIMERS[2]} secondes</li>
-            <li>{TIMERS[3]} secondes</li>
-            <li>{TIMERS[4]} secondes</li>
-          </ol>
-
-          <DialogContentText>
-            À chaque étapes egalement, vous aurez un nouvel indice:
-          </DialogContentText>
-          <ol>
-            <li>Aucun indice</li>
-            <li>Date de réalisation</li>
-            <li>Réalisateurs</li>
-            <li>Casting principal</li>
-            <li>Synopsis</li>
-          </ol>
-        </DialogContent>
-        <Divider />
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            autoFocus
-            variant="contained"
-          >
-            Fermer
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Rules
+        timers={TIMERS}
+        onClose={() => setRulesOpen(false)}
+      />
     );
+  }
+
+  function renderDialogStats() {
+    if (!isStatsOpen) {
+      return;
+    }
+
+    return <Stats onClose={() => setStatsOpen(false)} />;
   }
 }
 
