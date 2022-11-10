@@ -21,6 +21,7 @@ import {
 import { shuffle } from '../../lib/array';
 import { checkSimilarity } from '../../lib/check';
 import { updateTitle } from '../../lib/document';
+import { calculScore } from '../../lib/number';
 import { GamePlayer } from '../../components/Game';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
@@ -187,7 +188,7 @@ function NewGame(props) {
     setIsCorrect(isAnswerCorrect);
 
     if (isAnswerCorrect) {
-      score = Math.round((timeLeft * 100) / timeLimit / 10);
+      score = calculScore(timeLeft, timeLimit);
     }
 
     setScore(score);
@@ -231,7 +232,7 @@ function NewGame(props) {
     }
 
     if (isAnswerCorrect) {
-      score = (timeLeft * 100) / timeLimit;
+      score = calculScore(timeLeft, timeLimit);
     }
 
     setScore(score);

@@ -6,6 +6,7 @@ import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import { useTextfield } from '../../hooks/formHooks';
 import { checkSimilarity } from '../../lib/check';
 import { shuffle } from '../../lib/array';
+import { calculScore } from '../../lib/number';
 
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
@@ -160,7 +161,7 @@ function Play({
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = (timeLeft * 100) / room.settings.timeLimit;
+      score = calculScore(timeLeft, room.settings.timeLimit);
     }
 
     setScore(score);
@@ -185,7 +186,7 @@ function Play({
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = Math.round((timeLeft * 100) / room.settings.timeLimit / 10);
+      score = calculScore(timeLeft, room.settings.timeLimit);
     }
 
     setScore(score);
