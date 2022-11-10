@@ -4,8 +4,6 @@ import { GameRoundResults } from '../../components/Game';
 import { PaperBox } from '../../components/UI';
 
 function Results({ game, players, onNewGame }) {
-  console.log('>>> game', game);
-  console.log('>>> players', players);
   return (
     <PaperBox>
       <div style={{ padding: '16px' }}>
