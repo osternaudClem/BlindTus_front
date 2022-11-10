@@ -26,7 +26,7 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
 
   return (
     <div>
-      {!hasPlayed && (
+      {!hasPlayed && isReady && (
         <Button
           variant="outlined"
           color="warning"
@@ -38,7 +38,7 @@ function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
       <audio
         src={`${API}/audio/${audioName}.mp3#t=${timecode}`}
         loop
-        autoPlay
+        // autoPlay
         controls={showControl}
         ref={audioRef}
         onCanPlayThrough={canPlay}
