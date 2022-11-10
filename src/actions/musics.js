@@ -9,7 +9,9 @@ import * as types from '../datas/actionTypes';
 export function getMusics(limit) {
   return async function (dispatch) {
     try {
-      const success = await callApi.get(`/musics?limit=${limit}`);
+      const success = await callApi.get(
+        `/musics?limit=${limit}&withProposals=true`
+      );
       dispatch({ type: types.GET_MUSICS_SUCCESS, musics: success.data });
       return success.data;
     } catch (error) {
