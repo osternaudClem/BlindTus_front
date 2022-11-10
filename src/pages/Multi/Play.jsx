@@ -218,6 +218,8 @@ function Play({
           className="NewGame__timer"
         />
 
+        {renderPlayer()}
+
         {room.settings.difficulty === 'difficult' ? (
           <Box
             sx={{
@@ -239,10 +241,7 @@ function Play({
             />
           </Box>
         ) : (
-          <div>
-            {renderPlayer()}
-            {renderProposals()}
-          </div>
+          <div>{renderProposals()}</div>
         )}
         {renderStart()}
         {renderResult()}
@@ -282,6 +281,8 @@ function Play({
   }
 
   function renderProposals() {
+    console.log('>>> room', room);
+    console.log('>>> game', game);
     if (!displayGame || answerSent) {
       return;
     }

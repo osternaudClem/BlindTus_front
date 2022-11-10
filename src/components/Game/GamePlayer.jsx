@@ -5,14 +5,7 @@ import { api } from '../../config';
 import { Button } from '@mui/material';
 const API = api[process.env.NODE_ENV];
 
-function GamePlayer({
-  audioName,
-  timecode,
-  canPlay,
-  showControl,
-  isReady,
-  onHasPlayed,
-}) {
+function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
   const [hasPlayed, setHasPlayed] = useState(false);
   const audioRef = useRef();
   const volume = useReadLocalStorage('player_volume');
