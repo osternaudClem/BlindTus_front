@@ -4,6 +4,8 @@ import { GameRoundResults } from '../../components/Game';
 import { PaperBox } from '../../components/UI';
 
 function Results({ game, players, onNewGame }) {
+  console.log('>>> game', game);
+  console.log('>>> players', players);
   return (
     <PaperBox>
       <div style={{ padding: '16px' }}>
@@ -27,16 +29,13 @@ function Results({ game, players, onNewGame }) {
               >
                 {movie}
               </Typography>
-              {players.map(() => {
-                return (
-                  <GameRoundResults
-                    game={game}
-                    players={players}
-                    musicNumber={index}
-                    minimize
-                  />
-                );
-              })}
+
+              <GameRoundResults
+                game={game}
+                players={players}
+                musicNumber={index}
+                minimize
+              />
               <Divider sx={{ marginTop: '8px' }} />
             </div>
           );
