@@ -281,8 +281,6 @@ function Play({
   }
 
   function renderProposals() {
-    console.log('>>> room', room);
-    console.log('>>> game', game);
     if (!displayGame || answerSent) {
       return;
     }
