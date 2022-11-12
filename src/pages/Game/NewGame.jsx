@@ -77,6 +77,8 @@ function NewGame(props) {
           const game = await props.gamesActions.getGame(code);
           if (game._id) {
             setTotalMusics(game.musics.length);
+            setTimeLimit(game.round_time);
+            setDifficulty(game.difficulty);
             return setGameWithCode(true);
           }
           navigate('/game');
