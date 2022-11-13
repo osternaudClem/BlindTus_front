@@ -3,12 +3,12 @@ module.exports = {
   api: {
     // development: 'http://localhost:4000',
     development: 'http://192.168.1.100:4000',
-    production: 'https://blindtus.cl3tus.com',
+    production: 'https://api.blindtus.com',
   },
   socketApi: {
     // development: 'http://localhost:4001',
     development: 'http://192.168.1.100:4001',
-    production: 'https://blindtus.cl3tus.com',
+    production: 'https://api.blindtus.com',
   },
   tmdb: {
     image_path: 'https://image.tmdb.org/t/p/original',
