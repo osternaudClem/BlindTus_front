@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { CssBaseline, Box, Container, Button } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { updateTitle } from '../lib/document';
 import { Heading } from '../components/UI';

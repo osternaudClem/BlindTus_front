@@ -1,12 +1,10 @@
-import { useEffect, useState, useCallback, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import {
   CssBaseline,
   Grid,
   Box,
-  Alert,
   IconButton,
   Typography,
   List,
@@ -58,7 +56,6 @@ function CircularProgressWithLabel(props) {
 }
 
 function Multi() {
-  const [error, setError] = useState(null);
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
@@ -127,6 +124,7 @@ function Multi() {
     });
 
     socket.on('NEXT_ROUND', ({ room }) => {
+      updateLoadings([]);
       updateRoom(room);
     });
 
@@ -135,7 +133,7 @@ function Multi() {
       setIsStarted(false);
       setIsEndGame(false);
     });
-  }, [socket]);
+  }, [socket, navigate]);
 
   const onCreateGame = function (code) {
     socket.emit(
@@ -408,22 +406,14 @@ function Multi() {
         <List dense>
           {usersScore.map((user, index) => {
             if (!players.length || !players[index]) {
-              return;
+              return null;
             }
             return (
               <div key={index}>
                 <ListItem
                   sx={{ paddingLeft: 0, paddingRight: 0 }}
                   secondaryAction={
-                    loadings.find((l) => l.id === user.id && l.loading < 100) &&
-                    !isReady ? (
-                      <CircularProgressWithLabel
-                        color="primary"
-                        value={loadings.find((l) => l.id === user.id).loading}
-                      />
-                    ) : (
-                      <Typography variant="body">{user.score}</Typography>
-                    )
+                    <Typography variant="body">{user.score}</Typography>
                   }
                 >
                   {isCreator && (
@@ -431,11 +421,26 @@ function Multi() {
                       <CloseIcon />
                     </IconButton>
                   )}
-                  <UserAvatar
-                    avatar={players[index].info.avatar}
-                    username={user.username}
-                    displayUsername="right"
-                  />
+                  {loadings.find((l) => l.id === user.id && l.loading < 100) &&
+                  !isReady ? (
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={2}
+                    >
+                      <CircularProgressWithLabel
+                        color="primary"
+                        value={loadings.find((l) => l.id === user.id).loading}
+                      />
+                      <Typography>{user.username}</Typography>
+                    </Stack>
+                  ) : (
+                    <UserAvatar
+                      avatar={players[index].info.avatar}
+                      username={user.username}
+                      displayUsername="right"
+                    />
+                  )}
                 </ListItem>
                 <Divider sx={{ marginTop: '8px' }} />
               </div>

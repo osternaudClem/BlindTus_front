@@ -8,7 +8,7 @@ import { UserAvatar } from '../Avatar';
 
 function GameRoundResults({ room, round, players }) {
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
-  const { rounds, step } = room;
+  const { rounds } = room;
 
   return rounds[round].scores.map((user, index) => {
     const player = players.find((p) => p.username === user.username);
