@@ -88,8 +88,8 @@ function GameSettings({
   const sendChangeSettings = function (settings) {
     if (onSettingsChange) {
       onSettingsChange({
-        timeLimit: settings.updatedTime || time,
-        totalMusics: settings.updatedMovieNumber || movieNumber,
+        time_limit: settings.updatedTime || time,
+        total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
         difficulty: settings.updatedDifficulty || difficulty,
       });
     }

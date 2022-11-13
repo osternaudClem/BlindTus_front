@@ -98,7 +98,7 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
           <ListItem
             secondaryAction={
               <Typography variant="body">
-                {game.totalMusics || (game.musics && game.musics.length)}
+                {game.total_musics || (game.musics && game.musics.length)}
               </Typography>
             }
           >
