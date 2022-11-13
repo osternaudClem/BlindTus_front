@@ -5,23 +5,57 @@ import { api } from '../../config';
 import { Button } from '@mui/material';
 const API = api[process.env.NODE_ENV];
 
-function GamePlayer({ audioName, timecode, canPlay, showControl, isReady }) {
+function GamePlayer({
+  audioName,
+  timecode,
+  canPlay,
+  onLoading,
+  showControl,
+  isReady,
+}) {
+  const [bufferReady, setBufferReady] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
   const audioRef = useRef();
   const volume = useReadLocalStorage('player_volume');
 
   useEffect(() => {
     audioRef.current.volume = volume === null ? 0.7 : volume / 100;
+
+    if (onLoading) {
+      loop();
+    }
   }, [volume]);
 
   useEffect(() => {
     if (isReady) {
+      setBufferReady(true);
       audioRef.current.play();
+    } else {
+      setBufferReady(false);
     }
   }, [isReady]);
 
   const handleFirstPlay = function (event) {
     setHasPlayed(true);
+  };
+
+  const loop = function () {
+    if (bufferReady) {
+      return;
+    }
+
+    const buffered = audioRef.current.buffered;
+    let loaded = 0;
+
+    if (buffered.length) {
+      loaded = parseInt((100 * buffered.end(0)) / audioRef.current.duration);
+    }
+
+    onLoading(loaded >= 20 ? 100 : (loaded * 100) / 20);
+
+    if (loaded < 20) {
+      setTimeout(loop, 50);
+    }
   };
 
   return (

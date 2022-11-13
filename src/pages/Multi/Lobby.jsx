@@ -158,6 +158,7 @@ function Lobby({
           <GameSettings
             onSettingsChange={handleChangeSettings}
             onSettingsSaved={handleStartGame}
+            room={room}
             noGameCode
           />
         ) : (

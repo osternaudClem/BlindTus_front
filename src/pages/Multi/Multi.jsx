@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import {
   CssBaseline,
   Grid,
+  Box,
   Alert,
   IconButton,
   Typography,
@@ -25,17 +26,49 @@ import { UserAvatar } from '../../components/Avatar';
 import { PaperBox } from '../../components/UI';
 import { UserContext } from '../../contexts/userContext';
 
-const TIMER_GAME = 30;
-const NOVIE_NUMBER = 10;
+function CircularProgressWithLabel(props) {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <CircularProgress
+        variant="determinate"
+        {...props}
+      />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          color="text.secondary"
+        >
+          {`${Math.round(props.value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
 
-function Multi(props) {
+function Multi() {
   const [error, setError] = useState(null);
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
+  const [isEndGame, setIsEndGame] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [players, updatePlayers] = useState([]);
+  const [loadings, updateLoadings] = useState([]);
   const [room, updateRoom] = useState({});
   const { user } = useContext(UserContext);
   const socket = useContext(SocketContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     updateTitle('Multijoueur');
@@ -45,12 +78,10 @@ function Multi(props) {
     if (!socket.connected) {
       socket.connect();
     }
-  }, [socket]);
 
-  useEffect(() => {
-    socket.on('SETTINGS_UPDATED', (room) => {
-      updateRoom(room);
-    });
+    return () => {
+      socket.emit('FORCE_DISCONNECT');
+    };
   }, [socket]);
 
   useEffect(() => {
@@ -68,10 +99,42 @@ function Multi(props) {
       updatePlayers(players);
     });
 
-    return function () {
-      socket.off('ROOM_USERS');
-      socket.emit('LEAVE_ROOM');
-    };
+    socket.on('KICK', () => {
+      console.log('>>> KICK');
+      navigate('/lobby');
+    });
+
+    socket.on('NEW_CREATOR', () => {
+      setIsCreator(true);
+    });
+
+    socket.on('SETTINGS_UPDATED', (room) => {
+      updateRoom(room);
+    });
+
+    socket.on('START_GAME', (room) => {
+      updateRoom(room);
+      setIsStarted(true);
+    });
+
+    socket.on('START_MUSIC', (room) => {
+      updateRoom(room);
+    });
+
+    socket.on('IS_EVERYBODY_READY', ({ isReady, loadings = [] }) => {
+      updateLoadings(loadings);
+      setIsReady(isReady);
+    });
+
+    socket.on('NEXT_ROUND', ({ room }) => {
+      updateRoom(room);
+    });
+
+    socket.on('NEW_GAME', (room) => {
+      updateRoom(room);
+      setIsStarted(false);
+      setIsEndGame(false);
+    });
   }, [socket]);
 
   const onCreateGame = function (code) {
@@ -112,12 +175,30 @@ function Multi(props) {
     );
   };
 
+  const handleClickDisconnect = function (user) {
+    socket.emit('KICK_USER', { user });
+  };
+
   const onUpdateSettings = function (settings) {
     socket.emit('UPDATE_SETTINGS', room.id, settings);
   };
 
   const onDisconnect = function (user) {
     socket.emit('KICK_USER', { user });
+  };
+
+  const onAnswer = function (score, step, answer) {
+    socket.emit('ADD_SCORE', { score, step, answer }, (room) => {
+      updateRoom(room);
+    });
+  };
+
+  const onEndGame = function () {
+    setIsEndGame(true);
+  };
+
+  const onNewGame = function () {
+    socket.emit('ASK_NEW_GAME');
   };
 
   return (
@@ -162,7 +243,29 @@ function Multi(props) {
       );
     }
 
-    return null;
+    if (!isEndGame) {
+      return (
+        <Play
+          socket={socket}
+          room={room}
+          players={players}
+          isCreator={isCreator}
+          isReady={isReady}
+          onAnswer={onAnswer}
+          isEndGame={isEndGame}
+          onEndGame={onEndGame}
+        />
+      );
+    }
+
+    return (
+      <Results
+        room={room}
+        players={players}
+        isCreator={isCreator}
+        onNewGame={onNewGame}
+      />
+    );
   }
 
   function renderSide() {
@@ -201,7 +304,146 @@ function Multi(props) {
       );
     }
 
-    return null;
+    if (!isEndGame) {
+      return renderScore();
+    }
+
+    let usersScore = [];
+
+    room.players.map((user) => {
+      let userScore = 0;
+
+      room.rounds.map((round) => {
+        const newScore = round.scores.find((s) => s.username === user.username);
+        if (newScore) {
+          userScore = userScore + newScore.score;
+        }
+
+        return null;
+      });
+      usersScore.push({ username: user.username, score: userScore });
+
+      return null;
+    });
+
+    usersScore = usersScore.sort((a, b) => b.score - a.score);
+
+    return (
+      <PaperBox>
+        <Typography
+          variant="h4"
+          gutterBottom
+        >
+          Joueurs
+        </Typography>
+        <Stack spacing={1}>
+          {usersScore.map((score, index) => {
+            const player = players.find((p) => p.username === score.username);
+            return (
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                key={index}
+              >
+                {isCreator && (
+                  <IconButton onClick={() => handleClickDisconnect(player)}>
+                    <CloseIcon />
+                  </IconButton>
+                )}
+                <UserAvatar
+                  username={player.username}
+                  avatar={player.info.avatar}
+                  displayUsername="right"
+                />
+                <Typography variant="h6">{score.score}</Typography>
+              </Stack>
+            );
+          })}
+        </Stack>
+      </PaperBox>
+    );
+  }
+
+  function renderScore() {
+    if (!room || !room.id) {
+      return;
+    }
+
+    let usersScore = [];
+
+    room.players.map((user) => {
+      let userScore = 0;
+
+      room.rounds.map((round) => {
+        const newScore = round.scores.find((s) => s.username === user.username);
+        if (newScore) {
+          userScore = userScore + newScore.score;
+        }
+
+        return null;
+      });
+
+      return usersScore.push({
+        username: user.username,
+        score: userScore,
+        id: user.id,
+      });
+    });
+
+    usersScore = usersScore.sort((a, b) => b.score - a.score);
+    return (
+      <PaperBox>
+        <Grid
+          container
+          alignItems="center"
+        >
+          <Grid
+            item
+            xs
+          >
+            <Typography variant="h5">Scores</Typography>
+          </Grid>
+        </Grid>
+        <List dense>
+          {usersScore.map((user, index) => {
+            if (!players.length || !players[index]) {
+              return;
+            }
+            return (
+              <div key={index}>
+                <ListItem
+                  sx={{ paddingLeft: 0, paddingRight: 0 }}
+                  secondaryAction={
+                    loadings.find((l) => l.id === user.id && l.loading < 100) &&
+                    !isReady ? (
+                      <CircularProgressWithLabel
+                        color="primary"
+                        value={loadings.find((l) => l.id === user.id).loading}
+                      />
+                    ) : (
+                      <Typography variant="body">{user.score}</Typography>
+                    )
+                  }
+                >
+                  {isCreator && (
+                    <IconButton onClick={() => handleClickDisconnect(user)}>
+                      <CloseIcon />
+                    </IconButton>
+                  )}
+                  <UserAvatar
+                    avatar={players[index].info.avatar}
+                    username={user.username}
+                    displayUsername="right"
+                  />
+                </ListItem>
+                <Divider sx={{ marginTop: '8px' }} />
+              </div>
+            );
+          })}
+        </List>
+      </PaperBox>
+    );
   }
 }
 

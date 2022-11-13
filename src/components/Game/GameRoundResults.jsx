@@ -6,10 +6,11 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 import { UserAvatar } from '../Avatar';
 
-function GameRoundResults({ game, musicNumber, players }) {
+function GameRoundResults({ room, round, players }) {
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
+  const { rounds, step } = room;
 
-  return game.rounds[musicNumber].scores.map((user, index) => {
+  return rounds[round].scores.map((user, index) => {
     const player = players.find((p) => p.username === user.username);
     const isCorrect = user.score > 0;
     return largeScreen
@@ -111,13 +112,7 @@ function GameRoundResults({ game, musicNumber, players }) {
 }
 
 GameRoundResults.propTypes = {
-  game: PropTypes.object.isRequired,
-  musicNumber: PropTypes.number,
-  players: PropTypes.array,
-};
-
-GameRoundResults.defaultProps = {
-  musicNumber: 0,
+  room: PropTypes.object.isRequired,
 };
 
 export default GameRoundResults;

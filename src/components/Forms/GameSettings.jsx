@@ -39,13 +39,20 @@ function GameSettings({
   onSettingsSaved,
   onSettingsChange,
   redirect,
+  room,
   noGameCode,
   ...props
 }) {
   const [errorCode, setErrorCode] = useState(null);
-  const [time, updateTime] = useSlider(30);
-  const [movieNumber, updateMovieNumber] = useTextfield(NOVIE_NUMBER);
-  const [difficulty, updateDifficulty] = useTextfield('easy');
+  const [time, updateTime] = useSlider(
+    (room.settings && room.settings.time_limit) || 30
+  );
+  const [movieNumber, updateMovieNumber] = useTextfield(
+    (room.settings && room.settings.total_musics) || NOVIE_NUMBER
+  );
+  const [difficulty, updateDifficulty] = useTextfield(
+    (room.settings && room.settings.difficulty) || 'easy'
+  );
   const [code, updateCode] = useTextfield('');
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
@@ -163,11 +170,12 @@ function GameSettings({
             xs={12}
           >
             <Typography gutterBottom>
-              Durée de chaques manches: {time} secondes
+              Durée de chaques manches:{' '}
+              {(room.settings && room.settings.time_limit) || time} secondes
             </Typography>
             <Slider
               aria-label="Durée des manches"
-              defaultValue={30}
+              value={(room.settings && room.settings.time_limit) || time}
               getAriaValueText={valuetext}
               valueLabelDisplay="auto"
               step={5}
@@ -184,7 +192,9 @@ function GameSettings({
             <Typography gutterBottom>Nombre de films</Typography>
             <TextField
               type="number"
-              defaultValue={movieNumber}
+              defaultValue={
+                (room.settings && room.settings.total_musics) || movieNumber
+              }
               InputProps={{
                 inputProps: {
                   min: MOVIE_MIN,
@@ -201,7 +211,9 @@ function GameSettings({
             <FormControl>
               <Typography gutterBottom>Difficulté de la partie</Typography>
               <RadioGroup
-                defaultValue={difficulty}
+                defaultValue={
+                  (room.settings && room.settings.difficulty) || difficulty
+                }
                 value={difficulty}
                 onChange={onDifficultyChange}
               >
@@ -242,12 +254,14 @@ GameSettings.propTypes = {
   onSettingsSaved: PropTypes.func.isRequired,
   onSettingsChange: PropTypes.func,
   redirect: PropTypes.string,
+  room: PropTypes.object,
 };
 
 GameSettings.defaultProps = {
   noGameCode: false,
   onSettingsChange: null,
   redirect: null,
+  room: {},
 };
 
 function mapDispatchToProps(dispatch) {
