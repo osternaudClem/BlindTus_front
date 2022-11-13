@@ -18,8 +18,6 @@ import {
 } from '../../components/Game';
 import { Heading, PaperBox } from '../../components/UI';
 
-const TIMER_GAME = 10;
-
 function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
   const [isInputDisable, setIsInputDisable] = useState(true);
   const [isAnswerSent, setIsAnswerSent] = useState(false);
@@ -51,9 +49,8 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
       if (room.step - 1 === room.settings.total_musics) {
         return onEndGame();
       }
-
+      setIsCorrect(false);
       setIsInputDisable(true);
-      // updateTimer(room.settings.time_limit);
       setIsDisplayResult(false);
       setIsDisplayGame(true);
     });
@@ -70,10 +67,9 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
       setIsInputDisable(true);
       setIsAnswerSent(false);
       setIsReady(false);
-      setIsCorrect(false);
       updateTimer(0);
     });
-  }, [socket]);
+  }, [socket, onEndGame]);
 
   useEffect(() => {
     const { musics, step } = room;
@@ -109,7 +105,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
   };
 
   const onSendAnswer = (event, timeOut = false) => {
-    const { musics, settings, step } = room;
+    const { musics, step } = room;
     const movie = musics[step - 1].movie;
     let score = 0;
 

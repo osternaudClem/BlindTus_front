@@ -20,11 +20,13 @@ function GamePlayer({
 
   useEffect(() => {
     audioRef.current.volume = volume === null ? 0.7 : volume / 100;
+  }, [volume]);
 
+  useEffect(() => {
     if (onLoading) {
       loop();
     }
-  }, [volume]);
+  });
 
   useEffect(() => {
     if (isReady) {
