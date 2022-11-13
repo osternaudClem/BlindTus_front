@@ -3,19 +3,21 @@ import { Typography, Divider, Button } from '@mui/material';
 import { GameRoundResults } from '../../components/Game';
 import { PaperBox } from '../../components/UI';
 
-function Results({ game, players, onNewGame }) {
+function Results({ room, players, isCreator, onNewGame }) {
   return (
     <PaperBox>
-      <div style={{ padding: '16px' }}>
-        <Button
-          variant="contained"
-          onClick={onNewGame}
-        >
-          Nouvelle partie
-        </Button>
-      </div>
-      {game.movies &&
-        game.movies.map((movie, index) => {
+      {isCreator && (
+        <div style={{ padding: '16px' }}>
+          <Button
+            variant="contained"
+            onClick={onNewGame}
+          >
+            Nouvelle partie
+          </Button>
+        </div>
+      )}
+      {room.musics &&
+        room.musics.map((music, index) => {
           return (
             <div
               key={index}
@@ -25,13 +27,13 @@ function Results({ game, players, onNewGame }) {
                 component="h3"
                 variant="h5"
               >
-                {movie}
+                {music.movie.title_fr}
               </Typography>
 
               <GameRoundResults
-                game={game}
+                room={room}
                 players={players}
-                musicNumber={index}
+                round={index}
                 minimize
               />
               <Divider sx={{ marginTop: '8px' }} />

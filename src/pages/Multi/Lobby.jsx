@@ -26,10 +26,8 @@ function Lobby({
   onCreate,
   onJoin,
   onUpdateSettings,
-  players,
   isCreator,
-  code,
-  settings,
+  room,
   ...props
 }) {
   const [, copyToClipBoard] = useCopyToClipboard();
@@ -63,8 +61,8 @@ function Lobby({
     socket.emit('INIT_GAME');
   };
 
-  const handleClickCopyUrl = async function (event) {
-    const isCopied = await copyToClipBoard(`${URL}/lobby?code=${code}`);
+  const handleClickCopyUrl = async function () {
+    const isCopied = await copyToClipBoard(`${URL}/lobby?code=${room.id}`);
 
     if (isCopied) {
       setAlertTitle('Lien copié dans le presse-papier.');
@@ -77,12 +75,12 @@ function Lobby({
 
   return (
     <div>
-      <Heading>Multijoueur {code && `Room #${code}`}</Heading>
+      <Heading>Multijoueur {room.id && `Room #${room.id}`}</Heading>
       {renderAlert()}
-      {code && (
+      {room.id && (
         <Box marginBottom={4}>
           <TextField
-            defaultValue={`${URL}/lobby?code=${code}`}
+            defaultValue={`${URL}/lobby?code=${room.id}`}
             disabled
             fullWidth
             InputProps={{
@@ -107,7 +105,7 @@ function Lobby({
   );
 
   function renderCreateGame() {
-    if (code) {
+    if (room.id) {
       return;
     }
 
@@ -150,7 +148,7 @@ function Lobby({
   }
 
   function renderGameSettings() {
-    if (!code) {
+    if (!room.id) {
       return;
     }
 
@@ -160,16 +158,17 @@ function Lobby({
           <GameSettings
             onSettingsChange={handleChangeSettings}
             onSettingsSaved={handleStartGame}
+            room={room}
             noGameCode
           />
         ) : (
           <GameSettingsResume
             game={{
-              round_time: settings.timeLimit,
-              difficulty: settings.difficulty,
-              totalMusics: settings.totalMusics,
+              round_time: room.settings.time_limit,
+              difficulty: room.settings.difficulty,
+              total_musics: room.settings.total_musics,
             }}
-            code={code}
+            code={room.id}
           />
         )}
       </div>
@@ -196,16 +195,6 @@ function Lobby({
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.users.me,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {};
-}
-
 Lobby.propTypes = {
   onCreate: PropTypes.func,
   onJoin: PropTypes.func,
@@ -218,4 +207,4 @@ Lobby.defaultProps = {
   players: [],
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Lobby);
+export default Lobby;

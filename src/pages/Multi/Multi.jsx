@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import {
   CssBaseline,
   Grid,
+  Box,
   Alert,
   IconButton,
   Typography,
@@ -23,212 +24,173 @@ import Play from './Play';
 import Results from './Results';
 import { UserAvatar } from '../../components/Avatar';
 import { PaperBox } from '../../components/UI';
+import { UserContext } from '../../contexts/userContext';
 
-const TIMER_GAME = 30;
-const NOVIE_NUMBER = 10;
+function CircularProgressWithLabel(props) {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <CircularProgress
+        variant="determinate"
+        {...props}
+      />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          color="text.secondary"
+        >
+          {`${Math.round(props.value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
 
-function Multi(props) {
-  const [open, setOpen] = useState(false);
+function Multi() {
   const [error, setError] = useState(null);
-  const [code, setCode] = useState(null);
-  const [room, setRoom] = useState(null);
-  const [game, setGame] = useState(null);
-  const [roundStarted, setRoundStarted] = useState(false);
-  const [readyPlayers, setReadyPlayers] = useState([]);
-  const [players, setPlayers] = useState([]);
-  const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
-  const [difficulty, setDifficulty] = useState('easy');
-  const [totalMusics, setTotalMusics] = useState(NOVIE_NUMBER);
-  const [musics, setMusics] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
-  const [scores, setScores] = useState([]);
-  const navigate = useNavigate();
+  const [isReady, setIsReady] = useState(false);
+  const [players, updatePlayers] = useState([]);
+  const [loadings, updateLoadings] = useState([]);
+  const [room, updateRoom] = useState({});
+  const { user } = useContext(UserContext);
   const socket = useContext(SocketContext);
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const roomCode = urlParams.get('code');
+  const navigate = useNavigate();
 
   useEffect(() => {
     updateTitle('Multijoueur');
   }, []);
 
-  const onJoinGame = useCallback(
-    (customRoom) => {
-      socket.emit(
-        'JOIN_ROOM',
-        { username: props.user.username, room: customRoom },
-        ({ error, user, room }) => {
-          if (error) {
-            console.log('>>> error', error);
-            setOpen(true);
-            return setError(error);
-          }
-
-          setIsCreator(user.isCreator);
-          setCode(customRoom);
-          setTimeLimit(room.settings.timeLimit);
-          setDifficulty(room.settings.difficulty);
-          setTotalMusics(room.settings.totalMusics);
-
-          return () => {
-            socket.off('JOIN_ROOM');
-          };
-        }
-      );
-    },
-    [socket, props.user.username]
-  );
-
   useEffect(() => {
-    // window.addEventListener('beforeunload', handleTabClose);
-
     if (!socket.connected) {
       socket.connect();
     }
 
-    socket.on('ERROR', (error) => {
-      setOpen(true);
-      setError(error);
+    return () => {
+      socket.emit('FORCE_DISCONNECT');
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on('ROOM_USERS', async (players) => {
+      const response = await callApi.get(
+        `/users?usernames=${players.map((player) => player.username)}`
+      );
+
+      players.map(
+        (player, index) =>
+          (player.info = response.data.find(
+            (d) => d.username === player.username
+          ))
+      );
+      updatePlayers(players);
     });
 
     socket.on('KICK', () => {
-      navigate(0);
-    });
-
-    socket.on('PLAYER_DISCONNECTED', (player, game) => {
-      setGame(game);
-    });
-
-    socket.on('SETTINGS_UPDATED', (settings) => {
-      setTimeLimit(settings.timeLimit);
-      setDifficulty(settings.difficulty);
-      setTotalMusics(settings.totalMusics);
+      console.log('>>> KICK');
+      navigate('/lobby');
     });
 
     socket.on('NEW_CREATOR', () => {
       setIsCreator(true);
     });
 
-    socket.on('START_GAME', ({ room, game, musics }) => {
-      setGame(game);
-      setMusics(musics);
-      setRoom(room);
+    socket.on('SETTINGS_UPDATED', (room) => {
+      updateRoom(room);
+    });
+
+    socket.on('START_GAME', (room) => {
+      updateRoom(room);
       setIsStarted(true);
     });
 
-    socket.on('UPDATE_SCORES', ({ game }) => {
-      setGame(game);
+    socket.on('START_MUSIC', (room) => {
+      updateRoom(room);
     });
 
-    socket.on('NEXT_ROUND', ({ game }) => {
-      setRoundStarted(false);
-      setScores(game.rounds);
+    socket.on('IS_EVERYBODY_READY', ({ isReady, loadings = [] }) => {
+      updateLoadings(loadings);
+      setIsReady(isReady);
     });
 
-    socket.on('NEW_GAME', () => {
+    socket.on('NEXT_ROUND', ({ room }) => {
+      updateRoom(room);
+    });
+
+    socket.on('NEW_GAME', (room) => {
+      updateRoom(room);
       setIsStarted(false);
       setIsEndGame(false);
     });
-
-    socket.on('disconnect', (reason) => {
-      console.log('>>> reason', reason);
-    });
-
-    if (roomCode) {
-      onJoinGame(roomCode);
-    }
-
-    socket.on('IS_EVERYBODY_READY', ({ players }) => {
-      setReadyPlayers(players);
-    });
-
-    socket.on('START_MUSIC', () => {
-      setRoundStarted(true);
-    });
-
-    return () => {
-      window.removeEventListener('beforeunload', handleTabClose);
-      socket.off('ERROR');
-      socket.off('KICK');
-      socket.off('PLAYER_DISCONNECTED');
-      socket.off('SETTINGS_UPDATED');
-      socket.off('NEW_CREATOR');
-      socket.off('START_GAME');
-      socket.off('UPDATE_SCORES');
-      socket.off('NEW_GAME');
-      socket.off('NEXT_ROUND');
-      socket.off('IS_EVERYBODY_READY');
-      socket.off('disconnect');
-    };
-  }, [socket, navigate, onJoinGame, roomCode]);
-
-  useEffect(() => {
-    socket.on('ROOM_USERS', async (users) => {
-      const response = await callApi.get(
-        `/users?usernames=${users.map((user) => user.username)}`
-      );
-      users.map(
-        (user, index) =>
-          (user.info = response.data.find((d) => d.username === user.username))
-      );
-      setPlayers(users);
-    });
-
-    return function () {
-      socket.off('ROOM_USERS');
-      socket.emit('LEAVE_ROOM');
-    };
   }, [socket]);
-
-  const handleTabClose = function (event) {
-    event.preventDefault();
-
-    const message = 'Etes-vous sur de vouloir quitter la page ?';
-    event.returnValue = message;
-    return message;
-  };
-
-  const handleClickError = function () {
-    setError(null);
-    setOpen(false);
-  };
 
   const onCreateGame = function (code) {
     socket.emit(
       'CREATE_ROOM',
       {
-        username: props.user.username,
+        username: user.username,
         room: code,
         settings: {
-          timeLimit,
-          difficulty,
-          totalMusics,
+          time_limit: 30,
+          difficulty: 'easy',
+          total_musics: 10,
         },
       },
-      ({ error, user }) => {
-        if (error) {
-          return setError(error);
-        }
-        setCode(code);
+      (newRoom) => {
         setIsCreator(true);
+        updateRoom(newRoom);
       }
     );
+  };
+
+  const onJoinGame = function (code) {
+    socket.emit(
+      'JOIN_ROOM',
+      { username: user.username, room: code },
+      ({ error, user, room }) => {
+        if (error) {
+          console.log('>>> error', error);
+        }
+
+        setIsCreator(user.isCreator);
+        updateRoom(room);
+
+        return () => {
+          socket.off('JOIN_ROOM');
+        };
+      }
+    );
+  };
+
+  const handleClickDisconnect = function (user) {
+    socket.emit('KICK_USER', { user });
   };
 
   const onUpdateSettings = function (settings) {
-    socket.emit('UPDATE_SETTINGS', settings);
+    socket.emit('UPDATE_SETTINGS', room.id, settings);
+  };
+
+  const onDisconnect = function (user) {
+    socket.emit('KICK_USER', { user });
   };
 
   const onAnswer = function (score, step, answer) {
-    socket.emit(
-      'ADD_SCORE',
-      { score: Math.round(score), step, answer },
-      ({ game }) => {
-        setGame(game);
-      }
-    );
+    socket.emit('ADD_SCORE', { score, step, answer }, (room) => {
+      updateRoom(room);
+    });
   };
 
   const onEndGame = function () {
@@ -236,14 +198,7 @@ function Multi(props) {
   };
 
   const onNewGame = function () {
-    socket.emit('ASK_NEW_GAME', () => {
-      setIsStarted(false);
-      setIsEndGame(false);
-    });
-  };
-
-  const handleClickDisconnect = function (user) {
-    socket.emit('KICK_USER', { user });
+    socket.emit('ASK_NEW_GAME');
   };
 
   return (
@@ -254,25 +209,6 @@ function Multi(props) {
       className="LoginPage"
     >
       <CssBaseline />
-      {open && (
-        <Alert
-          variant="outlined"
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={handleClickError}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          sx={{ mb: 2 }}
-        >
-          {error}
-        </Alert>
-      )}
       <Grid
         item
         xs={12}
@@ -301,14 +237,8 @@ function Multi(props) {
           onCreate={onCreateGame}
           onJoin={onJoinGame}
           onUpdateSettings={onUpdateSettings}
-          players={players}
+          room={room}
           isCreator={isCreator}
-          code={code}
-          settings={{
-            timeLimit,
-            difficulty,
-            totalMusics,
-          }}
         />
       );
     }
@@ -317,12 +247,12 @@ function Multi(props) {
       return (
         <Play
           socket={socket}
-          musics={musics}
           room={room}
-          game={game}
           players={players}
           isCreator={isCreator}
+          isReady={isReady}
           onAnswer={onAnswer}
+          isEndGame={isEndGame}
           onEndGame={onEndGame}
         />
       );
@@ -330,15 +260,16 @@ function Multi(props) {
 
     return (
       <Results
-        game={game}
+        room={room}
         players={players}
+        isCreator={isCreator}
         onNewGame={onNewGame}
       />
     );
   }
 
   function renderSide() {
-    if (!isStarted && code) {
+    if (!isStarted && room.id) {
       return (
         <PaperBox>
           <Typography
@@ -356,7 +287,7 @@ function Multi(props) {
                   key={index}
                 >
                   {isCreator && (
-                    <IconButton onClick={() => handleClickDisconnect(player)}>
+                    <IconButton onClick={() => onDisconnect(player)}>
                       <CloseIcon />
                     </IconButton>
                   )}
@@ -379,10 +310,10 @@ function Multi(props) {
 
     let usersScore = [];
 
-    game.users.map((user) => {
+    room.players.map((user) => {
       let userScore = 0;
 
-      game.rounds.map((round) => {
+      room.rounds.map((round) => {
         const newScore = round.scores.find((s) => s.username === user.username);
         if (newScore) {
           userScore = userScore + newScore.score;
@@ -415,6 +346,11 @@ function Multi(props) {
                 alignItems="center"
                 key={index}
               >
+                {isCreator && (
+                  <IconButton onClick={() => handleClickDisconnect(player)}>
+                    <CloseIcon />
+                  </IconButton>
+                )}
                 <UserAvatar
                   username={player.username}
                   avatar={player.info.avatar}
@@ -430,16 +366,16 @@ function Multi(props) {
   }
 
   function renderScore() {
-    if (!game || !game.id) {
+    if (!room || !room.id) {
       return;
     }
 
     let usersScore = [];
 
-    game.users.map((user) => {
+    room.players.map((user) => {
       let userScore = 0;
 
-      scores.map((round) => {
+      room.rounds.map((round) => {
         const newScore = round.scores.find((s) => s.username === user.username);
         if (newScore) {
           userScore = userScore + newScore.score;
@@ -456,7 +392,6 @@ function Multi(props) {
     });
 
     usersScore = usersScore.sort((a, b) => b.score - a.score);
-
     return (
       <PaperBox>
         <Grid
@@ -472,13 +407,20 @@ function Multi(props) {
         </Grid>
         <List dense>
           {usersScore.map((user, index) => {
+            if (!players.length || !players[index]) {
+              return;
+            }
             return (
               <div key={index}>
                 <ListItem
                   sx={{ paddingLeft: 0, paddingRight: 0 }}
                   secondaryAction={
-                    !readyPlayers.includes(user.id) && roundStarted ? (
-                      <CircularProgress color="primary" />
+                    loadings.find((l) => l.id === user.id && l.loading < 100) &&
+                    !isReady ? (
+                      <CircularProgressWithLabel
+                        color="primary"
+                        value={loadings.find((l) => l.id === user.id).loading}
+                      />
                     ) : (
                       <Typography variant="body">{user.score}</Typography>
                     )
@@ -505,14 +447,4 @@ function Multi(props) {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.users.me,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Multi);
+export default Multi;

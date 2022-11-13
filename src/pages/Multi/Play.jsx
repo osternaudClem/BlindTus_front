@@ -20,116 +20,88 @@ import { Heading, PaperBox } from '../../components/UI';
 
 const TIMER_GAME = 10;
 
-function Play({
-  socket,
-  room,
-  musics,
-  isCreator,
-  game,
-  players,
-  onAnswer,
-  onEndGame,
-}) {
-  const [score, setScore] = useState(0);
-  const [answer, updateAnswer] = useTextfield();
-  const [isReady, setIsReady] = useState(false);
+function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
+  const [isInputDisable, setIsInputDisable] = useState(true);
+  const [isAnswerSent, setIsAnswerSent] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
-  const [musicNumber, setMusicsNumber] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(TIMER_GAME);
-  const [inputDisabled, setInputDisabled] = useState(true);
-  const [displayGame, setDisplayGame] = useState(false);
-  const [displayResult, setDisplayResult] = useState(false);
+  const [isDisplayGame, setIsDisplayGame] = useState(false);
+  const [isDisplayResult, setIsDisplayResult] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [timer, updateTimer] = useState(0);
+  const [timeLeft, updateTimeLeft] = useState(0);
+  const [answer, updateAnswer] = useTextfield();
   const [proposals, setProposals] = useState([]);
-  const [isEndGame, setIsEndGame] = useState(false);
-  const [answerSent, setAnswerSent] = useState(false);
+  const [score, setScore] = useState(0);
   const answerField = useRef(null);
 
   useEffect(() => {
-    if (!inputDisabled && answerField.current) {
+    if (!isInputDisable && answerField.current) {
       answerField.current.focus();
     }
-  }, [inputDisabled]);
+  }, [isInputDisable]);
 
   useEffect(() => {
     if (isReady) {
-      setTimer(room.settings.timeLimit);
+      updateTimer(room.settings.time_limit);
     }
-  }, [isReady, room.settings.timeLimit]);
+  }, [isReady, room.settings.time_limit]);
 
   useEffect(() => {
-    let nexMusicNumber = 0;
-    let endGame = false;
-
-    socket.on('NEXT_ROUND', ({ step, isEndGame }) => {
-      endGame = isEndGame;
-      nexMusicNumber = step;
-      setDisplayGame(false);
-      setAnswerSent(false);
-      setTimer(0);
-      setIsEndGame(isEndGame);
-      setIsReady(false);
-
-      return () => {
-        socket.off('NEXT_ROUND');
-      };
-    });
-
-    socket.on('START_MUSIC', () => {
-      if (endGame) {
-        setDisplayGame(false);
-        setIsEndGame(false);
-        setMusicsNumber(0);
-        onEndGame();
+    socket.on('START_MUSIC', (room) => {
+      if (room.step - 1 === room.settings.total_musics) {
+        return onEndGame();
       }
 
-      setDisplayResult(false);
-      setInputDisabled(false);
-      setMusicsNumber(nexMusicNumber);
-      setIsCorrect(null);
-      setDisplayGame(true);
+      setIsInputDisable(true);
+      // updateTimer(room.settings.time_limit);
+      setIsDisplayResult(false);
+      setIsDisplayGame(true);
     });
 
-    socket.on('IS_EVERYBODY_READY', ({ isReadyToPlay }) => {
-      setIsReady(isReadyToPlay);
+    socket.on('IS_EVERYBODY_READY', ({ isReady }) => {
+      setIsReady(isReady);
+      if (isReady) {
+        setIsInputDisable(false);
+      }
     });
 
-    return () => {
-      endGame = false;
-      nexMusicNumber = 0;
-      setIsEndGame(false);
-      setMusicsNumber(0);
-
-      socket.off('NEXT_ROUND');
-      socket.off('START_MUSIC');
-      socket.off('IS_EVERYBODY_READY');
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    socket.on('NEXT_ROUND', () => {
+      setIsDisplayGame(false);
+      setIsInputDisable(true);
+      setIsAnswerSent(false);
+      setIsReady(false);
+      setIsCorrect(false);
+      updateTimer(0);
+    });
   }, [socket]);
 
   useEffect(() => {
-    if (musics[musicNumber].proposals && musicNumber < musics.length) {
+    const { musics, step } = room;
+
+    const currentStep = step - 1;
+
+    if (musics[currentStep] && musics[currentStep].proposals) {
       setProposals(
         shuffle([
-          musics[musicNumber].movie.title_fr,
-          ...musics[musicNumber].proposals.slice(0, 7),
+          musics[currentStep].movie.title_fr,
+          ...musics[currentStep].proposals.slice(0, 7),
         ])
       );
     }
-  }, [musicNumber, musics]);
+  }, [room]);
 
-  const onTimerFinished = function (count, sending = true) {
-    setTimeLeft(count);
+  const onTimerFinished = function (count) {
+    updateTimeLeft(count);
 
-    if (count === 0 && displayGame) {
-      if (sending) {
-        onSendAnswer(null, true);
-      }
-      setDisplayGame(false);
-      setInputDisabled(true);
-      updateAnswer('');
-      setAnswerSent(false);
+    if (count !== 0 || !isDisplayGame) {
+      return;
     }
+
+    setIsDisplayGame(false);
+    setIsInputDisable(true);
+    onSendAnswer(null, true);
+    updateAnswer('');
+    setIsAnswerSent(false);
   };
 
   const handleClickStartMusic = function () {
@@ -137,15 +109,15 @@ function Play({
   };
 
   const onSendAnswer = (event, timeOut = false) => {
-    const music = musicNumber;
-    const movie = musics[music].movie;
+    const { musics, settings, step } = room;
+    const movie = musics[step - 1].movie;
     let score = 0;
 
     if (event) {
       event.preventDefault();
     }
 
-    if (inputDisabled) {
+    if (isInputDisable) {
       return;
     }
 
@@ -161,21 +133,21 @@ function Play({
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = calculScore(timeLeft, room.settings.timeLimit);
+      score = calculScore(timeLeft, room.settings.time_limit);
     }
 
     setScore(score);
 
-    onAnswer(score, musicNumber, answer);
-    setAnswerSent(true);
-    setDisplayResult(true);
-    setInputDisabled(true);
+    onAnswer(score, step, answer);
+    setIsAnswerSent(true);
+    setIsDisplayResult(true);
+    setIsInputDisable(true);
     updateAnswer('');
   };
 
   const handleClickAnswer = function (answer) {
-    const music = musicNumber;
-    const movie = musics[music].movie;
+    const { musics, settings, step } = room;
+    const movie = musics[step - 1].movie;
     let score = 0;
     let isCorrect = false;
 
@@ -186,72 +158,91 @@ function Play({
     setIsCorrect(isCorrect);
 
     if (isCorrect) {
-      score = calculScore(timeLeft, room.settings.timeLimit);
+      score = calculScore(timeLeft, settings.time_limit);
     }
 
     setScore(score);
-    onAnswer(score, musicNumber, answer);
-    setAnswerSent(true);
-    setDisplayResult(true);
+    onAnswer(score, step, answer);
+    setIsAnswerSent(true);
+    setIsDisplayResult(true);
+  };
+
+  const onLoading = function (loading) {
+    if (isReady) {
+      return;
+    }
+
+    socket.emit('UPDATE_LOADING', loading);
   };
 
   const onCanPlayAudio = function () {
     socket.emit('PLAYER_AUDIO_READY');
   };
 
-  return <div>{renderGame()}</div>;
+  return (
+    <div>
+      <div>
+        {room.step} / {room.musics.length}
+      </div>
 
-  function renderGame() {
-    if (!musics || musics.length === 0) {
+      <Timer
+        limit={timer}
+        onFinished={(count) => onTimerFinished(count)}
+        key={timer}
+        className="NewGame__timer"
+      />
+
+      {renderPlayer()}
+
+      {room.settings.difficulty === 'difficult' ? (
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '100%',
+          }}
+          mb={4}
+          component="form"
+          noValidate
+          autoComplete="off"
+          onSubmit={(event) => onSendAnswer(event)}
+        >
+          <MovieTextField
+            onChange={updateAnswer}
+            value={answer}
+            disabled={isInputDisable}
+            inputRef={answerField}
+            isCorrect={isCorrect}
+          />
+        </Box>
+      ) : (
+        <div>{renderProposals()}</div>
+      )}
+
+      {renderStart()}
+      {renderResult()}
+    </div>
+  );
+
+  function renderPlayer() {
+    if (!isDisplayGame) {
       return;
     }
 
+    const { musics, step } = room;
+
     return (
-      <div>
-        <div>
-          {musicNumber + 1} / {musics.length}
-        </div>
-
-        <Timer
-          limit={timer}
-          onFinished={(count) => onTimerFinished(count)}
-          key={timer}
-          className="NewGame__timer"
-        />
-
-        {renderPlayer()}
-
-        {room.settings.difficulty === 'difficult' ? (
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '100%',
-            }}
-            mb={4}
-            component="form"
-            noValidate
-            autoComplete="off"
-            onSubmit={(event) => onSendAnswer(event)}
-          >
-            <MovieTextField
-              onChange={updateAnswer}
-              value={answer}
-              disabled={inputDisabled}
-              inputRef={answerField}
-              isCorrect={isCorrect}
-            />
-          </Box>
-        ) : (
-          <div>{renderProposals()}</div>
-        )}
-        {renderStart()}
-        {renderResult()}
-      </div>
+      <GamePlayer
+        audioName={musics[step - 1].audio_name}
+        timecode={musics[step - 1].timecode}
+        canPlay={onCanPlayAudio}
+        onLoading={onLoading}
+        isReady={isReady}
+      />
     );
   }
 
   function renderStart() {
-    if (displayGame) {
+    if (isDisplayGame) {
       return;
     }
 
@@ -273,16 +264,24 @@ function Play({
         onClick={handleClickStartMusic}
         variant="contained"
         size="large"
-        startIcon={isEndGame ? <SportsScoreIcon /> : <PlayArrowIcon />}
+        startIcon={
+          room.step === room.settings.total_musics ? (
+            <SportsScoreIcon />
+          ) : (
+            <PlayArrowIcon />
+          )
+        }
         sx={{ marginBottom: '16px' }}
       >
-        {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
+        {room.step === room.settings.total_musics
+          ? 'Afficher les résultats'
+          : 'Lancer la musique'}
       </Button>
     );
   }
 
   function renderProposals() {
-    if (!displayGame || answerSent) {
+    if (!isDisplayGame || isAnswerSent) {
       return;
     }
 
@@ -294,23 +293,9 @@ function Play({
     );
   }
 
-  function renderPlayer() {
-    if (!displayGame) {
-      return;
-    }
-
-    return (
-      <GamePlayer
-        audioName={musics[musicNumber].audio_name}
-        timecode={musics[musicNumber].timecode}
-        canPlay={onCanPlayAudio}
-        isReady={isReady}
-      />
-    );
-  }
-
   function renderResult() {
-    if (musicNumber < 0 || !displayResult) {
+    const { musics, step } = room;
+    if (!isDisplayResult) {
       return;
     }
 
@@ -329,15 +314,17 @@ function Play({
         {renderRoundResults()}
 
         <Result
-          movie={musics[musicNumber].movie}
-          music={musics[musicNumber]}
+          movie={musics[step - 1].movie}
+          music={musics[step - 1]}
         />
       </React.Fragment>
     );
   }
 
   function renderRoundResults() {
-    if (!game.rounds[musicNumber]) {
+    const { rounds, step } = room;
+
+    if (!rounds[step - 1]) {
       return;
     }
 
@@ -345,9 +332,9 @@ function Play({
       <PaperBox style={{ marginBottom: '16px' }}>
         <Heading type="subtitle">Résultat de la manche</Heading>
         <GameRoundResults
-          game={game}
+          room={room}
           players={players}
-          musicNumber={musicNumber}
+          round={step - 1}
         />
       </PaperBox>
     );
