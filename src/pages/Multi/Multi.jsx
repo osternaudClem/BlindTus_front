@@ -118,9 +118,9 @@ function Multi() {
       updateRoom(room);
     });
 
-    socket.on('IS_EVERYBODY_READY', ({ isReady, loadings = [] }) => {
+    socket.on('IS_EVERYBODY_READY', ({ allReady, loadings = [] }) => {
       updateLoadings(loadings);
-      setIsReady(isReady);
+      setIsReady(allReady);
     });
 
     socket.on('NEXT_ROUND', ({ room }) => {

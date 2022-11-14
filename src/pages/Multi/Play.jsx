@@ -55,9 +55,9 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
       setIsDisplayGame(true);
     });
 
-    socket.on('IS_EVERYBODY_READY', ({ isReady }) => {
-      setIsReady(isReady);
-      if (isReady) {
+    socket.on('IS_EVERYBODY_READY', ({ allReady }) => {
+      if (allReady) {
+        setIsReady(true);
         setIsInputDisable(false);
       }
     });
@@ -69,7 +69,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
       setIsReady(false);
       updateTimer(0);
     });
-  }, [socket, onEndGame]);
+  }, []);
 
   useEffect(() => {
     const { musics, step } = room;
