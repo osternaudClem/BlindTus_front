@@ -10,7 +10,7 @@ export function getMusics(limit) {
   return async function (dispatch) {
     try {
       const success = await callApi.get(
-        `/musics?limit=${limit}&withProposals=true`
+        `/musics?limit=${limit}&withProposals=true&categorie=626962053dcb17a8995789a1`
       );
       dispatch({ type: types.GET_MUSICS_SUCCESS, musics: success.data });
       return success.data;
