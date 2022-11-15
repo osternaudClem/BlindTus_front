@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -19,13 +19,15 @@ import {
   IconButton,
   Alert,
   AlertTitle,
+  FormGroup,
+  Checkbox,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useSlider, useTextfield } from '../../hooks/formHooks';
-import { gamesActions } from '../../actions';
-import { PaperBox } from '../UI';
+import { gamesActions, categoriesActions } from '../../actions';
+import { Loading, PaperBox } from '../UI';
 
 const NOVIE_NUMBER = 10;
 const MOVIE_MIN = 3;
@@ -53,9 +55,20 @@ function GameSettings({
   const [difficulty, updateDifficulty] = useTextfield(
     (room.settings && room.settings.difficulty) || 'easy'
   );
+  const [categories, updateCategories] = useState({});
   const [code, updateCode] = useTextfield('');
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!props.categories.length) {
+      props.categoriesActions.getCategories();
+    }
+  }, []);
+
+  useEffect(() => {
+    sendChangeSettings({ categories });
+  }, [categories]);
 
   const handleClickSettings = async function (event) {
     event.preventDefault();
@@ -70,7 +83,7 @@ function GameSettings({
       return navigate(`/${redirect}?code=${code}`);
     }
 
-    onSettingsSaved({ time, movieNumber, difficulty });
+    onSettingsSaved({ time, movieNumber, difficulty, categories });
   };
 
   const handleClickResetCode = function () {
@@ -92,15 +105,25 @@ function GameSettings({
     sendChangeSettings({ updatedDifficulty: event.target.value });
   };
 
+  const onCategoriesChange = function (event, category) {
+    const isChecked = event.target.checked;
+    updateCategories({ ...categories, [category._id]: isChecked });
+  };
+
   const sendChangeSettings = function (settings) {
     if (onSettingsChange) {
       onSettingsChange({
         time_limit: settings.updatedTime || time,
         total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
         difficulty: settings.updatedDifficulty || difficulty,
+        categories: settings.categories || categories,
       });
     }
   };
+
+  if (!props.categories) {
+    return <Loading />;
+  }
 
   return (
     <PaperBox>
@@ -153,6 +176,7 @@ function GameSettings({
                   onClick={handleClickSettings}
                   type="submit"
                   size="large"
+                  disabled={!code}
                 >
                   Lancer la partie
                 </Button>
@@ -185,11 +209,34 @@ function GameSettings({
               onChange={onTimeChange}
             />
           </Grid>
+
           <Grid
             item
             xs={12}
           >
-            <Typography gutterBottom>Nombre de films</Typography>
+            <FormControl required>
+              <Typography gutterBottom>Themes</Typography>
+              <Typography variant="subtitle2">
+                Choisissez au moins 1 theme
+              </Typography>
+              <FormGroup row>
+                {props.categories.map((category) => (
+                  <FormControlLabel
+                    key={category._id}
+                    control={<Checkbox />}
+                    label={category.label_fr}
+                    onChange={(event) => onCategoriesChange(event, category)}
+                  />
+                ))}
+              </FormGroup>
+            </FormControl>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+          >
+            <Typography gutterBottom>Nombre de musiques</Typography>
             <TextField
               type="number"
               defaultValue={
@@ -204,6 +251,7 @@ function GameSettings({
               onChange={onMovieNumberChange}
             />
           </Grid>
+
           <Grid
             item
             xs={12}
@@ -239,6 +287,9 @@ function GameSettings({
               variant="contained"
               onClick={handleClickSettings}
               type="submit"
+              disabled={
+                !Object.keys(categories).filter((c) => categories[c]).length
+              }
             >
               Lancer la partie
             </Button>
@@ -264,10 +315,17 @@ GameSettings.defaultProps = {
   room: {},
 };
 
-function mapDispatchToProps(dispatch) {
+function mapStateToProps(state) {
   return {
-    gamesActions: bindActionCreators(gamesActions, dispatch),
+    categories: state.categories.all,
   };
 }
 
-export default connect(null, mapDispatchToProps)(GameSettings);
+function mapDispatchToProps(dispatch) {
+  return {
+    gamesActions: bindActionCreators(gamesActions, dispatch),
+    categoriesActions: bindActionCreators(categoriesActions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameSettings);

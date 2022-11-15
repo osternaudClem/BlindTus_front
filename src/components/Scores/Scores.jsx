@@ -47,9 +47,8 @@ function Scores(props) {
             .slice(0)
             .reverse()
             .map((score) => (
-              <div key={`${score.movie} - ${score.score}`}>
+              <div key={`${score.movie || score.tvShow} - ${score.score}`}>
                 <ListItem
-                  key={score.movie}
                   secondaryAction={
                     <Typography variant="body">{score.score}</Typography>
                   }
@@ -60,7 +59,7 @@ function Scores(props) {
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{ noWrap: true }}
-                    primary={score.movie}
+                    primary={score.movie || score.tvShow}
                   />
                 </ListItem>
                 <Divider variant="middle" />

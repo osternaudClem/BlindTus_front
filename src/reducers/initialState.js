@@ -15,6 +15,11 @@ const state = Object.freeze({
     selected: {},
     cover: null,
   },
+  tvShows: {
+    all: [],
+    search: [],
+    selected: {},
+  },
   scores: {
     currentGame: [],
   },
@@ -26,6 +31,9 @@ const state = Object.freeze({
   },
   historyToday: {
     today: {},
+    all: [],
+  },
+  categories: {
     all: [],
   },
 });

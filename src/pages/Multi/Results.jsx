@@ -27,7 +27,7 @@ function Results({ room, players, isCreator, onNewGame }) {
                 component="h3"
                 variant="h5"
               >
-                {music.movie.title_fr}
+                {music.movie ? music.movie.title_fr : music.tvShow.title_fr}
               </Typography>
 
               <GameRoundResults
