@@ -7,8 +7,11 @@ import { tmdb } from '../../config';
 import { addSpaces } from '../../lib/array.js';
 import './Cards.scss';
 
-function MovieCard({ movie, music, hideGenres, size }) {
+function MovieCard({ music, hideGenres, size }) {
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
+  const media = music.movie || music.tvShow;
+  const type = music.movie ? 'movies' : 'tvShows';
 
   return (
     <Stack
@@ -17,8 +20,8 @@ function MovieCard({ movie, music, hideGenres, size }) {
       className={`MovieCard MovieCard--${size}`}
     >
       <img
-        src={`${tmdb.image_path}${movie.poster_path}`}
-        alt={movie.title_fr}
+        src={`${tmdb.image_path}${media.poster_path}`}
+        alt={media.title_fr}
         className="MovieCard__poster"
       />
       <div className="MovieCard__content">
@@ -26,25 +29,27 @@ function MovieCard({ movie, music, hideGenres, size }) {
           textAlign={largeScreen ? 'left' : 'center'}
           sx={{ marginBottom: '16px' }}
         >
-          A propos du film
+          A propos {type === 'movies' ? 'du film' : 'de la serie'}
         </Divider>
         <Typography
           variant="h4"
           gutterBottom
         >
-          {movie.title_fr}
+          {media.title_fr}
         </Typography>
-        <Typography
-          variant="h5"
-          gutterBottom
-        >
-          {addSpaces(movie.directors)}
-        </Typography>
+        {media.directors && (
+          <Typography
+            variant="h5"
+            gutterBottom
+          >
+            {addSpaces(media.directors)}
+          </Typography>
+        )}
         <Typography
           variant="h6"
           gutterBottom
         >
-          {movie.release_date}
+          {media.release_date || media.first_air_date}
         </Typography>
         {renderGenres()}
 
@@ -60,7 +65,7 @@ function MovieCard({ movie, music, hideGenres, size }) {
 
     return (
       <div>
-        {movie.genres.map((genre) => (
+        {media.genres.map((genre) => (
           <Chip
             label={genre}
             size="small"
@@ -104,7 +109,6 @@ function MovieCard({ movie, music, hideGenres, size }) {
 
 MovieCard.propTypes = {
   hideGenres: PropTypes.bool,
-  movie: PropTypes.object.isRequired,
   music: PropTypes.object,
   size: PropTypes.oneOf(['small', 'large']),
 };

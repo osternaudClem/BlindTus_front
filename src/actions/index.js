@@ -7,4 +7,6 @@ module.exports = {
   moviesActions: require('./movies'),
   todayActions: require('./today'),
   historyTodayActions: require('./historyToday'),
+  tvShowsActions: require('./tvShows'),
+  categoriesActions: require('./categories'),
 };

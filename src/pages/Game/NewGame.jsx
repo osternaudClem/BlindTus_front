@@ -54,6 +54,7 @@ function NewGame(props) {
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
+  const [categories, setCategories] = useState([]);
   const [gameWithCode, setGameWithCode] = useState(false);
   const [proposals, setProposals] = useState([]);
   const [score, setScore] = useState(0);
@@ -95,8 +96,8 @@ function NewGame(props) {
     }
   }, [inputDisabled]);
 
-  const getMusics = async function (limit) {
-    const allMusics = await props.musicsActions.getMusics(limit);
+  const getMusics = async function (limit, categories) {
+    const allMusics = await props.musicsActions.getMusics(limit, categories);
 
     return allMusics;
   };
@@ -105,27 +106,40 @@ function NewGame(props) {
     const currentGame = props.games.currentGame;
 
     if (currentGame.proposals && musicNumber < totalMusics) {
+      const music = currentGame.musics[musicNumber];
       setProposals(
         shuffle([
-          currentGame.musics[musicNumber].movie.title_fr,
+          music[music.movie ? 'movie' : 'tvShow'].title_fr,
           ...currentGame.proposals[musicNumber].slice(0, 7),
         ])
       );
     }
   }, [musicNumber, props.games.currentGame, totalMusics]);
 
-  const onStartGame = async function ({ time, movieNumber, difficulty }) {
-    const musics = await getMusics(movieNumber);
+  const onStartGame = async function ({
+    time,
+    movieNumber,
+    difficulty,
+    categories,
+  }) {
+    try {
+      const musics = await getMusics(movieNumber, categories);
 
-    props.gamesActions.saveGame({
-      round_time: time,
-      difficulty,
-      musics,
-      created_by: user._id,
-    });
+      console.log('>>> musics', musics);
 
-    setIsStarted(true);
-    setDisplayTimer(true);
+      props.gamesActions.saveGame({
+        round_time: time,
+        difficulty,
+        musics,
+        categories,
+        created_by: user._id,
+      });
+
+      setIsStarted(true);
+      setDisplayTimer(true);
+    } catch (error) {
+      console.log('>>> error', error);
+    }
   };
 
   const handleClickStart = function () {
@@ -137,6 +151,7 @@ function NewGame(props) {
     setTimeLimit(settings.time);
     setDifficulty(settings.difficulty);
     setTotalMusics(settings.movieNumber);
+    setCategories(settings.categories);
 
     onStartGame(settings);
   };
@@ -177,13 +192,15 @@ function NewGame(props) {
   };
 
   const handleClickAnswer = function (answer) {
-    const music = musicNumber;
-    const movie = props.games.currentGame.musics[music].movie;
+    const music = props.games.currentGame.musics[musicNumber];
     let score = 0;
 
     let isAnswerCorrect = false;
 
-    if (answer === movie.title_fr) {
+    if (
+      (music.movie && music.movie.title_fr === answer) ||
+      (music.tvShow && music.tvShow.title_fr === answer)
+    ) {
       isAnswerCorrect = true;
     }
 
@@ -195,21 +212,14 @@ function NewGame(props) {
 
     setScore(score);
 
-    props.scoresActions.addScore({
-      movie: movie.title_fr,
-      isCorrect: isAnswerCorrect,
-      score: Math.round(score),
-      playerAnswer: answer,
-      movie_id: props.games.currentGame.musics[music].movie._id,
-      music_id: props.games.currentGame.musics[music]._id,
-    });
+    saveScore(music, isAnswerCorrect, score);
 
     onTimerFinished(0, false);
   };
 
   const onSendAnswer = (event, timeOut = false) => {
-    const music = musicNumber;
-    const movie = props.games.currentGame.musics[music].movie;
+    const music = props.games.currentGame.musics[musicNumber];
+
     let score = 0;
 
     if (event) {
@@ -220,7 +230,17 @@ function NewGame(props) {
       return;
     }
 
-    let titles = [movie.title, movie.title_fr, ...movie.simple_title];
+    const titles =
+      (music.movie && [
+        music.movie.title,
+        music.movie.title_fr,
+        ...music.movie.simple_title,
+      ]) ||
+      (music.tvShow && [
+        music.tvShow.title,
+        music.tvShow.title_fr,
+        ...music.tvShow.simple_title,
+      ]);
 
     const isAnswerCorrect = checkSimilarity(answer, titles);
 
@@ -239,16 +259,22 @@ function NewGame(props) {
 
     setScore(score);
 
+    saveScore(music, isAnswerCorrect, score);
+
+    onTimerFinished(0, false);
+  };
+
+  const saveScore = function (music, isAnswerCorrect, score) {
     props.scoresActions.addScore({
-      movie: movie.title_fr,
+      movie: (music.movie && music.movie.title_fr) || null,
+      tvShow: (music.tvShow && music.tvShow.title_fr) || null,
       isCorrect: isAnswerCorrect,
       score: Math.round(score),
       playerAnswer: answer,
-      movie_id: props.games.currentGame.musics[music].movie._id,
-      music_id: props.games.currentGame.musics[music]._id,
+      movie_id: (music.movie && music.movie._id) || null,
+      show_id: (music.tvShow && music.tvShow._id) || null,
+      music_id: music._id,
     });
-
-    onTimerFinished(0, false);
   };
 
   return (
@@ -388,6 +414,7 @@ function NewGame(props) {
   function renderPlayer() {
     if (!displayGame || isEndGame) {
       if (musicNumber > 0) {
+        const musics = props.games.currentGame.musics[musicNumber - 1];
         return (
           <React.Fragment>
             <Alert
@@ -402,10 +429,7 @@ function NewGame(props) {
               + {Math.round(score)} points !
             </Alert>
 
-            <Result
-              movie={props.games.currentGame.musics[musicNumber - 1].movie}
-              music={props.games.currentGame.musics[musicNumber - 1]}
-            />
+            <Result music={musics} />
           </React.Fragment>
         );
       }

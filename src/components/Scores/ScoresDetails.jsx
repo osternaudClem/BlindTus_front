@@ -42,9 +42,8 @@ function ScoresDetails(props) {
       </Grid>
       <List dense>
         {props.scores.currentGame.map((score) => (
-          <div key={`${score.movie} - ${score.score}`}>
+          <div key={`${score.movie || score.tvShow} - ${score.score}`}>
             <ListItem
-              key={score.movie}
               secondaryAction={
                 <Typography variant="body">{score.score}</Typography>
               }
@@ -55,7 +54,7 @@ function ScoresDetails(props) {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ noWrap: true }}
-                primary={score.movie}
+                primary={score.movie || score.tvShow}
                 secondary={`Votre reponse: ${score.playerAnswer}`}
               />
             </ListItem>

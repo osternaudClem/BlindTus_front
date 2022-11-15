@@ -3,13 +3,10 @@ import { MovieCard } from '../Cards';
 import './Result.scss';
 import { PaperBox } from '../UI';
 
-function Result({ movie, music }) {
+function Result({ music }) {
   return (
     <PaperBox className="Result">
-      <MovieCard
-        movie={movie}
-        music={music}
-      />
+      <MovieCard music={music} />
     </PaperBox>
   );
 }

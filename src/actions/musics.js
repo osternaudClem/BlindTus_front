@@ -6,11 +6,13 @@ import * as types from '../datas/actionTypes';
  * @param {number} limit
  * @returns {string|Object[]}
  */
-export function getMusics(limit) {
+export function getMusics(limit, categories) {
   return async function (dispatch) {
     try {
       const success = await callApi.get(
-        `/musics?limit=${limit}&withProposals=true&categorie=626962053dcb17a8995789a1`
+        `/musics?limit=${limit}&withProposals=true&categories=${Object.keys(
+          categories
+        ).filter((c) => categories[c])}`
       );
       dispatch({ type: types.GET_MUSICS_SUCCESS, musics: success.data });
       return success.data;

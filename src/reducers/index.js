@@ -7,6 +7,8 @@ import games from './games';
 import movies from './movies';
 import today from './today';
 import historyToday from './historyToday';
+import tvShows from './tvShows';
+import categories from './categories';
 
 export default combineReducers({
   musics,
@@ -17,4 +19,6 @@ export default combineReducers({
   movies,
   today,
   historyToday,
+  tvShows,
+  categories,
 });
