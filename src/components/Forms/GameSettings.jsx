@@ -176,6 +176,7 @@ function GameSettings({
                   onClick={handleClickSettings}
                   type="submit"
                   size="large"
+                  disabled={!code}
                 >
                   Lancer la partie
                 </Button>
@@ -286,6 +287,9 @@ function GameSettings({
               variant="contained"
               onClick={handleClickSettings}
               type="submit"
+              disabled={
+                !Object.keys(categories).filter((c) => categories[c]).length
+              }
             >
               Lancer la partie
             </Button>

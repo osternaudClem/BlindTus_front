@@ -9,6 +9,7 @@ import {
   Alert,
   AlertTitle,
   Button,
+  Typography,
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
@@ -124,8 +125,6 @@ function NewGame(props) {
   }) {
     try {
       const musics = await getMusics(movieNumber, categories);
-
-      console.log('>>> musics', musics);
 
       props.gamesActions.saveGame({
         round_time: time,
@@ -340,6 +339,7 @@ function NewGame(props) {
     ) {
       return;
     }
+    const music = props.games.currentGame.musics[musicNumber];
 
     return (
       <div>
@@ -348,6 +348,17 @@ function NewGame(props) {
         </div>
 
         {renderTimer()}
+
+        <Typography
+          variant="h5"
+          mb={2}
+        >
+          Nous cherchons{' '}
+          {!displayGame
+            ? '...'
+            : (music && music.movie && 'un film !') ||
+              (music && music.tvShow && 'une serie !')}
+        </Typography>
 
         {difficulty === 'difficult' ? (
           <Box
@@ -374,7 +385,6 @@ function NewGame(props) {
         )}
 
         {renderStart()}
-
         {renderPlayer()}
       </div>
     );
@@ -414,7 +424,7 @@ function NewGame(props) {
   function renderPlayer() {
     if (!displayGame || isEndGame) {
       if (musicNumber > 0) {
-        const musics = props.games.currentGame.musics[musicNumber - 1];
+        const music = props.games.currentGame.musics[musicNumber - 1];
         return (
           <React.Fragment>
             <Alert
@@ -429,7 +439,7 @@ function NewGame(props) {
               + {Math.round(score)} points !
             </Alert>
 
-            <Result music={musics} />
+            <Result music={music} />
           </React.Fragment>
         );
       }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Alert, AlertTitle, Button } from '@mui/material';
+import { Box, Alert, AlertTitle, Button, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 
@@ -79,7 +79,8 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
     if (musics[currentStep] && musics[currentStep].proposals) {
       setProposals(
         shuffle([
-          musics[currentStep].movie.title_fr,
+          musics[currentStep][musics[currentStep].movie ? 'movie' : 'tvShow']
+            .title_fr,
           ...musics[currentStep].proposals.slice(0, 7),
         ])
       );
@@ -107,6 +108,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
   const onSendAnswer = (event, timeOut = false) => {
     const { musics, step } = room;
     const movie = musics[step - 1].movie;
+    const tvShow = musics[step - 1].tvShow;
     let score = 0;
 
     if (event) {
@@ -117,7 +119,9 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
       return;
     }
 
-    let titles = [movie.title, movie.title_fr, ...movie.simple_title];
+    const titles =
+      (movie && [movie.title, movie.title_fr, ...movie.simple_title]) ||
+      (tvShow && [tvShow.title, tvShow.title_fr, ...tvShow.simple_title]);
 
     let isCorrect = checkSimilarity(answer, titles);
 
@@ -144,10 +148,14 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
   const handleClickAnswer = function (answer) {
     const { musics, settings, step } = room;
     const movie = musics[step - 1].movie;
+    const tvShow = musics[step - 1].tvShow;
     let score = 0;
     let isCorrect = false;
 
-    if (answer === movie.title_fr) {
+    if (
+      (movie && movie.title_fr === answer) ||
+      (tvShow && tvShow.title_fr === answer)
+    ) {
       isCorrect = true;
     }
 
@@ -187,6 +195,21 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
         key={timer}
         className="NewGame__timer"
       />
+
+      <Typography
+        variant="h5"
+        mb={2}
+      >
+        Nous cherchons{' '}
+        {!isDisplayGame
+          ? '...'
+          : (room.musics[room.step - 1] &&
+              room.musics[room.step - 1].movie &&
+              'un film !') ||
+            (room.musics[room.step - 1] &&
+              room.musics[room.step - 1].tvShow &&
+              'une serie !')}
+      </Typography>
 
       {renderPlayer()}
 
