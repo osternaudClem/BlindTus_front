@@ -357,7 +357,7 @@ function NewGame(props) {
           {!displayGame
             ? '...'
             : (music && music.movie && 'un film !') ||
-              (music && music.tvShow && 'une serie !')}
+              (music && music.tvShow && 'une série !')}
         </Typography>
 
         {difficulty === 'difficult' ? (

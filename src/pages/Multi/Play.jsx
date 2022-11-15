@@ -208,7 +208,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
               'un film !') ||
             (room.musics[room.step - 1] &&
               room.musics[room.step - 1].tvShow &&
-              'une serie !')}
+              'une série !')}
       </Typography>
 
       {renderPlayer()}

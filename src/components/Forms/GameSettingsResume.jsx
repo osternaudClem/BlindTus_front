@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import {
   Grid,
   Button,
@@ -9,10 +10,21 @@ import {
   Divider,
   Stack,
   Avatar,
+  Chip,
 } from '@mui/material';
 import { Heading, PaperBox } from '../UI';
 
-function GameSettingsResume({ game, displayStart, code, onClickStart }) {
+function GameSettingsResume({
+  game,
+  displayStart,
+  code,
+  onClickStart,
+  ...props
+}) {
+  const getCategoryLabel = function (category) {
+    return props.categories.find((c) => c._id === category).label_fr;
+  };
+
   return (
     <PaperBox>
       <Grid
@@ -69,12 +81,36 @@ function GameSettingsResume({ game, displayStart, code, onClickStart }) {
         <div>
           <ListItem
             secondaryAction={
+              <Typography variant="body">
+                {Object.keys(game.categories)
+                  .filter((c) => game.categories[c])
+                  .map((category) => (
+                    <Chip
+                      label={getCategoryLabel(category)}
+                      size="small"
+                      variant="outlined"
+                      key={category}
+                    />
+                  ))}
+              </Typography>
+            }
+          >
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary="Thème"
+            />
+          </ListItem>
+          <Divider variant="middle" />
+        </div>
+        <div>
+          <ListItem
+            secondaryAction={
               <Typography variant="body">{game.round_time}</Typography>
             }
           >
             <ListItemText
               primaryTypographyProps={{ noWrap: true }}
-              primary="Temps des manches"
+              primary="Durée des manches"
             />
           </ListItem>
           <Divider variant="middle" />
@@ -137,4 +173,10 @@ GameSettingsResume.defaultProps = {
   displayStart: false,
 };
 
-export default GameSettingsResume;
+function mapStateToProps(state) {
+  return {
+    categories: state.categories.all,
+  };
+}
+
+export default connect(mapStateToProps, null)(GameSettingsResume);

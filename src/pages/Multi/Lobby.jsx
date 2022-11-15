@@ -166,6 +166,7 @@ function Lobby({
               round_time: room.settings.time_limit,
               difficulty: room.settings.difficulty,
               total_musics: room.settings.total_musics,
+              categories: room.settings.categories,
             }}
             code={room.id}
           />

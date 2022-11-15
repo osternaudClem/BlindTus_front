@@ -215,9 +215,9 @@ function GameSettings({
             xs={12}
           >
             <FormControl required>
-              <Typography gutterBottom>Themes</Typography>
+              <Typography gutterBottom>Thème</Typography>
               <Typography variant="subtitle2">
-                Choisissez au moins 1 theme
+                Choisissez au moins 1 thème
               </Typography>
               <FormGroup row>
                 {props.categories.map((category) => (

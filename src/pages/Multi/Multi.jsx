@@ -23,6 +23,9 @@ import Results from './Results';
 import { UserAvatar } from '../../components/Avatar';
 import { PaperBox } from '../../components/UI';
 import { UserContext } from '../../contexts/userContext';
+import { categoriesActions } from '../../actions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 function CircularProgressWithLabel(props) {
   return (
@@ -55,7 +58,7 @@ function CircularProgressWithLabel(props) {
   );
 }
 
-function Multi() {
+function Multi(props) {
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
@@ -70,6 +73,12 @@ function Multi() {
   useEffect(() => {
     updateTitle('Multijoueur');
   }, []);
+
+  useEffect(() => {
+    if (!props.categories.length) {
+      props.categoriesActions.getCategories();
+    }
+  }, [props.categories]);
 
   useEffect(() => {
     if (!socket.connected) {
@@ -452,4 +461,16 @@ function Multi() {
   }
 }
 
-export default Multi;
+function mapStateToProps(state) {
+  return {
+    categories: state.categories.all,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    categoriesActions: bindActionCreators(categoriesActions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Multi);

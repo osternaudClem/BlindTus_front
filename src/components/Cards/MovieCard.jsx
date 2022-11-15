@@ -29,7 +29,7 @@ function MovieCard({ music, hideGenres, size }) {
           textAlign={largeScreen ? 'left' : 'center'}
           sx={{ marginBottom: '16px' }}
         >
-          A propos {type === 'movies' ? 'du film' : 'de la serie'}
+          A propos {type === 'movies' ? 'du film' : 'de la série'}
         </Divider>
         <Typography
           variant="h4"
