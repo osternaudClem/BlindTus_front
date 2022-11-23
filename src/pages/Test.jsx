@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { CssBaseline, Box, Container, Typography } from '@mui/material';
+import { CssBaseline, Box, Container, Typography, Button } from '@mui/material';
 import { tmdb } from '../config';
 import { updateTitle } from '../lib/document';
 import { musicsActions } from '../actions';
@@ -13,6 +13,7 @@ const COEF_ZOOM = 10;
 
 function Test(props) {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+  const [displayTitle, setDisplayTitle] = useState(false);
 
   useEffect(() => {
     updateTitle('Test');
@@ -25,10 +26,9 @@ function Test(props) {
 
   const handleClickNewImage = function () {
     props.musicsActions.getMusics(1);
+    setDisplayTitle(false);
     setZoom(DEFAULT_ZOOM);
   };
-
-  console.log('>>> musics', props.musics.selection[0]);
 
   return (
     <Box>
@@ -49,8 +49,29 @@ function Test(props) {
                 pixelSize={1 * (COEF_ZOOM * zoom)}
               />
             </div>
-            <button onClick={handleClickZoom}>Zoom -</button>
-            <button onClick={handleClickNewImage}>New image</button>
+            {displayTitle && (
+              <Typography variant="h4">
+                {props.musics.selection[0].movie.title_fr}
+              </Typography>
+            )}
+            <Button
+              onClick={handleClickZoom}
+              variant="contained"
+            >
+              Zoom - ({zoom} / {DEFAULT_ZOOM})
+            </Button>
+            <Button
+              onClick={() => setDisplayTitle(true)}
+              variant="contained"
+            >
+              Show title
+            </Button>
+            <Button
+              onClick={handleClickNewImage}
+              variant="contained"
+            >
+              New image
+            </Button>
           </div>
         )}
       </Container>
