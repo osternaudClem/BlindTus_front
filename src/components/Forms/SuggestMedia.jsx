@@ -147,7 +147,7 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
                     size="small"
                     onClick={() => onAddMedia(movie, type)}
                   >
-                    Ajouter {type === 'movies' ? 'ce film' : 'cette serie'}
+                    Ajouter {type === 'movies' ? 'ce film' : 'cette série'}
                   </Button>
                 </CardActions>
 
@@ -157,7 +157,7 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
                     severity="info"
                     className="MovieCard__info"
                   >
-                    {type === 'movies' ? 'Film' : 'Serie'} déjà ajouté !
+                    {type === 'movies' ? 'Film' : 'Série'} déjà ajouté !
                   </Alert>
                 )}
               </Card>

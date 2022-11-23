@@ -117,13 +117,13 @@ function Suggest(props) {
           severity="success"
           sx={{ width: '100%' }}
         >
-          Film/Serie suggéré !
+          Film/Série suggéré !
         </Alert>
       </Snackbar>
 
       <Heading>Suggérer...</Heading>
       <Typography variant="subtitle1">
-        Aidez-moi a jouté des films, des series et des musiques. Toutes demandes
+        Aidez-moi a jouté des films, des séries et des musiques. Toutes demandes
         seront vérifiées.
       </Typography>
 

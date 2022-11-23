@@ -141,7 +141,7 @@ function SuggestMusic({ onSubmit, ...props }) {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Film ou serie"
+                  label="Film ou série"
                   name="movie"
                   required
                 />
