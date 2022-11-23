@@ -1,18 +1,25 @@
 import stringSimilarity from 'string-similarity';
 
 /**
- * @name isMovieAlreadyAdded
- * @param {Object[]} moviesList
- * @param {Object} movie
+ * @name isMediaAlreadyAdded
+ * @param {Object[]} mediasList
+ * @param {Object} media
+ * @param {String} type
  * @returns {boolean}
  */
-export function isMovieAlreadyAdded(moviesList, movie) {
+export function isMediaAlreadyAdded(mediasList, media, type) {
   let exist = false;
 
-  moviesList.map((movieList) => {
+  mediasList.map((mediaList) => {
     if (
-      movieList.title === movie.original_title &&
-      movieList.release_date.toString() === movie.release_date.substring(0, 4)
+      (mediaList.title === media.original_title ||
+        mediaList.title === media.original_name) &&
+      ((mediaList.release_date &&
+        mediaList.release_date.toString() ===
+          media.release_date.substring(0, 4)) ||
+        (mediaList.first_air_date &&
+          mediaList.first_air_date ===
+            parseInt(media.first_air_date.slice(0, 4))))
     ) {
       exist = true;
     }

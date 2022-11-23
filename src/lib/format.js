@@ -8,6 +8,7 @@ export function formatMoviesSearch(movies) {
 
   movies.map((movie) => {
     movie.label = movie.title_fr;
+    movie.type = movie.category.type;
     formatedMovies.push(movie);
     return null;
   });

@@ -47,7 +47,7 @@ export function clearSelectedTVShow() {
   };
 }
 
-export function saveTVShow(tvShow) {
+export function suggestTVShow(tvShow) {
   return async function () {
     try {
       const success = await callApi.post('/tv-shows', {

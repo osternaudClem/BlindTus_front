@@ -99,8 +99,8 @@ const RoutesUrl = () => {
                 />
                 <Route
                   path="/lobby"
-                  // element={<MultiPage />}
-                  element={<Navigate to="/" />}
+                  element={<MultiPage />}
+                  // element={<Navigate to="/" />}
                 />
                 <Route
                   path="/suggest"

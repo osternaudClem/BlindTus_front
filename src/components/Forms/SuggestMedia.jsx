@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -19,18 +20,25 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 
 import { useTextfield } from '../../hooks/formHooks';
-import { moviesActions } from '../../actions';
-import { isMovieAlreadyAdded } from '../../lib/check';
+import { moviesActions, tvShowsActions } from '../../actions';
+import { isMediaAlreadyAdded } from '../../lib/check';
 import { tmdb } from '../../config';
 
-function SuggestMovie({ moviesActions, movies, onAddMovie }) {
+function SuggestMedia({ onAddMedia, type, ...props }) {
   const [query, onChangeQuery, setField] = useTextfield();
 
-  const onSearchMovies = async function (event) {
+  const onSearchMedia = async function (event) {
     event.preventDefault();
+    if (query === '') {
+      return;
+    }
 
-    if (query !== '') {
-      await moviesActions.findMovies(query);
+    switch (type) {
+      case 'tvShows':
+        return props.tvShowsActions.findTVShows(query);
+      case 'movies':
+      default:
+        return props.moviesActions.findMovies(query);
     }
   };
 
@@ -45,13 +53,15 @@ function SuggestMovie({ moviesActions, movies, onAddMovie }) {
 
   return (
     <Box sx={{ margin: '48px 0' }}>
-      <form onSubmit={onSearchMovies}>
+      <form onSubmit={onSearchMedia}>
         <FormControl
           fullWidth
           sx={{ mb: 4 }}
         >
           <TextField
-            label="Tapez le nom d'un film"
+            label={`Tapez le nom ${
+              type === 'movies' ? "d'un film" : "d'une série"
+            }`}
             variant="outlined"
             value={query}
             onChange={onChangeQuery}
@@ -70,7 +80,7 @@ function SuggestMovie({ moviesActions, movies, onAddMovie }) {
             }}
           />
         </FormControl>
-        {movies.search.length > 0 && (
+        {props[type].search.length > 0 && (
           <Button
             variant="contained"
             onClick={handleClickClear}
@@ -86,8 +96,12 @@ function SuggestMovie({ moviesActions, movies, onAddMovie }) {
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 16 }}
       >
-        {movies.search.map((movie) => {
-          const isAlreadyAdded = isMovieAlreadyAdded(movies.all, movie);
+        {props[type].search.map((movie) => {
+          let isAlreadyAdded = isMediaAlreadyAdded(
+            props[type].all,
+            movie,
+            type
+          );
 
           return (
             <Grid
@@ -116,23 +130,24 @@ function SuggestMovie({ moviesActions, movies, onAddMovie }) {
                     variant="h5"
                     component="div"
                   >
-                    {movie.title}
+                    {movie.title || movie.name}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                   >
                     Date de sortie:{' '}
-                    {movie.release_date && movie.release_date.slice(0, 4)}
+                    {(movie.release_date && movie.release_date.slice(0, 4)) ||
+                      movie.first_air_date.slice(0, 4)}
                   </Typography>
                 </CardContent>
 
                 <CardActions>
                   <Button
                     size="small"
-                    onClick={() => onAddMovie(movie)}
+                    onClick={() => onAddMedia(movie, type)}
                   >
-                    Ajouter ce film
+                    Ajouter {type === 'movies' ? 'ce film' : 'cette serie'}
                   </Button>
                 </CardActions>
 
@@ -142,7 +157,7 @@ function SuggestMovie({ moviesActions, movies, onAddMovie }) {
                     severity="info"
                     className="MovieCard__info"
                   >
-                    Film déjà ajouté !
+                    {type === 'movies' ? 'Film' : 'Serie'} déjà ajouté !
                   </Alert>
                 )}
               </Card>
@@ -157,13 +172,15 @@ function SuggestMovie({ moviesActions, movies, onAddMovie }) {
 function mapStateToProps(state) {
   return {
     movies: state.movies,
+    tvShows: state.tvShows,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     moviesActions: bindActionCreators(moviesActions, dispatch),
+    tvShowsActions: bindActionCreators(tvShowsActions, dispatch),
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SuggestMovie);
+export default connect(mapStateToProps, mapDispatchToProps)(SuggestMedia);

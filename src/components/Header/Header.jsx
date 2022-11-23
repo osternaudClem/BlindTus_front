@@ -45,11 +45,11 @@ const pages = [
     url: '/today',
     icon: <CalendarMonthIcon />,
   },
-  // {
-  //   label: 'Multijoueur',
-  //   url: '/lobby',
-  //   icon: <GroupIcon />,
-  // },
+  {
+    label: 'Multijoueur',
+    url: '/lobby',
+    icon: <GroupIcon />,
+  },
 ];
 
 const settings = [

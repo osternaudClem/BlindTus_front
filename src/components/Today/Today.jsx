@@ -147,9 +147,9 @@ function Today({ onSaveHistory, game, history }) {
       // Other tries ⬛
       let emote = '⬛';
 
-      if (history.attempts.length === i + 1) {
+      if (history.attempts.length === i + 1 && history.isWin) {
         emote = '✅';
-      } else if (history.attempts.length > i + 1) {
+      } else if (history.attempts.length > i + 1 || !history.isWin) {
         emote = '❌';
       }
 

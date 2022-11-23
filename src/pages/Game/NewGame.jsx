@@ -73,10 +73,13 @@ function NewGame(props) {
 
   useEffect(() => {
     props.scoresActions.reset();
+
     if (code) {
       (async function () {
         try {
           const game = await props.gamesActions.getGame(code);
+
+          console.log('>>> game', game);
           if (game._id) {
             setTotalMusics(game.musics.length);
             setTimeLimit(game.round_time);
@@ -130,7 +133,7 @@ function NewGame(props) {
         round_time: time,
         difficulty,
         musics,
-        categories,
+        categories: Object.keys(categories).filter((c) => categories[c]),
         created_by: user._id,
       });
 

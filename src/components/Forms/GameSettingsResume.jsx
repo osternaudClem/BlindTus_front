@@ -21,6 +21,13 @@ function GameSettingsResume({
   onClickStart,
   ...props
 }) {
+  let categories = [];
+  if (Array.isArray(game.categories)) {
+    categories = game.categories;
+  } else {
+    categories = Object.keys(game.categories).filter((c) => game.categories[c]);
+  }
+
   const getCategoryLabel = function (category) {
     return props.categories.find((c) => c._id === category).label_fr;
   };
@@ -82,16 +89,14 @@ function GameSettingsResume({
           <ListItem
             secondaryAction={
               <Typography variant="body">
-                {Object.keys(game.categories)
-                  .filter((c) => game.categories[c])
-                  .map((category) => (
-                    <Chip
-                      label={getCategoryLabel(category)}
-                      size="small"
-                      variant="outlined"
-                      key={category}
-                    />
-                  ))}
+                {categories.map((category) => (
+                  <Chip
+                    label={getCategoryLabel(category)}
+                    size="small"
+                    variant="outlined"
+                    key={category}
+                  />
+                ))}
               </Typography>
             }
           >
@@ -102,6 +107,7 @@ function GameSettingsResume({
           </ListItem>
           <Divider variant="middle" />
         </div>
+
         <div>
           <ListItem
             secondaryAction={

@@ -2,13 +2,19 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactPlayer from 'react-player';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import {
   Autocomplete,
   Box,
   Button,
+  Chip,
   FormControl,
   FormHelperText,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   Skeleton,
   TextField,
 } from '@mui/material';
@@ -16,10 +22,13 @@ import { createFilterOptions } from '@mui/material/Autocomplete';
 
 import { isYoutubeUrl } from '../../lib/check';
 import { formatMoviesSearch } from '../../lib/format';
+import { useEffect } from 'react';
 
-function SuggestMusic({ movies, onSubmit }) {
+function SuggestMusic({ onSubmit, ...props }) {
   const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
+  const [allMovies, updateAllMovies] = useState([]);
   const [newMusic, setNewMusic] = useState({
+    category: [],
     author: '',
     timecode: 0,
     title: '',
@@ -28,11 +37,23 @@ function SuggestMusic({ movies, onSubmit }) {
   const [movie, setMovie] = useState(null);
   const [youtubeUrlError, setYoutubeUrlError] = useState(false);
 
-  const allMovies = formatMoviesSearch(movies);
+  useEffect(() => {
+    if (props.movies.all.length && props.tvShows.all.length) {
+      const medias = [...props.movies.all, ...props.tvShows.all];
+
+      updateAllMovies(formatMoviesSearch(medias));
+    }
+  }, [props.movies.all, props.tvShows.all]);
 
   const filterOptions = createFilterOptions({
     stringify: (option) => `${option.title} ${option.title_fr}`,
   });
+
+  const onChangeMedia = function (value) {
+    setMovie(value);
+
+    setNewMusic({ ...newMusic, category: [value.category._id] });
+  };
 
   const onChangeMusic = (event) => {
     setNewMusic({ ...newMusic, [event.target.name]: event.target.value });
@@ -57,10 +78,16 @@ function SuggestMusic({ movies, onSubmit }) {
     }
   };
 
+  /* TODO: add movie OR tv show when saving the music */
   const handleSubmit = function (event) {
     event.preventDefault();
+
     if (movie && !youtubeUrlError) {
-      onSubmit(newMusic, movie);
+      if (movie.type === 'movies') {
+        onSubmit(newMusic, movie, null);
+      } else {
+        onSubmit(newMusic, null, movie);
+      }
     } else {
       console.log('>>> some error to display');
     }
@@ -89,17 +116,32 @@ function SuggestMusic({ movies, onSubmit }) {
               open={autoCompleteOpen}
               margin="normal"
               options={allMovies}
-              onChange={(event, value) => setMovie(value)}
+              onChange={(event, value) => onChangeMedia(value)}
               onInputChange={(event, value) =>
                 setAutoCompleteOpen(value.length > 0)
               }
               onClose={() => setAutoCompleteOpen(false)}
               getOptionLabel={(option) => option.title_fr}
               filterOptions={filterOptions}
+              renderOption={(props, option) => {
+                return (
+                  <li
+                    key={option._id}
+                    {...props}
+                  >
+                    <Chip
+                      label={option.category.label_fr}
+                      color={option.type === 'movies' ? 'success' : 'info'}
+                      sx={{ marginRight: '16px' }}
+                    />
+                    {option.label}
+                  </li>
+                );
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Film"
+                  label="Film ou serie"
                   name="movie"
                   required
                 />
@@ -129,6 +171,7 @@ function SuggestMusic({ movies, onSubmit }) {
               .
             </FormHelperText>
           </FormControl>
+
           <Grid container>
             <Grid
               item
@@ -241,7 +284,6 @@ function SuggestMusic({ movies, onSubmit }) {
 }
 
 SuggestMusic.propTypes = {
-  movies: PropTypes.array.isRequired,
   onSubmit: PropTypes.func,
 };
 
@@ -249,4 +291,12 @@ SuggestMusic.defaultProps = {
   onSubmit: () => {},
 };
 
-export default SuggestMusic;
+function mapStateToProps(state) {
+  return {
+    tvShows: state.tvShows,
+    movies: state.movies,
+    categories: state.categories,
+  };
+}
+
+export default connect(mapStateToProps, null)(SuggestMusic);

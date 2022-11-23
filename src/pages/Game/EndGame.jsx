@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useCopyToClipboard } from 'usehooks-ts';
-import { CssBaseline, Button, Snackbar, Alert, Grid } from '@mui/material';
+import {
+  CssBaseline,
+  Button,
+  Snackbar,
+  Alert,
+  Grid,
+  Stack,
+} from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import ReplayIcon from '@mui/icons-material/Replay';
+import FlareIcon from '@mui/icons-material/Flare';
+
 import { updateTitle } from '../../lib/document';
 import { scoresActions, musicsActions } from '../../actions';
 import { ScoresDetails } from '../../components/Scores';
@@ -13,8 +25,9 @@ function EndGame(props) {
   const [, copyToClipBoard] = useCopyToClipboard();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
+  const navigate = useNavigate();
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
-
+  console.log('>>> game', props.games);
   useEffect(() => {
     updateTitle('Fin de partie');
   }, []);
@@ -86,12 +99,34 @@ function EndGame(props) {
           <Heading>Fin de partie</Heading>
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            onClick={handleClickShareResults}
+          <Stack
+            direction="row"
+            spacing={2}
           >
-            Partager le résultat
-          </Button>
+            <Button
+              variant="contained"
+              onClick={() =>
+                navigate(`/game?code=${props.games.currentGame.code}`)
+              }
+              startIcon={<ReplayIcon />}
+            >
+              Rejouer la partie
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => navigate('/game')}
+              startIcon={<FlareIcon />}
+            >
+              Nouvelle partie
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleClickShareResults}
+              startIcon={<IosShareIcon />}
+            >
+              Partager le résultat
+            </Button>
+          </Stack>
         </Grid>
       </Grid>
       <PaperBox>

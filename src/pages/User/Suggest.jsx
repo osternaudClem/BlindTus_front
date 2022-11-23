@@ -6,10 +6,15 @@ import { bindActionCreators } from 'redux';
 import { Alert, Slide, Snackbar, Tab, Tabs, Typography } from '@mui/material';
 
 import { UserContext } from '../../contexts/userContext';
-import { moviesActions, musicsActions } from '../../actions';
+import {
+  moviesActions,
+  tvShowsActions,
+  musicsActions,
+  categoriesActions,
+} from '../../actions';
 import { updateTitle } from '../../lib/document';
 import { Heading } from '../../components/UI';
-import { SuggestMusic, SuggestMovie } from '../../components/Forms';
+import { SuggestMusic, SuggestMedia } from '../../components/Forms';
 
 function SlideTransition(props) {
   return (
@@ -42,29 +47,50 @@ function Suggest(props) {
     if (!props.movies.all.length) {
       props.moviesActions.getAll();
     }
-  }, [props.movies.all, props.moviesActions]);
+    if (!props.tvShows.all.length) {
+      props.tvShowsActions.getTVShows();
+    }
+    if (!props.categories.all.length) {
+      props.categoriesActions.getCategories();
+    }
+  }, [
+    props.movies.all,
+    props.moviesActions,
+    props.tvShowsActions,
+    props.tvShows.all,
+    props.categoriesActions,
+    props.categories.all,
+  ]);
 
   const updateTab = function (value) {
     setTab(value);
     navigate(`/suggest?t=${value}`);
   };
 
-  const handleClickSaveMovie = async function (movie) {
+  const handleClickSaveMovie = async function (movie, type) {
+    const category = props.categories.all.find((c) => c.type === type);
     movie.verified = false;
     movie.added_by = user._id;
-    movie.category = ['626962053dcb17a8995789a1'];
-    const success = await props.moviesActions.suggestMovie(movie);
+    movie.category = [category._id];
+    let success = null;
 
+    if (type === 'movies') {
+      success = await props.moviesActions.suggestMovie(movie);
+    } else if (type === 'tvShows') {
+      success = await props.tvShowsActions.suggestTVShow(movie);
+    }
     if (success._id) {
       await props.moviesActions.getAll();
+      await props.tvShowsActions.getTVShows();
       toggleSnack();
     }
   };
 
-  const handleSubmitNewMusic = async function (music, movie) {
+  const handleSubmitNewMusic = async function (music, movie, tvShow) {
     music.verified = false;
     music.added_by = user._id;
-    music.movie = movie._id;
+    music.movie = movie && movie._id;
+    music.tvShow = tvShow && tvShow._id;
     music.video = `${music.video}&t=${music.timecode}`;
     delete music.timecode;
 
@@ -91,14 +117,14 @@ function Suggest(props) {
           severity="success"
           sx={{ width: '100%' }}
         >
-          Film suggéré !
+          Film/Serie suggéré !
         </Alert>
       </Snackbar>
 
       <Heading>Suggérer...</Heading>
       <Typography variant="subtitle1">
-        Aidez-moi a jouté des films et des musiques. Toutes demandes seront
-        vérifiées.
+        Aidez-moi a jouté des films, des series et des musiques. Toutes demandes
+        seront vérifiées.
       </Typography>
 
       <Tabs
@@ -113,6 +139,7 @@ function Suggest(props) {
         }}
       >
         <Tab label="un film" />
+        <Tab label="une série" />
         <Tab label="une musique" />
       </Tabs>
 
@@ -124,14 +151,21 @@ function Suggest(props) {
     switch (tab) {
       case 1:
         return (
-          <SuggestMusic
-            movies={props.movies.all}
-            onSubmit={handleSubmitNewMusic}
+          <SuggestMedia
+            onAddMedia={handleClickSaveMovie}
+            type="tvShows"
           />
         );
+      case 2:
+        return <SuggestMusic onSubmit={handleSubmitNewMusic} />;
       case 0:
       default:
-        return <SuggestMovie onAddMovie={handleClickSaveMovie} />;
+        return (
+          <SuggestMedia
+            onAddMedia={handleClickSaveMovie}
+            type="movies"
+          />
+        );
     }
   }
 }
@@ -139,13 +173,17 @@ function Suggest(props) {
 function mapStateToProps(state) {
   return {
     movies: state.movies,
+    tvShows: state.tvShows,
+    categories: state.categories,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     moviesActions: bindActionCreators(moviesActions, dispatch),
+    tvShowsActions: bindActionCreators(tvShowsActions, dispatch),
     musicsActions: bindActionCreators(musicsActions, dispatch),
+    categoriesActions: bindActionCreators(categoriesActions, dispatch),
   };
 }
 

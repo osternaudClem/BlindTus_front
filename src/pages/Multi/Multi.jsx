@@ -353,15 +353,11 @@ function Multi(props) {
                 alignItems="center"
                 key={index}
               >
-                {isCreator && (
-                  <IconButton onClick={() => handleClickDisconnect(player)}>
-                    <CloseIcon />
-                  </IconButton>
-                )}
                 <UserAvatar
                   username={player.username}
                   avatar={player.info.avatar}
                   displayUsername="right"
+                  style={{ flexGrow: 1 }}
                 />
                 <Typography variant="h6">{score.score}</Typography>
               </Stack>
