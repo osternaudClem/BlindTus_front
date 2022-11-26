@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import App from './layouts/App';
 import Connected from './layouts/Connected';
@@ -100,7 +100,6 @@ const RoutesUrl = () => {
                 <Route
                   path="/lobby"
                   element={<MultiPage />}
-                  // element={<Navigate to="/" />}
                 />
                 <Route
                   path="/suggest"

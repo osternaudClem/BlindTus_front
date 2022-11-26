@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -60,15 +60,29 @@ function GameSettings({
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
 
+  const sendChangeSettings = useCallback(
+    (settings) => {
+      if (onSettingsChange) {
+        onSettingsChange({
+          time_limit: settings.updatedTime || time,
+          total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
+          difficulty: settings.updatedDifficulty || difficulty,
+          categories: settings.categories || categories,
+        });
+      }
+    },
+    [categories, difficulty, movieNumber, onSettingsChange, time]
+  );
+
   useEffect(() => {
     if (!props.categories.length) {
       props.categoriesActions.getCategories();
     }
-  }, []);
+  }, [props.categories, props.categoriesActions]);
 
   useEffect(() => {
     sendChangeSettings({ categories });
-  }, [categories]);
+  }, [categories, sendChangeSettings]);
 
   const handleClickSettings = async function (event) {
     event.preventDefault();
@@ -108,17 +122,6 @@ function GameSettings({
   const onCategoriesChange = function (event, category) {
     const isChecked = event.target.checked;
     updateCategories({ ...categories, [category._id]: isChecked });
-  };
-
-  const sendChangeSettings = function (settings) {
-    if (onSettingsChange) {
-      onSettingsChange({
-        time_limit: settings.updatedTime || time,
-        total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
-        difficulty: settings.updatedDifficulty || difficulty,
-        categories: settings.categories || categories,
-      });
-    }
   };
 
   if (!props.categories) {

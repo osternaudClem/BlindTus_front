@@ -2,7 +2,6 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactPlayer from 'react-player';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
   Autocomplete,
@@ -12,9 +11,6 @@ import {
   FormControl,
   FormHelperText,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
   Skeleton,
   TextField,
 } from '@mui/material';
@@ -78,7 +74,6 @@ function SuggestMusic({ onSubmit, ...props }) {
     }
   };
 
-  /* TODO: add movie OR tv show when saving the music */
   const handleSubmit = function (event) {
     event.preventDefault();
 

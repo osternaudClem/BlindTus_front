@@ -82,8 +82,10 @@ function Today({ onSaveHistory, game, history }) {
   const handleClickNext = function () {
     setStep(STEPS['PLAYING']);
     if (!answerSent) {
+      onSaveHistory('', false);
       setTries((s) => s + 1);
     }
+
     setAnswerSent(false);
     setDisplayGame(true);
     setDisplayTimer(true);
@@ -132,6 +134,7 @@ function Today({ onSaveHistory, game, history }) {
     setDisplayTimer(false);
     setDisplayGame(false);
     setTries((s) => s + 1);
+    setAnswerSent(true);
 
     if (tries === 4) {
       setStep(STEPS['ENDED']);

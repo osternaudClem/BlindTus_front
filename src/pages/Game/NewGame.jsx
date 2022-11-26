@@ -79,7 +79,6 @@ function NewGame(props) {
         try {
           const game = await props.gamesActions.getGame(code);
 
-          console.log('>>> game', game);
           if (game._id) {
             setTotalMusics(game.musics.length);
             setTimeLimit(game.round_time);

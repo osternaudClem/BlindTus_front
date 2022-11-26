@@ -27,7 +27,7 @@ function EndGame(props) {
   const [alertTitle, setAlertTitle] = useState('');
   const navigate = useNavigate();
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
-  console.log('>>> game', props.games);
+
   useEffect(() => {
     updateTitle('Fin de partie');
   }, []);
@@ -44,6 +44,10 @@ function EndGame(props) {
     const scores = props.scores.currentGame;
     const game = props.games.currentGame;
 
+    const categories = game.categories.map(
+      (c) => props.categories.all.find((k) => k._id === c).label_fr
+    );
+
     const totalPoint = scores.reduce((accumulator, game) => {
       return accumulator + game.score;
     }, 0);
@@ -56,6 +60,7 @@ function EndGame(props) {
 
     header = header + resultsEmotes.join('\t') + '\n\n';
     header = header + `Score total: ${totalPoint}\n\n`;
+    header = header + `Categories: ${categories.join(' | ')}\n\n`;
     header = header + `https://blindtus.com/game?code=${game.code}`;
 
     const isCopied = await copyToClipBoard(header);
@@ -159,6 +164,7 @@ function mapStateToProps(state) {
   return {
     scores: state.scores,
     games: state.games,
+    categories: state.categories,
   };
 }
 
