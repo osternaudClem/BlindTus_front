@@ -9,6 +9,7 @@ import today from './today';
 import historyToday from './historyToday';
 import tvShows from './tvShows';
 import categories from './categories';
+import notifications from './notifications';
 
 export default combineReducers({
   musics,
@@ -21,4 +22,5 @@ export default combineReducers({
   historyToday,
   tvShows,
   categories,
+  notifications,
 });
