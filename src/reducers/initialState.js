@@ -36,6 +36,9 @@ const state = Object.freeze({
   categories: {
     all: [],
   },
+  notifications: {
+    all: [],
+  },
 });
 
 export default state;

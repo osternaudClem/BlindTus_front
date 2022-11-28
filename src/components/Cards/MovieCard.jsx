@@ -88,7 +88,7 @@ function MovieCard({ music, hideGenres, size }) {
           textAlign={largeScreen ? 'left' : 'center'}
           sx={{ margin: '16px 0' }}
         >
-          A props de la musique
+          A propos de la musique
         </Divider>
         <Typography
           variant="h5"
