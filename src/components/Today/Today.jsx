@@ -14,10 +14,13 @@ import {
   Stack,
   Tooltip,
   useMediaQuery,
+  Chip,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import LocalMoviesIcon from '@mui/icons-material/LocalMovies';
+import TvIcon from '@mui/icons-material/Tv';
 
 import { addLeadingZeros } from '../../lib/number';
 import { checkSimilarity } from '../../lib/check';
@@ -105,12 +108,12 @@ function Today({ onSaveHistory, game, history }) {
       event.preventDefault();
     }
 
-    const movie = game.music.movie;
+    const media = game.music.movie || game.music.tvShow;
     if (answer.trim().length === 0) {
       return;
     }
 
-    const titles = [movie.title, movie.title_fr, ...movie.simple_title];
+    const titles = [media.title, media.title_fr, ...media.simple_title];
 
     let isCorrect = checkSimilarity(answer, titles);
 
@@ -219,6 +222,27 @@ function Today({ onSaveHistory, game, history }) {
           </Tooltip>
         </Stack>
 
+        <Typography marginBottom={2}>
+          Aujourd'hui, nous recherchons
+          {game.music.movie ? (
+            <Chip
+              icon={<LocalMoviesIcon />}
+              label="Un film"
+              variant="outlined"
+              color="success"
+              sx={{ paddingLeft: 1, marginLeft: 1 }}
+            />
+          ) : (
+            <Chip
+              icon={<TvIcon />}
+              label="Une série"
+              variant="outlined"
+              color="info"
+              sx={{ paddingLeft: 1, marginLeft: 1 }}
+            />
+          )}
+        </Typography>
+
         {endedGame()}
         {renderGame()}
 
@@ -279,6 +303,11 @@ function Today({ onSaveHistory, game, history }) {
             isCorrect={isCorrect}
             addSkipButton
             onSkipRound={handleCliclSkipRound}
+            placeholder={
+              game.music.movie === 'movie'
+                ? 'Tapez le nom du film'
+                : 'Tapez le nom de la série'
+            }
           />
         </Box>
         {!displayGame && (
@@ -318,7 +347,7 @@ function Today({ onSaveHistory, game, history }) {
           </Button>
         </Box>
         <Result
-          movie={game.music.movie}
+          movie={game.music.movie || game.music.tvShow}
           music={game.music}
         />
       </div>
@@ -339,23 +368,41 @@ function Today({ onSaveHistory, game, history }) {
   }
 
   function renderClues() {
-    const movie = game.music.movie;
+    const media = game.music.movie || game.music.tvShow;
     const clues = [];
 
     if (tries > 0) {
-      clues.push({ key: 'Année de sortie', value: movie.release_date });
+      if (media.release_date) {
+        clues.push({ key: 'Année de sortie', value: media.release_date });
+      } else if (media.first_air_date) {
+        clues.push({
+          key: 'Année de sortie',
+          value: `${media.first_air_date} - ${
+            media.status === 'Returning Series'
+              ? 'en cours'
+              : media.last_air_date
+          }`,
+        });
+      }
     }
 
     if (tries > 1) {
-      clues.push({ key: 'Réalisateur', value: addSpaces(movie.directors) });
+      if (media.directors) {
+        clues.push({ key: 'Réalisateur', value: addSpaces(media.directors) });
+      } else {
+        clues.push({
+          key: 'Network (chaine, plateforme de VOD)',
+          value: media.networks[0],
+        });
+      }
     }
 
     if (tries > 2) {
-      clues.push({ key: 'Acteurs', value: addSpaces(movie.casts) });
+      clues.push({ key: 'Acteurs', value: addSpaces(media.casts) });
     }
 
     if (tries > 3) {
-      clues.push({ key: 'Résumé', value: movie.overview });
+      clues.push({ key: 'Résumé', value: media.overview });
     }
 
     if (!clues.length) {
@@ -388,9 +435,13 @@ function Today({ onSaveHistory, game, history }) {
       return;
     }
 
+    if (!data.data.music) {
+      return;
+    }
+
     return (
       <PaperBox style={{ marginTop: '24px' }}>
-        <Heading type="subtitle">Film d'hier</Heading>
+        <Heading type="subtitle">Musique d'hier</Heading>
         <MovieCard
           movie={data.data.music.movie}
           music={data.data.music}

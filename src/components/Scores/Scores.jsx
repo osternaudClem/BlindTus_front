@@ -18,7 +18,7 @@ import { PaperBox } from '../UI';
 import './Scores.scss';
 
 function Scores(props) {
-  const totalPoint = props.scores.currentGame.reduce((accumulator, game) => {
+  const totalPoint = props.currentGame.reduce((accumulator, game) => {
     return accumulator + game.score;
   }, 0);
 
@@ -43,7 +43,7 @@ function Scores(props) {
           </Grid>
         </Grid>
         <List dense>
-          {props.scores.currentGame
+          {props.currentGame
             .slice(0)
             .reverse()
             .map((score) => (

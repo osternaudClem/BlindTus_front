@@ -9,4 +9,5 @@ module.exports = {
   historyTodayActions: require('./historyToday'),
   tvShowsActions: require('./tvShows'),
   categoriesActions: require('./categories'),
+  notificationsActions: require('./notifications'),
 };

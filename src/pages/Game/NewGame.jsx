@@ -15,9 +15,9 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import {
   musicsActions,
-  scoresActions,
   gamesActions,
   historyActions,
+  scoresActions,
 } from '../../actions';
 import { shuffle } from '../../lib/array';
 import { checkSimilarity } from '../../lib/check';
@@ -59,7 +59,8 @@ function NewGame(props) {
   const [gameWithCode, setGameWithCode] = useState(false);
   const [proposals, setProposals] = useState([]);
   const [score, setScore] = useState(0);
-  const { user } = useContext(UserContext);
+  const [currentGame, updateCurrentGame] = useState([]);
+  const { user, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -68,12 +69,9 @@ function NewGame(props) {
 
   useEffect(() => {
     updateTitle('Nouvelle partie');
-    props.scoresActions.reset();
-  }, [props.scoresActions]);
+  }, []);
 
   useEffect(() => {
-    props.scoresActions.reset();
-
     if (code) {
       (async function () {
         try {
@@ -91,7 +89,7 @@ function NewGame(props) {
         }
       })();
     }
-  }, [props.scoresActions, props.gamesActions, code, navigate]);
+  }, [props.gamesActions, code, navigate]);
 
   useEffect(() => {
     if (!inputDisabled && answerField.current) {
@@ -118,6 +116,24 @@ function NewGame(props) {
       );
     }
   }, [musicNumber, props.games.currentGame, totalMusics]);
+
+  useEffect(() => {
+    if (musicNumber > totalMusics - 1) {
+      props.historyActions
+        .saveHistory({
+          scores: currentGame,
+          user: user,
+          game: props.games.currentGame,
+          totalScore: currentGame.reduce((accumulator, game) => {
+            return accumulator + game.score;
+          }, 0),
+        })
+        .then((data) => {
+          updateUser(data.user);
+        });
+      setIsEndGame(true);
+    }
+  }, [totalMusics, musicNumber, currentGame]);
 
   const onStartGame = async function ({
     time,
@@ -169,15 +185,6 @@ function NewGame(props) {
       setInputDisabled(true);
       setMusicsNumber(musicNumber + 1);
       updateAnswer('');
-
-      if (musicNumber >= totalMusics - 1) {
-        props.historyActions.saveHistory({
-          scores: props.scores.currentGame,
-          user: user,
-          game: props.games.currentGame,
-        });
-        setIsEndGame(true);
-      }
     }
   }
 
@@ -266,6 +273,20 @@ function NewGame(props) {
   };
 
   const saveScore = function (music, isAnswerCorrect, score) {
+    updateCurrentGame((g) => [
+      ...g,
+      {
+        movie: (music.movie && music.movie.title_fr) || null,
+        tvShow: (music.tvShow && music.tvShow.title_fr) || null,
+        isCorrect: isAnswerCorrect,
+        score: Math.round(score),
+        playerAnswer: answer,
+        movie_id: (music.movie && music.movie._id) || null,
+        show_id: (music.tvShow && music.tvShow._id) || null,
+        music_id: music._id,
+      },
+    ]);
+
     props.scoresActions.addScore({
       movie: (music.movie && music.movie.title_fr) || null,
       tvShow: (music.tvShow && music.tvShow.title_fr) || null,
@@ -301,7 +322,7 @@ function NewGame(props) {
         sm={6}
         md={4}
       >
-        {isStarted && <Scores />}
+        {isStarted && <Scores currentGame={currentGame} />}
       </Grid>
     </Grid>
   );
@@ -479,7 +500,6 @@ function NewGame(props) {
 function mapStateToProps(state) {
   return {
     musics: state.musics,
-    scores: state.scores,
     games: state.games,
   };
 }
@@ -487,9 +507,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     musicsActions: bindActionCreators(musicsActions, dispatch),
-    scoresActions: bindActionCreators(scoresActions, dispatch),
     gamesActions: bindActionCreators(gamesActions, dispatch),
     historyActions: bindActionCreators(historyActions, dispatch),
+    scoresActions: bindActionCreators(scoresActions, dispatch),
   };
 }
 
