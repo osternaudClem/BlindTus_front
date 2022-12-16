@@ -31,6 +31,7 @@ import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
 import { GameVolume } from '../Game';
 import logo from '../../assets/logo_light.png';
+import { getLevel } from '../../lib/levels';
 
 import './Header.scss';
 
@@ -99,6 +100,8 @@ const ResponsiveAppBar = (props) => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // console.log('>>> level', getLevel(5400));
 
   useEffect(() => {}, [user]);
 
