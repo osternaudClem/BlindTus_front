@@ -8,7 +8,7 @@ import { Today } from './';
 import { Loading } from '../UI';
 
 function TodayLogged(props) {
-  const { user } = useContext(UserContext);
+  const { user, updateUser } = useContext(UserContext);
   const userId = getCookie('user');
 
   useEffect(() => {
@@ -44,17 +44,21 @@ function TodayLogged(props) {
         : [];
     attempts.push(answer);
 
-    props.historyTodayActions.saveHistory({
-      ...props.historyToday.today,
-      today: props.today.game._id,
-      user: user._id,
-      attempts,
-      isWin: isCorrect,
-      isCompleted:
-        isCorrect ||
-        (props.historyToday.today &&
-          props.historyToday.today.attempts.length === 4),
-    });
+    props.historyTodayActions
+      .saveHistory({
+        ...props.historyToday.today,
+        today: props.today.game._id,
+        user: user._id,
+        attempts,
+        isWin: isCorrect,
+        isCompleted:
+          isCorrect ||
+          (props.historyToday.today &&
+            props.historyToday.today.attempts.length === 4),
+      })
+      .then((data) => {
+        updateUser(data);
+      });
   };
 
   if (

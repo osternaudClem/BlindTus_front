@@ -24,6 +24,12 @@ import {
   MenuItem,
   Divider,
   Badge,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -37,10 +43,10 @@ import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
 import { notificationsActions } from '../../actions';
 import { GameVolume } from '../Game';
+import { getLevel } from '../../lib/levels';
 
 import logo from '../../assets/logo_light.png';
 import './Header.scss';
-import { Stack } from '@mui/system';
 
 const pages = [
   {
@@ -100,18 +106,63 @@ const settingsBottom = [
   },
 ];
 
+function CircularProgressWithLabel({
+  progress,
+  label,
+  labelSize = 14,
+  ...props
+}) {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <CircularProgress
+        variant="determinate"
+        value={progress}
+        {...props}
+      />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          color="text.secondary"
+          sx={{ paddingTop: '4px' }}
+          fontSize={labelSize}
+        >
+          {label}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
 const ResponsiveAppBar = (props) => {
+  const [isExpOpen, setExpOpen] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNotification, setAnchorElNotification] = useState(null);
   const [volume, setVolume] = useLocalStorage('player_volume', 70);
   const { user } = useContext(UserContext);
+  const [levelInfo, updateLevelInfo] = useState(getLevel(user.exp));
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     props.notificationsActions.getNotifications(user._id);
   }, []);
+
+  useEffect(() => {
+    updateLevelInfo(getLevel(user.exp));
+  }, [user]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -245,6 +296,20 @@ const ResponsiveAppBar = (props) => {
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                verticalAlign: 'middle',
+                cursor: 'pointer',
+                marginRight: 8,
+              }}
+              onClick={() => setExpOpen(true)}
+            >
+              <CircularProgressWithLabel
+                label={levelInfo.currentLevel}
+                progress={levelInfo.progress}
+              />
+            </div>
             <IconButton
               size="large"
               color="inherit"
@@ -408,6 +473,43 @@ const ResponsiveAppBar = (props) => {
           </Box>
         </Toolbar>
       </Container>
+
+      <Dialog
+        open={isExpOpen}
+        onClose={() => {
+          setExpOpen(false);
+        }}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Expériences</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <CircularProgressWithLabel
+            label={levelInfo.currentLevel}
+            labelSize={34}
+            progress={levelInfo.progress}
+            size={120}
+          />
+          <DialogContentText>
+            Vous êtes niveau {levelInfo.currentLevel}
+          </DialogContentText>
+          <DialogContentText>
+            Encore {levelInfo.nextNeeded - levelInfo.currentExp} points avant le
+            prochain niveau ({levelInfo.progress}%).
+          </DialogContentText>
+        </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button
+            onClick={() => setExpOpen(false)}
+            autoFocus
+            variant="contained"
+          >
+            Fermer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 };

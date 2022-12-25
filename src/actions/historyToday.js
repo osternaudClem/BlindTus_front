@@ -31,7 +31,7 @@ export function getHistory(history_id) {
       const success = await callApi.get(`/historytoday/${history_id}`);
       dispatch({
         type: types.GET_HISTORY_TODAY_SUCCESS,
-        history: success.data,
+        history: success.data.history,
       });
       return success.data;
     } catch (error) {
