@@ -29,6 +29,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -160,7 +161,6 @@ const ResponsiveAppBar = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('>>> user updated', user);
     updateLevelInfo(getLevel(user.exp));
   }, [user]);
 
@@ -482,7 +482,7 @@ const ResponsiveAppBar = (props) => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Experiences</DialogTitle>
+        <DialogTitle>Expériences</DialogTitle>
         <Divider />
         <DialogContent>
           <CircularProgressWithLabel
@@ -492,13 +492,23 @@ const ResponsiveAppBar = (props) => {
             size={120}
           />
           <DialogContentText>
-            Vous etes niveau {levelInfo.currentLevel}
+            Vous êtes niveau {levelInfo.currentLevel}
           </DialogContentText>
           <DialogContentText>
             Encore {levelInfo.nextNeeded - levelInfo.currentExp} points avant le
             prochain niveau ({levelInfo.progress}%).
           </DialogContentText>
         </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button
+            onClick={() => setExpOpen(false)}
+            autoFocus
+            variant="contained"
+          >
+            Fermer
+          </Button>
+        </DialogActions>
       </Dialog>
     </AppBar>
   );

@@ -128,8 +128,8 @@ function NewGame(props) {
             return accumulator + game.score;
           }, 0),
         })
-        .then((data) => {
-          updateUser(data.user);
+        .then((user) => {
+          updateUser(user);
         });
       setIsEndGame(true);
     }

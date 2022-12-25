@@ -60,7 +60,6 @@ const RoutesUrl = () => {
   const [user, setUser] = useState({});
 
   const updateUser = function (user) {
-    console.log('>>> user', user);
     setUser(user);
   };
 
