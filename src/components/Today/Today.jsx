@@ -304,7 +304,7 @@ function Today({ onSaveHistory, game, history }) {
             addSkipButton
             onSkipRound={handleCliclSkipRound}
             placeholder={
-              game.music.movie === 'movie'
+              game.music.movie
                 ? 'Tapez le nom du film'
                 : 'Tapez le nom de la série'
             }
@@ -329,7 +329,7 @@ function Today({ onSaveHistory, game, history }) {
   }
 
   function endedGame() {
-    if (!history.isCompleted) {
+    if (!history.isCompleted || tries === 0) {
       return;
     }
 
