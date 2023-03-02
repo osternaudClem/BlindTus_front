@@ -158,7 +158,7 @@ const ResponsiveAppBar = (props) => {
 
   useEffect(() => {
     props.notificationsActions.getNotifications(user._id);
-  }, []);
+  }, [user, props.notificationsActions]);
 
   useEffect(() => {
     updateLevelInfo(getLevel(user.exp));
@@ -318,8 +318,9 @@ const ResponsiveAppBar = (props) => {
             >
               <Badge
                 badgeContent={
-                  props.notifications.filter((n) => !n.users.includes(user._id))
-                    .length
+                  props.notifications?.filter(
+                    (n) => !n.users.includes(user._id)
+                  ).length
                 }
                 color="error"
               >

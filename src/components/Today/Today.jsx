@@ -391,8 +391,8 @@ function Today({ onSaveHistory, game, history }) {
         clues.push({ key: 'Réalisateur', value: addSpaces(media.directors) });
       } else {
         clues.push({
-          key: 'Network (chaine, plateforme de VOD)',
-          value: media.networks[0],
+          key: 'Ganres',
+          value: media.genres.join(','),
         });
       }
     }
