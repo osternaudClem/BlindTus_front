@@ -318,7 +318,7 @@ const ResponsiveAppBar = (props) => {
             >
               <Badge
                 badgeContent={
-                  props.notifications?.filter(
+                  props.notifications?.all?.filter(
                     (n) => !n.users.includes(user._id)
                   ).length
                 }
@@ -352,7 +352,7 @@ const ResponsiveAppBar = (props) => {
                   </MenuItem>
                 </div>
               )}
-              {props.notifications.map((notification) => {
+              {props.notifications?.all?.map((notification) => {
                 const isRead = notification.users.includes(user._id);
                 return (
                   <div
