@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -26,6 +26,10 @@ import { UserContext } from '../../contexts/userContext';
 import { categoriesActions } from '../../actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
+const STEPS = {
+  ROUND_RESULT: 'round_result',
+};
 
 function CircularProgressWithLabel(props) {
   return (
@@ -62,9 +66,11 @@ function Multi(props) {
   const [isCreator, setIsCreator] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
+  const [step, setStep] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const [players, updatePlayers] = useState([]);
   const [loadings, updateLoadings] = useState([]);
+  const [error, setError] = useState(null);
   const [room, updateRoom] = useState({});
   const { user } = useContext(UserContext);
   const socket = useContext(SocketContext);
@@ -106,7 +112,6 @@ function Multi(props) {
     });
 
     socket.on('KICK', () => {
-      console.log('>>> KICK');
       navigate('/lobby');
     });
 
@@ -141,6 +146,10 @@ function Multi(props) {
       updateRoom(room);
       setIsStarted(false);
       setIsEndGame(false);
+    });
+
+    socket.on('UPDATE_SCORES', (room) => {
+      updateRoom(room);
     });
   }, [socket, navigate]);
 
@@ -208,12 +217,15 @@ function Multi(props) {
     socket.emit('ASK_NEW_GAME');
   };
 
+  const onStep = function (step) {
+    setStep(step);
+  };
+
   return (
     <Grid
       container
       spacing={12}
       component="main"
-      className="LoginPage"
     >
       <CssBaseline />
       <Grid
@@ -246,6 +258,8 @@ function Multi(props) {
           onUpdateSettings={onUpdateSettings}
           room={room}
           isCreator={isCreator}
+          error={error}
+          onClearError={() => setError(null)}
         />
       );
     }
@@ -261,6 +275,7 @@ function Multi(props) {
           onAnswer={onAnswer}
           isEndGame={isEndGame}
           onEndGame={onEndGame}
+          onStep={onStep}
         />
       );
     }
@@ -427,7 +442,8 @@ function Multi(props) {
                     </IconButton>
                   )}
                   {loadings.find((l) => l.id === user.id && l.loading < 100) &&
-                  !isReady ? (
+                  !isReady &&
+                  step !== STEPS.ROUND_RESULT ? (
                     <Stack
                       direction="row"
                       alignItems="center"

@@ -17,6 +17,7 @@ function GamePlayer({
   const [hasPlayed, setHasPlayed] = useState(false);
   const audioRef = useRef();
   const volume = useReadLocalStorage('player_volume');
+  let timeout = null;
 
   useEffect(() => {
     audioRef.current.volume = volume === null ? 0.7 : volume / 100;
@@ -46,17 +47,18 @@ function GamePlayer({
       return;
     }
 
-    const buffered = audioRef.current.buffered;
+    const buffered = audioRef?.current?.buffered || [];
     let loaded = 0;
 
     if (buffered.length) {
       loaded = parseInt((100 * buffered.end(0)) / audioRef.current.duration);
     }
 
-    onLoading(loaded >= 20 ? 100 : (loaded * 100) / 20);
-
-    if (loaded < 20) {
-      setTimeout(loop, 50);
+    onLoading(loaded >= 30 ? 100 : (loaded * 100) / 20);
+    if (loaded < 30) {
+      timeout = setTimeout(loop, 50);
+    } else {
+      return clearTimeout(timeout);
     }
   };
 
