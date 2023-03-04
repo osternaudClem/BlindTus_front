@@ -358,7 +358,6 @@ function Play({
   }
 
   function renderRoundResults() {
-    // console.log('>>> room', room);
     const { rounds, step } = room;
 
     if (!rounds[step - 1]) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, Outlet, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,6 +15,7 @@ import { Loading } from '../components/UI';
 import { UserContext } from '../contexts/userContext';
 
 import '../assets/App.scss';
+import { socket } from '../contexts/sockets';
 
 function App(props) {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,12 +28,16 @@ function App(props) {
   const ga = getCookie('_ga');
   const gid = getCookie('_gid');
 
+  const getUserInfo = useCallback(async () => {
+    const userLoaded = await props.usersActions.getUserById(userId);
+    setUser(userLoaded);
+  }, [userId, props.usersActions]);
+
   useEffect(() => {
     if (userId && userId !== '') {
       (async function () {
         if (!props.users.me.username || !user._id) {
-          const userLoaded = await props.usersActions.getUserById(userId);
-          setUser(userLoaded);
+          await getUserInfo();
           setIsLoading(false);
         }
       })();
@@ -46,7 +51,12 @@ function App(props) {
         ReactGA.pageview(window.location.pathname + window.location.search);
       }
     }
+
+    socket.on('UPDATE_SCORES', async () => {
+      await getUserInfo();
+    });
   }, [
+    getUserInfo,
     navigate,
     props.users.me.username,
     props.usersActions,

@@ -158,6 +158,7 @@ function Multi(props) {
       'CREATE_ROOM',
       {
         username: user.username,
+        _id: user._id,
         room: code,
         settings: {
           time_limit: 30,
@@ -175,7 +176,7 @@ function Multi(props) {
   const onJoinGame = function (code) {
     socket.emit(
       'JOIN_ROOM',
-      { username: user.username, room: code },
+      { _id: user._id, username: user.username, room: code },
       ({ error, user, room }) => {
         if (error) {
           console.log('>>> error', error);

@@ -41,12 +41,13 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
-import { notificationsActions } from '../../actions';
+import { notificationsActions, usersActions } from '../../actions';
 import { GameVolume } from '../Game';
 import { getLevel } from '../../lib/levels';
 
 import logo from '../../assets/logo_light.png';
 import './Header.scss';
+import { socket } from '../../contexts/sockets';
 
 const pages = [
   {
@@ -528,6 +529,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     notificationsActions: bindActionCreators(notificationsActions, dispatch),
+    usersActions: bindActionCreators(usersActions, dispatch),
   };
 }
 
