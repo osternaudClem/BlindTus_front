@@ -157,6 +157,9 @@ const ResponsiveAppBar = (props) => {
   const location = useLocation();
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     props.notificationsActions.getNotifications(user._id);
   }, [user, props.notificationsActions]);
 
