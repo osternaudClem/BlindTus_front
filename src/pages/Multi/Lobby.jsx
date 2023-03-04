@@ -42,7 +42,7 @@ function Lobby({
   const urlCode = useMemo(() => {
     const params = new URLSearchParams(search);
     return params.get('code');
-  }, [search]);
+  }, []);
 
   useEffect(() => {
     if (urlCode) {
