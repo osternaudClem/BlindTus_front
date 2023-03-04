@@ -26,38 +26,42 @@ function GameRoundResults({ room, round, players }) {
         alignItems="center"
         style={{ marginTop: '16px' }}
       >
-        <div style={{ marginRight: '16px', transform: 'translateY(2px)' }}>
-          {isCorrect ? (
-            <CheckIcon color="success" />
-          ) : (
-            <ClearIcon color="error" />
-          )}
-        </div>
+        {player ? (
+          <>
+            <div style={{ marginRight: '16px', transform: 'translateY(2px)' }}>
+              {isCorrect ? (
+                <CheckIcon color="success" />
+              ) : (
+                <ClearIcon color="error" />
+              )}
+            </div>
 
-        <UserAvatar
-          username={player.username}
-          avatar={player.info ? player.info.avatar : null}
-          displayUsername="right"
-          style={{ width: '200px' }}
-        />
+            <UserAvatar
+              username={player.username}
+              avatar={player.info ? player.info.avatar : null}
+              displayUsername="right"
+              style={{ width: '200px' }}
+            />
 
-        <Divider
-          orientation="vertical"
-          flexItem
-        ></Divider>
-        <Typography
-          variant="body1"
-          style={{ marginLeft: '24px', marginRight: '16px', flexGrow: 1 }}
-          className="text--crop"
-        >
-          {user.answer}
-        </Typography>
-        <Chip
-          variant="outlined"
-          label={`+${user.score} points`}
-          color={isCorrect ? 'success' : 'error'}
-          sx={{ fontSize: '16px' }}
-        />
+            <Divider
+              orientation="vertical"
+              flexItem
+            ></Divider>
+            <Typography
+              variant="body1"
+              style={{ marginLeft: '24px', marginRight: '16px', flexGrow: 1 }}
+              className="text--crop"
+            >
+              {user.answer}
+            </Typography>
+            <Chip
+              variant="outlined"
+              label={`+${user.score} points`}
+              color={isCorrect ? 'success' : 'error'}
+              sx={{ fontSize: '16px' }}
+            />
+          </>
+        ) : null}
       </Stack>
     );
   }

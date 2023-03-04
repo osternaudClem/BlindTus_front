@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, Alert, AlertTitle, Button, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
@@ -18,7 +18,19 @@ import {
 } from '../../components/Game';
 import { Heading, PaperBox } from '../../components/UI';
 
-function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
+const STEPS = {
+  ROUND_RESULT: 'round_result',
+};
+
+function Play({
+  socket,
+  room,
+  players,
+  isCreator,
+  onAnswer,
+  onEndGame,
+  onStep,
+}) {
   const [isInputDisable, setIsInputDisable] = useState(true);
   const [isAnswerSent, setIsAnswerSent] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -63,6 +75,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
     });
 
     socket.on('NEXT_ROUND', () => {
+      onStep(STEPS.ROUND_RESULT);
       setIsDisplayGame(false);
       setIsInputDisable(true);
       setIsAnswerSent(false);
@@ -103,6 +116,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
 
   const handleClickStartMusic = function () {
     socket.emit('ASK_START_MUSIC');
+    onStep(null);
   };
 
   const onSendAnswer = (event, timeOut = false) => {
@@ -171,13 +185,16 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
     setIsDisplayResult(true);
   };
 
-  const onLoading = function (loading) {
-    if (isReady) {
-      return;
-    }
+  const onLoading = useCallback(
+    (loading) => {
+      if (isReady) {
+        return;
+      }
 
-    socket.emit('UPDATE_LOADING', loading);
-  };
+      socket.emit('UPDATE_LOADING', loading);
+    },
+    [socket, isReady]
+  );
 
   const onCanPlayAudio = function () {
     socket.emit('PLAYER_AUDIO_READY');
@@ -341,6 +358,7 @@ function Play({ socket, room, players, isCreator, onAnswer, onEndGame }) {
   }
 
   function renderRoundResults() {
+    // console.log('>>> room', room);
     const { rounds, step } = room;
 
     if (!rounds[step - 1]) {

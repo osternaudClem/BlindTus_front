@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useCopyToClipboard } from 'usehooks-ts';
 
@@ -11,12 +11,14 @@ import {
   InputAdornment,
   Snackbar,
   Alert,
+  AlertTitle,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { GameSettings, GameSettingsResume } from '../../components/Forms';
 import { Heading, PaperBox } from '../../components/UI';
+import { useLocation } from 'react-router-dom';
 
 const URL = 'https://blindtus.com';
 
@@ -27,21 +29,35 @@ function Lobby({
   onUpdateSettings,
   isCreator,
   room,
+  error,
+  onClearError,
   ...props
 }) {
   const [, copyToClipBoard] = useCopyToClipboard();
   const [customRoom, updateCustomRoom] = useTextfield();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
+  const { search } = useLocation();
 
-  const handleCloseAlert = function () {
+  const urlCode = useMemo(() => {
+    const params = new URLSearchParams(search);
+    return params.get('code');
+  }, [search]);
+
+  useEffect(() => {
+    if (urlCode) {
+      onJoin(urlCode);
+    }
+  }, [onJoin, urlCode]);
+
+  const handleCloseAlert = useCallback(() => {
     setIsAlertOpen(false);
-  };
+  }, []);
 
-  const handleClickCreate = function () {
+  const handleClickCreate = useCallback(() => {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     onCreate(code);
-  };
+  }, [onCreate]);
 
   const handleSubmitRoom = function (event) {
     event.preventDefault();
@@ -75,6 +91,16 @@ function Lobby({
   return (
     <div>
       <Heading>Multijoueur {room.id && `Room #${room.id}`}</Heading>
+      {error ? (
+        <Alert
+          severity="error"
+          sx={{ marginBottom: '24px' }}
+          onClose={onClearError}
+        >
+          <AlertTitle>Erreur</AlertTitle>
+          {error}
+        </Alert>
+      ) : null}
       {renderAlert()}
       {room.id && (
         <Box marginBottom={4}>
@@ -199,12 +225,16 @@ Lobby.propTypes = {
   onCreate: PropTypes.func,
   onJoin: PropTypes.func,
   players: PropTypes.array,
+  error: PropTypes.string,
+  onClearError: PropTypes.func,
 };
 
 Lobby.defaultProps = {
   onCreate: () => {},
   onJoin: () => {},
   players: [],
+  error: null,
+  onClearError: () => {},
 };
 
 export default Lobby;
