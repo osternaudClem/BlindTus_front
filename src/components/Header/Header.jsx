@@ -47,7 +47,6 @@ import { getLevel } from '../../lib/levels';
 
 import logo from '../../assets/logo_light.png';
 import './Header.scss';
-import { socket } from '../../contexts/sockets';
 
 const pages = [
   {

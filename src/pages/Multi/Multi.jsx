@@ -84,7 +84,7 @@ function Multi(props) {
     if (!props.categories.length) {
       props.categoriesActions.getCategories();
     }
-  }, [props.categories]);
+  }, [props.categories, props.categoriesActions]);
 
   useEffect(() => {
     if (!socket.connected) {
@@ -173,32 +173,38 @@ function Multi(props) {
     );
   };
 
-  const onJoinGame = function (code) {
-    socket.emit(
-      'JOIN_ROOM',
-      { _id: user._id, username: user.username, room: code },
-      ({ error, user, room }) => {
-        if (error) {
-          console.log('>>> error', error);
+  const onJoinGame = useCallback(
+    (code) => {
+      socket.emit(
+        'JOIN_ROOM',
+        { _id: user._id, username: user.username, room: code },
+        ({ error, user, room }) => {
+          if (error) {
+            console.log('>>> error', error);
+          }
+
+          setIsCreator(user.isCreator);
+          updateRoom(room);
+
+          return () => {
+            socket.off('JOIN_ROOM');
+          };
         }
-
-        setIsCreator(user.isCreator);
-        updateRoom(room);
-
-        return () => {
-          socket.off('JOIN_ROOM');
-        };
-      }
-    );
-  };
+      );
+    },
+    [socket, user._id, user.username]
+  );
 
   const handleClickDisconnect = function (user) {
     socket.emit('KICK_USER', { user });
   };
 
-  const onUpdateSettings = function (settings) {
-    socket.emit('UPDATE_SETTINGS', room.id, settings);
-  };
+  const onUpdateSettings = useCallback(
+    (settings) => {
+      socket.emit('UPDATE_SETTINGS', room.id, settings);
+    },
+    [socket, room]
+  );
 
   const onDisconnect = function (user) {
     socket.emit('KICK_USER', { user });

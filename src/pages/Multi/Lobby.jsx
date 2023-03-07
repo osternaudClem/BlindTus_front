@@ -48,7 +48,7 @@ function Lobby({
     if (urlCode) {
       onJoin(urlCode);
     }
-  }, []);
+  }, [urlCode, onJoin]);
 
   const handleCloseAlert = useCallback(() => {
     setIsAlertOpen(false);
@@ -68,9 +68,12 @@ function Lobby({
     onJoin(customRoom);
   };
 
-  const handleChangeSettings = function (settings) {
-    onUpdateSettings(settings);
-  };
+  const handleChangeSettings = useCallback(
+    (settings) => {
+      onUpdateSettings(settings);
+    },
+    [onUpdateSettings]
+  );
 
   const handleStartGame = function () {
     socket.emit('INIT_GAME');

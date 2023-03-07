@@ -14,8 +14,8 @@ export function getLevel(exp) {
   }
 
   const prevStep = i - 3;
-  const expStep = prev - allExp[prevStep];
-  const currentExp = exp - allExp[prevStep];
+  const expStep = prev - allExp[prevStep] || allExp[0];
+  const currentExp = allExp[prevStep] ? exp - allExp[prevStep] : exp;
 
   return {
     totalExp: exp,

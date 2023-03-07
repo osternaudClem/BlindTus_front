@@ -104,25 +104,37 @@ function GameSettings({
     updateCode('');
   };
 
-  const onTimeChange = function (event, value) {
-    updateTime(event, value);
-    sendChangeSettings({ updatedTime: value });
-  };
+  const onTimeChange = useCallback(
+    (event, value) => {
+      updateTime(event, value);
+      sendChangeSettings({ updatedTime: value });
+    },
+    [updateTime, sendChangeSettings]
+  );
 
-  const onMovieNumberChange = function (event) {
-    updateMovieNumber(event);
-    sendChangeSettings({ updatedMovieNumber: event.target.value });
-  };
+  const onMovieNumberChange = useCallback(
+    (event) => {
+      updateMovieNumber(event);
+      sendChangeSettings({ updatedMovieNumber: event.target.value });
+    },
+    [updateMovieNumber, sendChangeSettings]
+  );
 
-  const onDifficultyChange = function (event) {
-    updateDifficulty(event);
-    sendChangeSettings({ updatedDifficulty: event.target.value });
-  };
+  const onDifficultyChange = useCallback(
+    (event) => {
+      updateDifficulty(event);
+      sendChangeSettings({ updatedDifficulty: event.target.value });
+    },
+    [updateDifficulty, sendChangeSettings]
+  );
 
-  const onCategoriesChange = function (event, category) {
-    const isChecked = event.target.checked;
-    updateCategories({ ...categories, [category._id]: isChecked });
-  };
+  const onCategoriesChange = useCallback(
+    (event, category) => {
+      const isChecked = event.target.checked;
+      updateCategories({ ...categories, [category._id]: isChecked });
+    },
+    [updateCategories, categories]
+  );
 
   if (!props.categories) {
     return <Loading />;

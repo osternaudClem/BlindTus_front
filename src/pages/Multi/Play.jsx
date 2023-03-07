@@ -5,7 +5,6 @@ import SportsScoreIcon from '@mui/icons-material/SportsScore';
 
 import { useTextfield } from '../../hooks/formHooks';
 import { checkSimilarity } from '../../lib/check';
-import { shuffle } from '../../lib/array';
 import { calculScore } from '../../lib/number';
 
 import { Timer } from '../../components/Timer';
@@ -82,7 +81,7 @@ function Play({
       setIsReady(false);
       updateTimer(0);
     });
-  }, []);
+  }, [onEndGame, onStep, socket]);
 
   useEffect(() => {
     const { musics, step } = room;
@@ -90,13 +89,7 @@ function Play({
     const currentStep = step - 1;
 
     if (musics[currentStep] && musics[currentStep].proposals) {
-      setProposals(
-        shuffle([
-          musics[currentStep][musics[currentStep].movie ? 'movie' : 'tvShow']
-            .title_fr,
-          ...musics[currentStep].proposals.slice(0, 7),
-        ])
-      );
+      setProposals(musics[currentStep].proposals);
     }
   }, [room]);
 
