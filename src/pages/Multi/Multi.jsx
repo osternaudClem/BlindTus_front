@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useCallback, useMemo } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -26,8 +26,8 @@ import { UserContext } from '../../contexts/userContext';
 import { categoriesActions } from '../../actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { getLevel } from '../../lib/levels';
 import styled from '@emotion/styled';
+import { getLevel } from '../../lib/levels';
 
 const STEPS = {
   ROUND_RESULT: 'round_result',
@@ -211,12 +211,9 @@ function Multi(props) {
     [socket, user._id, user.username]
   );
 
-  const handleClickDisconnect = useCallback(
-    (user) => {
-      socket.emit('KICK_USER', { user });
-    },
-    [socket]
-  );
+  const handleClickDisconnect = function (user) {
+    socket.emit('KICK_USER', { user });
+  };
 
   const onUpdateSettings = useCallback(
     (settings) => {
@@ -225,12 +222,9 @@ function Multi(props) {
     [socket, room]
   );
 
-  const onDisconnect = useCallback(
-    (user) => {
-      socket.emit('KICK_USER', { user });
-    },
-    [socket]
-  );
+  const onDisconnect = function (user) {
+    socket.emit('KICK_USER', { user });
+  };
 
   const onAnswer = function (score, step, answer) {
     socket.emit('ADD_SCORE', { score, step, answer }, (room) => {
@@ -250,7 +244,176 @@ function Multi(props) {
     setStep(step);
   };
 
-  const renderScore = useMemo(() => {
+  return (
+    <Grid
+      container
+      spacing={12}
+      component="main"
+    >
+      <CssBaseline />
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={8}
+      >
+        {render()}
+      </Grid>
+
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={4}
+      >
+        {renderSide()}
+      </Grid>
+    </Grid>
+  );
+
+  function render() {
+    if (!isStarted) {
+      return (
+        <Lobby
+          socket={socket}
+          onCreate={onCreateGame}
+          onJoin={onJoinGame}
+          onUpdateSettings={onUpdateSettings}
+          room={room}
+          isCreator={isCreator}
+          error={error}
+          onClearError={() => setError(null)}
+        />
+      );
+    }
+
+    if (!isEndGame) {
+      return (
+        <Play
+          socket={socket}
+          room={room}
+          players={players}
+          isCreator={isCreator}
+          isReady={isReady}
+          onAnswer={onAnswer}
+          isEndGame={isEndGame}
+          onEndGame={onEndGame}
+          onStep={onStep}
+        />
+      );
+    }
+
+    return (
+      <Results
+        room={room}
+        players={players}
+        isCreator={isCreator}
+        onNewGame={onNewGame}
+      />
+    );
+  }
+
+  function renderSide() {
+    if (!isStarted && room.id) {
+      return (
+        <PaperBox>
+          <Typography
+            variant="h4"
+            gutterBottom
+          >
+            Joueurs
+          </Typography>
+          <Stack spacing={1}>
+            {players.map((player, index) => {
+              const playerLevel = getLevel(player.info.exp);
+              return (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  key={index}
+                >
+                  {isCreator && (
+                    <IconButton onClick={() => onDisconnect(player)}>
+                      <CloseIcon />
+                    </IconButton>
+                  )}
+                  <UserAvatar
+                    username={player.username}
+                    avatar={player.info ? player.info.avatar : null}
+                    displayUsername="right"
+                    badge={
+                      <AvatarLevel>{playerLevel.currentLevel}</AvatarLevel>
+                    }
+                  />
+                </Stack>
+              );
+            })}
+          </Stack>
+        </PaperBox>
+      );
+    }
+
+    if (!isEndGame) {
+      return renderScore();
+    }
+
+    let usersScore = [];
+
+    room.players.map((user) => {
+      let userScore = 0;
+
+      room.rounds.map((round) => {
+        const newScore = round.scores.find((s) => s.username === user.username);
+        if (newScore) {
+          userScore = userScore + newScore.score;
+        }
+
+        return null;
+      });
+      usersScore.push({ username: user.username, score: userScore });
+
+      return null;
+    });
+
+    usersScore = usersScore.sort((a, b) => b.score - a.score);
+
+    return (
+      <PaperBox>
+        <Typography
+          variant="h4"
+          gutterBottom
+        >
+          Joueurs
+        </Typography>
+        <Stack spacing={1}>
+          {usersScore.map((score, index) => {
+            const player = players.find((p) => p.username === score.username);
+            const playerLevel = getLevel(player.info.exp);
+
+            return (
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                key={index}
+              >
+                <UserAvatar
+                  username={player.username}
+                  avatar={player.info.avatar}
+                  displayUsername="right"
+                  badge={<AvatarLevel>{playerLevel.currentLevel}</AvatarLevel>}
+                  style={{ flexGrow: 1 }}
+                />
+                <Typography variant="h6">{score.score}</Typography>
+              </Stack>
+            );
+          })}
+        </Stack>
+      </PaperBox>
+    );
+  }
+
+  function renderScore() {
     if (!room || !room.id) {
       return;
     }
@@ -295,6 +458,10 @@ function Multi(props) {
             if (!players.length || !players[index]) {
               return null;
             }
+
+            const player = players.find((p) => p.username === user.username);
+            const playerLevel = getLevel(player.info.exp);
+
             return (
               <div key={index}>
                 <ListItem
@@ -327,6 +494,9 @@ function Multi(props) {
                       avatar={players[index].info.avatar}
                       username={user.username}
                       displayUsername="right"
+                      badge={
+                        <AvatarLevel>{playerLevel.currentLevel}</AvatarLevel>
+                      }
                     />
                   )}
                 </ListItem>
@@ -336,192 +506,6 @@ function Multi(props) {
           })}
         </List>
       </PaperBox>
-    );
-  }, [
-    handleClickDisconnect,
-    isCreator,
-    isReady,
-    loadings,
-    players,
-    room,
-    step,
-  ]);
-
-  const renderSide = useMemo(() => {
-    if (!isStarted && room.id) {
-      return (
-        <PaperBox>
-          <Typography
-            variant="h4"
-            gutterBottom
-          >
-            Joueurs
-          </Typography>
-          <Stack spacing={1}>
-            {players.map((player, index) => {
-              const playerLevel = getLevel(player.info.exp);
-
-              return (
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  key={index}
-                >
-                  {isCreator && (
-                    <IconButton onClick={() => onDisconnect(player)}>
-                      <CloseIcon />
-                    </IconButton>
-                  )}
-                  <UserAvatar
-                    player={player}
-                    username={player.username}
-                    avatar={player.info ? player.info.avatar : null}
-                    displayUsername="right"
-                    badge={
-                      <AvatarLevel>{playerLevel.currentLevel}</AvatarLevel>
-                    }
-                  />
-                </Stack>
-              );
-            })}
-          </Stack>
-        </PaperBox>
-      );
-    }
-
-    if (!isEndGame) {
-      return renderScore;
-    }
-
-    let usersScore = [];
-
-    room.players.map((user) => {
-      let userScore = 0;
-
-      room.rounds.map((round) => {
-        const newScore = round.scores.find((s) => s.username === user.username);
-        if (newScore) {
-          userScore = userScore + newScore.score;
-        }
-
-        return null;
-      });
-      usersScore.push({ username: user.username, score: userScore });
-
-      return null;
-    });
-
-    usersScore = usersScore.sort((a, b) => b.score - a.score);
-
-    return (
-      <PaperBox>
-        <Typography
-          variant="h4"
-          gutterBottom
-        >
-          Joueurs
-        </Typography>
-        <Stack spacing={1}>
-          {usersScore.map((score, index) => {
-            const player = players.find((p) => p.username === score.username);
-            return (
-              <Stack
-                direction="row"
-                spacing={2}
-                alignItems="center"
-                key={index}
-              >
-                <UserAvatar
-                  username={player.username}
-                  avatar={player.info.avatar}
-                  displayUsername="right"
-                  style={{ flexGrow: 1 }}
-                />
-                <Typography variant="h6">{score.score}</Typography>
-              </Stack>
-            );
-          })}
-        </Stack>
-      </PaperBox>
-    );
-  }, [
-    isCreator,
-    isEndGame,
-    isStarted,
-    onDisconnect,
-    players,
-    renderScore,
-    room.id,
-    room.players,
-    room.rounds,
-  ]);
-
-  return (
-    <Grid
-      container
-      spacing={12}
-      component="main"
-    >
-      <CssBaseline />
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        md={8}
-      >
-        {render()}
-      </Grid>
-
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        md={4}
-      >
-        {renderSide}
-      </Grid>
-    </Grid>
-  );
-
-  function render() {
-    if (!isStarted) {
-      return (
-        <Lobby
-          socket={socket}
-          onCreate={onCreateGame}
-          onJoin={onJoinGame}
-          onUpdateSettings={onUpdateSettings}
-          room={room}
-          isCreator={isCreator}
-          error={error}
-          onClearError={() => setError(null)}
-        />
-      );
-    }
-
-    if (!isEndGame) {
-      return (
-        <Play
-          socket={socket}
-          room={room}
-          players={players}
-          isCreator={isCreator}
-          isReady={isReady}
-          onAnswer={onAnswer}
-          isEndGame={isEndGame}
-          onEndGame={onEndGame}
-          onStep={onStep}
-        />
-      );
-    }
-
-    return (
-      <Results
-        room={room}
-        players={players}
-        isCreator={isCreator}
-        onNewGame={onNewGame}
-      />
     );
   }
 }
