@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { Avatar, Stack, Typography } from '@mui/material';
+import { Avatar, Badge, Stack, Typography } from '@mui/material';
 
-function UserAvatar({ avatar, username, displayUsername, style }) {
+function UserAvatar({ avatar, badge, username, displayUsername, style }) {
   return (
     <Stack
       direction="row"
@@ -10,15 +10,35 @@ function UserAvatar({ avatar, username, displayUsername, style }) {
       style={style}
       data-testid="test-UserAvatar"
     >
-      {displayUsername === 'left' &&
-        <Typography variant="body" marginRight={2}>{username}</Typography>
-      }
-      <Avatar src={avatar || 'undefined'} alt={username} data-testid="test-UserAvatar__avatar" />
-      {displayUsername === 'right' &&
-        <Typography variant="body" marginRight={2} className="text--crop">{username}</Typography>
-      }
+      {displayUsername === 'left' && (
+        <Typography
+          variant="body"
+          marginRight={2}
+        >
+          {username}
+        </Typography>
+      )}
+      <Badge
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        badgeContent={badge}
+      >
+        <Avatar
+          src={avatar || 'undefined'}
+          alt={username}
+        />
+      </Badge>
+      {displayUsername === 'right' && (
+        <Typography
+          variant="body"
+          marginRight={2}
+          className="text--crop"
+        >
+          {username}
+        </Typography>
+      )}
     </Stack>
-  )
+  );
 }
 
 UserAvatar.propTypes = {
@@ -33,6 +53,6 @@ UserAvatar.defaultProps = {
   displayUsername: 'none',
   style: {},
   username: null,
-}
+};
 
 export default UserAvatar;
