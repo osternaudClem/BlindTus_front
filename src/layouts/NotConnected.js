@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { getCookie } from 'react-use-cookie';
 import { Paper, Box, Grid } from '@mui/material';
 
-import { SemiBackground } from '../components/Background';
+import { SemiBackgroundContainer } from '../components/Background';
 
 function NotConnected(props) {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function NotConnected(props) {
       component="main"
       className="NotLogged"
     >
-      <SemiBackground />
+      <SemiBackgroundContainer />
       <Grid
         item
         sm={12}

@@ -6,6 +6,7 @@ export function getCategories() {
   return async function (dispatch) {
     try {
       const success = await callApi.get('/categories');
+
       dispatch({
         type: types.GET_CATEGORIES_SUCCESS,
         categories: success.data,

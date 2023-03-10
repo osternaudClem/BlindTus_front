@@ -1,6 +1,4 @@
 import classnames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import {
   Alert,
   Box,
@@ -19,11 +17,10 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 
 import { useTextfield } from '../../hooks/formHooks';
-import { moviesActions, tvShowsActions } from '../../actions';
 import { isMediaAlreadyAdded } from '../../lib/check';
 import { tmdb } from '../../config';
 
-function SuggestMedia({ onAddMedia, type, ...props }) {
+function SuggestMedia({ onAddMedia, type, findMedias, resetSearch, media }) {
   const [query, onChangeQuery, setField] = useTextfield();
 
   const onSearchMedia = async function (event) {
@@ -32,13 +29,7 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
       return;
     }
 
-    switch (type) {
-      case 'tvShows':
-        return props.tvShowsActions.findTVShows(query);
-      case 'movies':
-      default:
-        return props.moviesActions.findMovies(query);
-    }
+    findMedias(query);
   };
 
   const handleClickResetCode = function () {
@@ -46,7 +37,7 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
   };
 
   const handleClickClear = function () {
-    moviesActions.reset();
+    resetSearch();
     handleClickResetCode();
   };
 
@@ -79,7 +70,7 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
             }}
           />
         </FormControl>
-        {props[type].search.length > 0 && (
+        {media.search.length > 0 && (
           <Button
             variant="contained"
             onClick={handleClickClear}
@@ -95,12 +86,8 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 16 }}
       >
-        {props[type].search.map((movie) => {
-          let isAlreadyAdded = isMediaAlreadyAdded(
-            props[type].all,
-            movie,
-            type
-          );
+        {media.search.map((movie) => {
+          let isAlreadyAdded = isMediaAlreadyAdded(media.all, movie, type);
 
           return (
             <Grid
@@ -168,18 +155,4 @@ function SuggestMedia({ onAddMedia, type, ...props }) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    movies: state.movies,
-    tvShows: state.tvShows,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    moviesActions: bindActionCreators(moviesActions, dispatch),
-    tvShowsActions: bindActionCreators(tvShowsActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SuggestMedia);
+export default SuggestMedia;

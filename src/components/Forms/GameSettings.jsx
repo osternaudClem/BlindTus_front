@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   Box,
   Slider,
@@ -26,7 +24,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useSlider, useTextfield } from '../../hooks/formHooks';
-import { gamesActions, categoriesActions } from '../../actions';
 import { Loading, PaperBox } from '../UI';
 
 const NOVIE_NUMBER = 10;
@@ -43,7 +40,9 @@ function GameSettings({
   redirect,
   room,
   noGameCode,
-  ...props
+  categories,
+  getCategories,
+  getGame,
 }) {
   const [errorCode, setErrorCode] = useState(null);
   const [time, updateTime] = useSlider(
@@ -55,7 +54,7 @@ function GameSettings({
   const [difficulty, updateDifficulty] = useTextfield(
     (room.settings && room.settings.difficulty) || 'easy'
   );
-  const [categories, updateCategories] = useState({});
+  const [selectedCategories, updateSelectedCategories] = useState({});
   const [code, updateCode] = useTextfield('');
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
@@ -67,22 +66,22 @@ function GameSettings({
           time_limit: settings.updatedTime || time,
           total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
           difficulty: settings.updatedDifficulty || difficulty,
-          categories: settings.categories || categories,
+          categories: settings.categories || selectedCategories,
         });
       }
     },
-    [categories, difficulty, movieNumber, onSettingsChange, time]
+    [selectedCategories, difficulty, movieNumber, onSettingsChange, time]
   );
 
   useEffect(() => {
-    if (!props.categories.length) {
-      props.categoriesActions.getCategories();
+    if (!categories.length) {
+      getCategories();
     }
-  }, [props.categories, props.categoriesActions]);
+  }, [categories, getCategories]);
 
   useEffect(() => {
-    sendChangeSettings({ categories });
-  }, [categories, sendChangeSettings]);
+    sendChangeSettings({ selectedCategories });
+  }, [selectedCategories, sendChangeSettings]);
 
   const handleClickSettings = async function (event) {
     event.preventDefault();
@@ -90,14 +89,19 @@ function GameSettings({
     setErrorCode(null);
 
     if (code && code !== '' && redirect) {
-      const game = await props.gamesActions.getGame(code);
+      const game = await getGame(code);
       if (!game._id) {
         return setErrorCode("La partie correspondante à ce code n'existe pas");
       }
       return navigate(`/${redirect}?code=${code}`);
     }
 
-    onSettingsSaved({ time, movieNumber, difficulty, categories });
+    onSettingsSaved({
+      time,
+      movieNumber,
+      difficulty,
+      categories: selectedCategories,
+    });
   };
 
   const handleClickResetCode = function () {
@@ -131,12 +135,15 @@ function GameSettings({
   const onCategoriesChange = useCallback(
     (event, category) => {
       const isChecked = event.target.checked;
-      updateCategories({ ...categories, [category._id]: isChecked });
+      updateSelectedCategories({
+        ...selectedCategories,
+        [category._id]: isChecked,
+      });
     },
-    [updateCategories, categories]
+    [updateSelectedCategories, selectedCategories]
   );
 
-  if (!props.categories) {
+  if (!categories) {
     return <Loading />;
   }
 
@@ -235,7 +242,7 @@ function GameSettings({
                 Choisissez au moins 1 thème
               </Typography>
               <FormGroup row>
-                {props.categories.map((category) => (
+                {categories.map((category) => (
                   <FormControlLabel
                     key={category._id}
                     control={<Checkbox />}
@@ -303,7 +310,9 @@ function GameSettings({
               onClick={handleClickSettings}
               type="submit"
               disabled={
-                !Object.keys(categories).filter((c) => categories[c]).length
+                !Object.keys(selectedCategories).filter(
+                  (c) => selectedCategories[c]
+                ).length
               }
             >
               Lancer la partie
@@ -330,17 +339,4 @@ GameSettings.defaultProps = {
   room: {},
 };
 
-function mapStateToProps(state) {
-  return {
-    categories: state.categories.all,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    gamesActions: bindActionCreators(gamesActions, dispatch),
-    categoriesActions: bindActionCreators(categoriesActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(GameSettings);
+export default GameSettings;

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import {
   Grid,
   Button,
@@ -19,17 +18,20 @@ function GameSettingsResume({
   displayStart,
   code,
   onClickStart,
+  categories,
   ...props
 }) {
-  let categories = [];
+  let gameCategories = [];
   if (Array.isArray(game.categories)) {
-    categories = game.categories;
+    gameCategories = game.categories;
   } else {
-    categories = Object.keys(game.categories).filter((c) => game.categories[c]);
+    gameCategories = Object.keys(game.categories).filter(
+      (c) => game.categories[c]
+    );
   }
 
   const getCategoryLabel = function (category) {
-    return props.categories.find((c) => c._id === category).label_fr;
+    return categories.find((c) => c._id === category).label_fr;
   };
 
   return (
@@ -89,7 +91,7 @@ function GameSettingsResume({
           <ListItem
             secondaryAction={
               <Typography variant="body">
-                {categories.map((category) => (
+                {gameCategories.map((category) => (
                   <Chip
                     label={getCategoryLabel(category)}
                     size="small"
@@ -179,10 +181,4 @@ GameSettingsResume.defaultProps = {
   displayStart: false,
 };
 
-function mapStateToProps(state) {
-  return {
-    categories: state.categories.all,
-  };
-}
-
-export default connect(mapStateToProps, null)(GameSettingsResume);
+export default GameSettingsResume;

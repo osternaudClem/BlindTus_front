@@ -14,7 +14,10 @@ import {
 } from '../../actions';
 import { updateTitle } from '../../lib/document';
 import { Heading } from '../../components/UI';
-import { SuggestMusic, SuggestMedia } from '../../components/Forms';
+import {
+  SuggestMusicContainer,
+  SuggestMediaContainer,
+} from '../../components/Forms';
 
 function SlideTransition(props) {
   return (
@@ -151,17 +154,17 @@ function Suggest(props) {
     switch (tab) {
       case 1:
         return (
-          <SuggestMedia
+          <SuggestMediaContainer
             onAddMedia={handleClickSaveMovie}
             type="tvShows"
           />
         );
       case 2:
-        return <SuggestMusic onSubmit={handleSubmitNewMusic} />;
+        return <SuggestMusicContainer onSubmit={handleSubmitNewMusic} />;
       case 0:
       default:
         return (
-          <SuggestMedia
+          <SuggestMediaContainer
             onAddMedia={handleClickSaveMovie}
             type="movies"
           />

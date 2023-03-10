@@ -29,8 +29,8 @@ import { Result } from '../../components/Results';
 import { Scores } from '../../components/Scores';
 import { GameProposals } from '../../components/Game';
 import {
-  GameSettings,
-  GameSettingsResume,
+  GameSettingsContainer,
+  GameSettingsResumeContainer,
   MovieTextField,
 } from '../../components/Forms';
 import { Heading } from '../../components/UI';
@@ -143,7 +143,6 @@ function NewGame(props) {
   }) {
     try {
       const musics = await getMusics(movieNumber, categories);
-
       props.gamesActions.saveGame({
         round_time: time,
         difficulty,
@@ -169,7 +168,6 @@ function NewGame(props) {
     setDifficulty(settings.difficulty);
     setTotalMusics(settings.movieNumber);
     setCategories(settings.categories);
-
     onStartGame(settings);
   };
 
@@ -334,7 +332,7 @@ function NewGame(props) {
 
     if (gameWithCode) {
       return (
-        <GameSettingsResume
+        <GameSettingsResumeContainer
           game={props.games.currentGame}
           displayStart
           code={code}
@@ -346,7 +344,7 @@ function NewGame(props) {
     return (
       <div>
         <Heading>Nouvelle partie</Heading>
-        <GameSettings
+        <GameSettingsContainer
           onSettingsSaved={onSettingsSaved}
           redirect="game"
         />

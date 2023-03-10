@@ -2,7 +2,6 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactPlayer from 'react-player';
-import { connect } from 'react-redux';
 import {
   Autocomplete,
   Box,
@@ -20,7 +19,7 @@ import { isYoutubeUrl } from '../../lib/check';
 import { formatMoviesSearch } from '../../lib/format';
 import { useEffect } from 'react';
 
-function SuggestMusic({ onSubmit, ...props }) {
+function SuggestMusic({ onSubmit, movies, tvShows }) {
   const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
   const [allMovies, updateAllMovies] = useState([]);
   const [newMusic, setNewMusic] = useState({
@@ -34,12 +33,12 @@ function SuggestMusic({ onSubmit, ...props }) {
   const [youtubeUrlError, setYoutubeUrlError] = useState(false);
 
   useEffect(() => {
-    if (props.movies.all.length && props.tvShows.all.length) {
-      const medias = [...props.movies.all, ...props.tvShows.all];
+    if (movies.all.length && tvShows.all.length) {
+      const medias = [...movies.all, ...tvShows.all];
 
       updateAllMovies(formatMoviesSearch(medias));
     }
-  }, [props.movies.all, props.tvShows.all]);
+  }, [movies.all, tvShows.all]);
 
   const filterOptions = createFilterOptions({
     stringify: (option) => `${option.title} ${option.title_fr}`,
@@ -286,12 +285,4 @@ SuggestMusic.defaultProps = {
   onSubmit: () => {},
 };
 
-function mapStateToProps(state) {
-  return {
-    tvShows: state.tvShows,
-    movies: state.movies,
-    categories: state.categories,
-  };
-}
-
-export default connect(mapStateToProps, null)(SuggestMusic);
+export default SuggestMusic;
