@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import App from './layouts/App';
 import Connected from './layouts/Connected';
 import NotConnected from './layouts/NotConnected';
 import Other from './layouts/Other';
@@ -32,6 +31,8 @@ import {
   NotFoundPage,
 } from './pages';
 import { CssBaseline } from '@mui/material';
+import AppContainer from './layouts/AppContainer';
+import { getCookie } from 'react-use-cookie';
 
 const darkTheme = createTheme({
   palette: {
@@ -63,15 +64,19 @@ const RoutesUrl = () => {
     setUser(user);
   };
 
+  const isLogged = useMemo(() => {
+    return !!getCookie('user');
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider value={{ user, updateUser, isLogged }}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <BrowserRouter>
           <Routes>
             <Route
               path="/"
-              element={<App />}
+              element={<AppContainer />}
             >
               <Route
                 path="/"

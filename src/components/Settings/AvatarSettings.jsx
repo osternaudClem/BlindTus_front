@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/avatars-bottts-sprites';
 
@@ -20,7 +18,6 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { UserContext } from '../../contexts/userContext';
-import { usersActions } from '../../actions';
 import { objectToArray } from '../../lib/array';
 import colors from '../../datas/colors/index';
 import { Heading, PaperBox } from '../UI';
@@ -28,7 +25,7 @@ import './Settings.scss';
 
 const COLORS = objectToArray(colors);
 
-function AvatarSettings(props) {
+function AvatarSettings({ user, onUpdateUser }) {
   const [avatar, setAvatar] = useState({});
   const { updateUser } = useContext(UserContext);
   const avatarSvg = createAvatar(style, {
@@ -41,23 +38,23 @@ function AvatarSettings(props) {
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
 
   useEffect(() => {
-    if (props.user.avatarSettings && props.user.avatarSettings.seed) {
-      setAvatar(props.user.avatarSettings);
+    if (user?.avatarSettings && user?.avatarSettings.seed) {
+      setAvatar(user.avatarSettings);
     } else {
       setAvatar({
-        seed: props.user._id,
+        seed: user?._id,
         textureChance: 100,
         mouthChance: 100,
         sidesChance: 100,
         topChance: 100,
       });
     }
-  }, [props.user]);
+  }, [user]);
 
   const handleCancelUpdate = function () {
-    if (!props.user.avatar || props.user.avatar === '') {
+    if (!user?.avatar || user?.avatar === '') {
       setAvatar((a) => ({
-        seed: props.user.username,
+        seed: user.username,
         colors: '',
         textureChance: 100,
         mouthChance: 100,
@@ -65,7 +62,7 @@ function AvatarSettings(props) {
         topChance: 100,
       }));
     } else {
-      setAvatar((a) => props.user.avatarSettings);
+      setAvatar((a) => user.avatarSettings);
     }
   };
 
@@ -77,10 +74,11 @@ function AvatarSettings(props) {
   };
 
   const handleClickSave = async function () {
-    const updatedUser = await props.usersActions.updateUser(props.user._id, {
+    const updatedUser = await onUpdateUser({
       avatar: avatarSvg,
       avatarSettings: avatar,
     });
+
     updateUser(updatedUser);
   };
 
@@ -131,7 +129,7 @@ function AvatarSettings(props) {
                     onClick={() =>
                       handleUpdateAvatar(
                         'seed',
-                        `${props.user.username}-${Math.random() * 1000}`
+                        `${user.username}-${Math.random() * 1000}`
                       )
                     }
                   >
@@ -267,16 +265,4 @@ function AvatarSettings(props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.users.me,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    usersActions: bindActionCreators(usersActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(AvatarSettings);
+export default AvatarSettings;

@@ -4,8 +4,6 @@ import {
   NavLink as RouterLink,
   useLocation,
 } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { setCookie } from 'react-use-cookie';
 import { useLocalStorage } from 'usehooks-ts';
 import ReactMarkdown from 'react-markdown';
@@ -41,9 +39,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import { isMobileDevice } from '../../lib/check';
 import { UserContext } from '../../contexts/userContext';
-import { notificationsActions, usersActions } from '../../actions';
 import { GameVolume } from '../Game';
-import { getLevel } from '../../lib/levels';
 
 import logo from '../../assets/logo_light.png';
 import './Header.scss';
@@ -145,14 +141,19 @@ function CircularProgressWithLabel({
   );
 }
 
-const ResponsiveAppBar = (props) => {
+const ResponsiveAppBar = ({
+  level,
+  notifications,
+  getNotifications,
+  markNotificationAsRead,
+  onLogout,
+}) => {
   const [isExpOpen, setExpOpen] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNotification, setAnchorElNotification] = useState(null);
   const [volume, setVolume] = useLocalStorage('player_volume', 70);
   const { user } = useContext(UserContext);
-  const [levelInfo, updateLevelInfo] = useState(getLevel(user.exp));
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -160,12 +161,8 @@ const ResponsiveAppBar = (props) => {
     if (!user) {
       return;
     }
-    props.notificationsActions.getNotifications(user._id);
-  }, [user, props.notificationsActions]);
-
-  useEffect(() => {
-    updateLevelInfo(getLevel(user.exp));
-  }, [user]);
+    getNotifications();
+  }, [user, getNotifications]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -189,13 +186,7 @@ const ResponsiveAppBar = (props) => {
 
   const handleCloseUserMenu = (setting) => {
     if (setting.id === 'logout') {
-      setCookie('user', '', {
-        days: 0,
-        domain:
-          !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
-            ? ''
-            : '.blindtus.com',
-      });
+      onLogout();
     }
     navigate(setting.url);
     setAnchorElUser(null);
@@ -309,8 +300,8 @@ const ResponsiveAppBar = (props) => {
               onClick={() => setExpOpen(true)}
             >
               <CircularProgressWithLabel
-                label={levelInfo.currentLevel}
-                progress={levelInfo.progress}
+                label={level.currentLevel}
+                progress={level.progress}
               />
             </div>
             <IconButton
@@ -321,9 +312,8 @@ const ResponsiveAppBar = (props) => {
             >
               <Badge
                 badgeContent={
-                  props.notifications?.all?.filter(
-                    (n) => !n.users.includes(user._id)
-                  ).length
+                  notifications?.all?.filter((n) => !n.users.includes(user._id))
+                    .length
                 }
                 color="error"
               >
@@ -344,7 +334,7 @@ const ResponsiveAppBar = (props) => {
               open={Boolean(anchorElNotification)}
               onClose={handleCloseNotificationMenu}
             >
-              {!props.notifications.length && (
+              {!notifications.length && (
                 <div style={{ minWidth: '200px' }}>
                   <MenuItem
                     sx={{ flexDirection: 'column', alignItems: 'flex-start' }}
@@ -355,7 +345,7 @@ const ResponsiveAppBar = (props) => {
                   </MenuItem>
                 </div>
               )}
-              {props.notifications?.all?.map((notification) => {
+              {notifications?.all?.map((notification) => {
                 const isRead = notification.users.includes(user._id);
                 return (
                   <div
@@ -385,14 +375,8 @@ const ResponsiveAppBar = (props) => {
                           color="secondary"
                           variant="outlined"
                           onClick={async () => {
-                            await props.notificationsActions.markAsRead(
-                              notification._id,
-                              user._id
-                            );
-
-                            await props.notificationsActions.getNotifications(
-                              user._id
-                            );
+                            await markNotificationAsRead(notification._id);
+                            await getNotifications();
                           }}
                         >
                           <CheckIcon />
@@ -490,17 +474,17 @@ const ResponsiveAppBar = (props) => {
         <Divider />
         <DialogContent>
           <CircularProgressWithLabel
-            label={levelInfo.currentLevel}
+            label={level.currentLevel}
             labelSize={34}
-            progress={levelInfo.progress}
+            progress={level.progress}
             size={120}
           />
           <DialogContentText>
-            Vous êtes niveau {levelInfo.currentLevel}
+            Vous êtes niveau {level.currentLevel}
           </DialogContentText>
           <DialogContentText>
-            Encore {levelInfo.nextNeeded - levelInfo.currentExp} points avant le
-            prochain niveau ({levelInfo.progress}%).
+            Encore {level.nextNeeded - level.currentExp} points avant le
+            prochain niveau ({level.progress}%).
           </DialogContentText>
         </DialogContent>
         <Divider />
@@ -518,18 +502,4 @@ const ResponsiveAppBar = (props) => {
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    user: state.users.me,
-    notifications: state.notifications.all,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    notificationsActions: bindActionCreators(notificationsActions, dispatch),
-    usersActions: bindActionCreators(usersActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ResponsiveAppBar);
+export default ResponsiveAppBar;

@@ -26,7 +26,7 @@ import { calculScore } from '../../lib/number';
 import { GamePlayer } from '../../components/Game';
 import { Timer } from '../../components/Timer';
 import { Result } from '../../components/Results';
-import { Scores } from '../../components/Scores';
+import { ScoresContainer } from '../../components/Scores';
 import { GameProposals } from '../../components/Game';
 import {
   GameSettingsContainer,
@@ -41,7 +41,13 @@ import '../Page.scss';
 // const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
-function NewGame(props) {
+function NewGame({
+  currentGame,
+  getMusics,
+  onSaveGame,
+  onSaveHistory,
+  onSaveScore,
+}) {
   const [isStarted, setIsStarted] = useState(false);
   const [isEndGame, setIsEndGame] = useState(false);
   const [musicNumber, setMusicsNumber] = useState(0);
@@ -59,8 +65,6 @@ function NewGame(props) {
   const [gameWithCode, setGameWithCode] = useState(false);
   const [proposals, setProposals] = useState([]);
   const [score, setScore] = useState(0);
-  const [currentGame, updateCurrentGame] = useState([]);
-  const { user, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -73,23 +77,15 @@ function NewGame(props) {
 
   useEffect(() => {
     if (code) {
-      (async function () {
-        try {
-          const game = await props.gamesActions.getGame(code);
-
-          if (game._id) {
-            setTotalMusics(game.musics.length);
-            setTimeLimit(game.round_time);
-            setDifficulty(game.difficulty);
-            return setGameWithCode(true);
-          }
-          navigate('/game');
-        } catch (error) {
-          navigate('/game');
-        }
-      })();
+      if (currentGame._id) {
+        setTotalMusics(game.musics.length);
+        setTimeLimit(game.round_time);
+        setDifficulty(game.difficulty);
+        return setGameWithCode(true);
+      }
+      navigate('/game');
     }
-  }, [props.gamesActions, code, navigate]);
+  }, [code, currentGame, game, navigate]);
 
   useEffect(() => {
     if (!inputDisabled && answerField.current) {
@@ -97,15 +93,7 @@ function NewGame(props) {
     }
   }, [inputDisabled]);
 
-  const getMusics = async function (limit, categories) {
-    const allMusics = await props.musicsActions.getMusics(limit, categories);
-
-    return allMusics;
-  };
-
   useEffect(() => {
-    const currentGame = props.games.currentGame;
-
     if (currentGame.proposals && musicNumber < totalMusics) {
       const music = currentGame.musics[musicNumber];
       setProposals(
@@ -115,22 +103,11 @@ function NewGame(props) {
         ])
       );
     }
-  }, [musicNumber, props.games.currentGame, totalMusics]);
+  }, [musicNumber, currentGame, totalMusics]);
 
   useEffect(() => {
     if (musicNumber > totalMusics - 1) {
-      props.historyActions
-        .saveHistory({
-          scores: currentGame,
-          user: user,
-          game: props.games.currentGame,
-          totalScore: currentGame.reduce((accumulator, game) => {
-            return accumulator + game.score;
-          }, 0),
-        })
-        .then((user) => {
-          updateUser(user);
-        });
+      onSaveHistory();
       setIsEndGame(true);
     }
   }, [totalMusics, musicNumber, currentGame]);
@@ -142,14 +119,13 @@ function NewGame(props) {
     categories,
   }) {
     try {
-      const musics = await getMusics(movieNumber, categories);
-      props.gamesActions.saveGame({
-        round_time: time,
-        difficulty,
-        musics,
-        categories: Object.keys(categories).filter((c) => categories[c]),
-        created_by: user._id,
-      });
+      getMusics(movieNumber, categories);
+
+      // onSaveGame(
+      //   time,
+      //   difficulty,
+      //   Object.keys(categories).filter((c) => categories[c])
+      // );
 
       setIsStarted(true);
       setDisplayTimer(true);
@@ -198,7 +174,7 @@ function NewGame(props) {
   };
 
   const handleClickAnswer = function (answer) {
-    const music = props.games.currentGame.musics[musicNumber];
+    const music = currentGame.musics[musicNumber];
     let score = 0;
 
     let isAnswerCorrect = false;
@@ -224,7 +200,7 @@ function NewGame(props) {
   };
 
   const onSendAnswer = (event, timeOut = false) => {
-    const music = props.games.currentGame.musics[musicNumber];
+    const music = currentGame.musics[musicNumber];
 
     let score = 0;
 
@@ -271,30 +247,8 @@ function NewGame(props) {
   };
 
   const saveScore = function (music, isAnswerCorrect, score) {
-    updateCurrentGame((g) => [
-      ...g,
-      {
-        movie: (music.movie && music.movie.title_fr) || null,
-        tvShow: (music.tvShow && music.tvShow.title_fr) || null,
-        isCorrect: isAnswerCorrect,
-        score: Math.round(score),
-        playerAnswer: answer,
-        movie_id: (music.movie && music.movie._id) || null,
-        show_id: (music.tvShow && music.tvShow._id) || null,
-        music_id: music._id,
-      },
-    ]);
-
-    props.scoresActions.addScore({
-      movie: (music.movie && music.movie.title_fr) || null,
-      tvShow: (music.tvShow && music.tvShow.title_fr) || null,
-      isCorrect: isAnswerCorrect,
-      score: Math.round(score),
-      playerAnswer: answer,
-      movie_id: (music.movie && music.movie._id) || null,
-      show_id: (music.tvShow && music.tvShow._id) || null,
-      music_id: music._id,
-    });
+    console.log('>>> currentGame', currentGame);
+    // onSaveScore(music, isAnswerCorrect, score, answer);
   };
 
   return (
@@ -320,7 +274,9 @@ function NewGame(props) {
         sm={6}
         md={4}
       >
-        {isStarted && <Scores currentGame={currentGame} />}
+        {isStarted && currentGame._id && (
+          <ScoresContainer currentGame={currentGame} />
+        )}
       </Grid>
     </Grid>
   );
@@ -333,7 +289,7 @@ function NewGame(props) {
     if (gameWithCode) {
       return (
         <GameSettingsResumeContainer
-          game={props.games.currentGame}
+          game={currentGame}
           displayStart
           code={code}
           onClickStart={handleClickStart}
@@ -353,19 +309,15 @@ function NewGame(props) {
   }
 
   function game() {
-    if (
-      !isStarted ||
-      !props.games.currentGame.musics ||
-      props.games.currentGame.musics.length === 0
-    ) {
+    if (!isStarted || !currentGame.musics || currentGame.musics.length === 0) {
       return;
     }
-    const music = props.games.currentGame.musics[musicNumber];
+    const music = currentGame.musics[musicNumber];
 
     return (
       <div>
         <div>
-          {musicNumber} / {props.games.currentGame.musics.length}
+          {musicNumber} / {currentGame.musics.length}
         </div>
 
         {renderTimer()}
@@ -445,7 +397,7 @@ function NewGame(props) {
   function renderPlayer() {
     if (!displayGame || isEndGame) {
       if (musicNumber > 0) {
-        const music = props.games.currentGame.musics[musicNumber - 1];
+        const music = currentGame.musics[musicNumber - 1];
         return (
           <React.Fragment>
             <Alert
@@ -467,7 +419,7 @@ function NewGame(props) {
       return;
     }
 
-    const music = props.games.currentGame.musics[musicNumber];
+    const music = currentGame.musics[musicNumber];
 
     return (
       <GamePlayer
@@ -495,20 +447,4 @@ function NewGame(props) {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    musics: state.musics,
-    games: state.games,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    musicsActions: bindActionCreators(musicsActions, dispatch),
-    gamesActions: bindActionCreators(gamesActions, dispatch),
-    historyActions: bindActionCreators(historyActions, dispatch),
-    scoresActions: bindActionCreators(scoresActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(NewGame);
+export default NewGame;

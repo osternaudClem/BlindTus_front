@@ -1,6 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { isStrongPassword } from 'validator';
 import {
   TextField,
@@ -19,7 +17,6 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import { usersActions } from '../../actions';
 import { useTextfield, useToggle } from '../../hooks/formHooks';
 import { UserContext } from '../../contexts/userContext';
 import { Heading, PaperBox } from '../UI';
@@ -33,8 +30,7 @@ function SlideTransition(props) {
   );
 }
 
-function ChangePasswordSettings(props) {
-  const { user } = useContext(UserContext);
+function ChangePasswordSettings({ onChangePassword }) {
   const [currentPassword, updateCurrentPassword] = useTextfield();
   const [newPassword, updateNewPassword] = useTextfield();
   const [confirmNewPassword, updateConfirmNewPassword] = useTextfield();
@@ -69,7 +65,7 @@ function ChangePasswordSettings(props) {
       return;
     }
 
-    const response = await props.usersActions.changePassword(user._id, {
+    const response = await onChangePassword({
       password: currentPassword,
       newPassword,
     });
@@ -206,10 +202,4 @@ function ChangePasswordSettings(props) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    usersActions: bindActionCreators(usersActions, dispatch),
-  };
-}
-
-export default connect(null, mapDispatchToProps)(ChangePasswordSettings);
+export default ChangePasswordSettings;

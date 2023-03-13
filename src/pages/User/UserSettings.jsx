@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 import { Container, CssBaseline, Tab, Tabs } from '@mui/material';
 
 import {
-  AvatarSettings,
-  CredentialsSettings,
-  ChangePasswordSettings,
+  CredentialsSettingsContainer,
+  ChangePasswordSettingsContainer,
+  AvatarSettingsContainer,
 } from '../../components/Settings';
 import { usersActions } from '../../actions';
 import { updateTitle } from '../../lib/document';
@@ -59,17 +59,15 @@ function UserSettings(props) {
 
   function renderTab() {
     switch (tab) {
-      case 0:
-        return <AvatarSettings />;
-
       case 1:
-        return <CredentialsSettings />;
+        return <CredentialsSettingsContainer />;
 
       case 2:
-        return <ChangePasswordSettings />;
+        return <ChangePasswordSettingsContainer />;
 
+      case 0:
       default:
-        return <AvatarSettings />;
+        return <AvatarSettingsContainer />;
     }
   }
 }

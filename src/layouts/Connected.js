@@ -1,23 +1,20 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Container } from '@mui/material/';
 import { UserContext } from '../contexts/userContext';
 import { SocketContext, socket } from '../contexts/sockets';
-import { usersActions } from '../actions';
 
 import '../assets/App.scss';
 
 function App() {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const { isLogged } = useContext(UserContext);
 
   useEffect(() => {
-    if (!user._id) {
+    if (!isLogged) {
       navigate('/login');
     }
-  }, [navigate, user]);
+  }, [navigate, isLogged]);
 
   return (
     <SocketContext.Provider value={socket}>
@@ -31,16 +28,4 @@ function App() {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    users: state.users,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    usersActions: bindActionCreators(usersActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

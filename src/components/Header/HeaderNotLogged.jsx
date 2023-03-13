@@ -34,7 +34,7 @@ const pages = [
   },
 ];
 
-const ResponsiveAppBar = (props) => {
+const HeaderNotLogged = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [volume, setVolume] = useLocalStorage('player_volume', 70);
   const navigate = useNavigate();
@@ -169,4 +169,4 @@ const ResponsiveAppBar = (props) => {
   );
 };
 
-export default ResponsiveAppBar;
+export default HeaderNotLogged;

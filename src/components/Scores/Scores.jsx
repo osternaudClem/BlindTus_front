@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import {
   Box,
@@ -17,11 +16,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { PaperBox } from '../UI';
 import './Scores.scss';
 
-function Scores(props) {
-  const totalPoint = props.currentGame.reduce((accumulator, game) => {
-    return accumulator + game.score;
-  }, 0);
-
+function Scores({ totalScore, currentGame }) {
   return (
     <PaperBox className="Scores">
       <Box
@@ -39,11 +34,11 @@ function Scores(props) {
             <Typography variant="h5">Score</Typography>
           </Grid>
           <Grid item>
-            <Typography variant="h4">{totalPoint}</Typography>
+            <Typography variant="h4">{totalScore}</Typography>
           </Grid>
         </Grid>
         <List dense>
-          {props.currentGame
+          {currentGame
             .slice(0)
             .reverse()
             .map((score) => (
@@ -71,10 +66,4 @@ function Scores(props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    scores: state.scores,
-  };
-}
-
-export default connect(mapStateToProps, null)(Scores);
+export default Scores;

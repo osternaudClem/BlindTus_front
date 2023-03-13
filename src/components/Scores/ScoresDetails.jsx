@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
 import {
   Box,
   Divider,
@@ -12,15 +10,10 @@ import {
   Typography,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
-
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 
-function ScoresDetails(props) {
-  const totalPoint = props.scores.currentGame.reduce((accumulator, game) => {
-    return accumulator + game.score;
-  }, 0);
-
+function ScoresDetails({ totalScore, scores }) {
   return (
     <Box
       sx={{ p: 2 }}
@@ -37,11 +30,11 @@ function ScoresDetails(props) {
           <Typography variant="h5">Score</Typography>
         </Grid>
         <Grid item>
-          <Typography variant="h4">{totalPoint}</Typography>
+          <Typography variant="h4">{totalScore}</Typography>
         </Grid>
       </Grid>
       <List dense>
-        {props.scores.currentGame.map((score) => (
+        {scores.map((score) => (
           <div key={`${score.movie || score.tvShow} - ${score.score}`}>
             <ListItem
               secondaryAction={
@@ -66,10 +59,4 @@ function ScoresDetails(props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    scores: state.scores,
-  };
-}
-
-export default connect(mapStateToProps, null)(ScoresDetails);
+export default ScoresDetails;

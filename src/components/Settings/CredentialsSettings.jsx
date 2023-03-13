@@ -27,7 +27,7 @@ function SlideTransition(props) {
   );
 }
 
-function CredentialsSettings(props) {
+function CredentialsSettings({ onUpdate }) {
   const { user, updateUser } = useContext(UserContext);
   const [username, updateUsername] = useTextfield(user.username);
   const [email, updateEmail] = useTextfield(user.email);
@@ -56,7 +56,7 @@ function CredentialsSettings(props) {
       return;
     }
 
-    const response = await props.usersActions.updateUser(user._id, {
+    const response = await onUpdate({
       username,
       email,
     });
@@ -148,10 +148,4 @@ function CredentialsSettings(props) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    usersActions: bindActionCreators(usersActions, dispatch),
-  };
-}
-
-export default connect(null, mapDispatchToProps)(CredentialsSettings);
+export default CredentialsSettings;

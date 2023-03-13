@@ -18,7 +18,7 @@ import FlareIcon from '@mui/icons-material/Flare';
 
 import { updateTitle } from '../../lib/document';
 import { scoresActions, musicsActions } from '../../actions';
-import { ScoresDetails } from '../../components/Scores';
+import { ScoresDetailsContainer } from '../../components/Scores';
 import { Heading, PaperBox } from '../../components/UI';
 
 function EndGame(props) {
@@ -135,7 +135,7 @@ function EndGame(props) {
         </Grid>
       </Grid>
       <PaperBox>
-        <ScoresDetails />
+        <ScoresDetailsContainer />
       </PaperBox>
     </div>
   );

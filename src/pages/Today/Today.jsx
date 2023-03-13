@@ -1,7 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { updateTitle } from '../../lib/document';
-import { TodayLogged, TodayNotLogged } from '../../components/Today';
+import {
+  TodayLoggedContainer,
+  TodayNotLoggedContainer,
+} from '../../components/Today';
 
 function Today() {
   const { user } = useContext(UserContext);
@@ -10,7 +13,7 @@ function Today() {
     updateTitle('Partie du jour');
   }, []);
 
-  return user._id ? <TodayLogged /> : <TodayNotLogged />;
+  return user._id ? <TodayLoggedContainer /> : <TodayNotLoggedContainer />;
 }
 
 export default Today;
