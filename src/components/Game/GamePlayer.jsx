@@ -71,7 +71,7 @@ function GamePlayer({
         </Button>
       )}
       <audio
-        src={`${API}/audio_small/${audioName}.mp3#t=${timecode}`}
+        src={`${API}/audio-cut/${audioName}.mp3`}
         loop
         // autoPlay
         controls={showControl}
