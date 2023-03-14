@@ -101,6 +101,8 @@ function Suggest(props) {
     }
   };
 
+  // console.log('>>> test', props.categories.all);
+
   return (
     <div>
       <Snackbar
@@ -138,8 +140,16 @@ function Suggest(props) {
           mb: '16px',
         }}
       >
-        <Tab label="un film" />
-        <Tab label="une série" />
+        {props.categories.all.find((c) => c.slug === 'movies')
+          ?.isDisplaySuggest ? (
+          <Tab label="un film" />
+        ) : null}
+
+        {props.categories.all.find((c) => c.slug === 'tv-shows')
+          ?.isDisplaySuggest ? (
+          <Tab label="une série" />
+        ) : null}
+
         <Tab label="une musique" />
       </Tabs>
 

@@ -235,14 +235,16 @@ function GameSettings({
                 Choisissez au moins 1 thème
               </Typography>
               <FormGroup row>
-                {props.categories.map((category) => (
-                  <FormControlLabel
-                    key={category._id}
-                    control={<Checkbox />}
-                    label={category.label_fr}
-                    onChange={(event) => onCategoriesChange(event, category)}
-                  />
-                ))}
+                {props.categories
+                  .filter((c) => c.isDisplayInGame)
+                  .map((category) => (
+                    <FormControlLabel
+                      key={category._id}
+                      control={<Checkbox />}
+                      label={category.label_fr}
+                      onChange={(event) => onCategoriesChange(event, category)}
+                    />
+                  ))}
               </FormGroup>
             </FormControl>
           </Grid>
