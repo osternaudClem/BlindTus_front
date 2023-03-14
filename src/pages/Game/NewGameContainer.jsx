@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   gamesActions,
   historyActions,
@@ -12,28 +12,26 @@ import useMergeProps from '../../hooks/useMergeProps';
 import NewGame from './NewGame';
 
 const NewGameContainer = (ownProps) => {
+  const dispatch = useDispatch();
   const [currentGame, setCurrentGame] = useState([]);
 
-  const selectedProps = useSelector((state) => {
-    console.log('>>> state', state);
-    return {
-      user: state.users?.me,
-      musics: state.musics?.selection,
-      currentGame: state.games?.currentGame,
-    };
-  });
+  const selectedProps = useSelector((state) => ({
+    user: state.users?.me,
+    musics: state.musics?.selection,
+    game: state.games?.currentGame,
+  }));
 
   const actions = useMemo(
     () => ({
       getMusics: (limit, categories) =>
         musicsActions.getMusics(limit, categories),
       getGame: (code) => gamesActions.getGame(code),
-      onSaveGame: (time, difficulty, categories) =>
+      onSaveGame: ({ time, difficulty, categories, musics }) =>
         gamesActions.saveGame({
           round_time: time,
           difficulty,
-          musics: selectedProps.musics,
-          categories: Object.keys(categories).filter((c) => categories[c]),
+          musics,
+          categories,
           created_by: selectedProps.user._id,
         }),
 
@@ -41,25 +39,21 @@ const NewGameContainer = (ownProps) => {
         historyActions.saveHistory({
           scores: currentGame,
           user: selectedProps.user._id,
-          game: selectedProps.currentGame,
+          game: selectedProps.game,
           totalScore: currentGame.reduce((accumulator, game) => {
             return accumulator + game.score;
           }, 0),
         }),
     }),
-    [
-      selectedProps.musics,
-      selectedProps.user._id,
-      selectedProps.currentGame,
-      currentGame,
-    ]
+    [selectedProps.user._id, selectedProps.game, currentGame]
   );
 
   const actionsProps = useBindActionsCreator(actions);
 
   const otherProps = useMemo(
     () => ({
-      onSaveScore: (music, isAnswerCorrect, score, answer) => {
+      currentGame,
+      onSaveScore: async (music, isAnswerCorrect, score, answer) => {
         const newScore = {
           movie: (music.movie && music.movie.title_fr) || null,
           tvShow: (music.tvShow && music.tvShow.title_fr) || null,
@@ -71,11 +65,11 @@ const NewGameContainer = (ownProps) => {
           music_id: music._id,
         };
 
-        setCurrentGame((g) => ({ ...g, newScore }));
-        scoresActions.addScore(newScore);
+        setCurrentGame((g) => [...g, newScore]);
+        dispatch(scoresActions.addScore(newScore));
       },
     }),
-    []
+    [currentGame, dispatch]
   );
 
   const enhancedProps = useMergeProps({

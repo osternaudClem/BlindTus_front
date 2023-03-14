@@ -3,7 +3,7 @@ export { default as TestPage } from './Test';
 
 // Game
 export { default as NewGamePage } from './Game/NewGameContainer';
-export { default as EndGamePage } from './Game/EndGame';
+export { default as EndGamePage } from './Game/EndGameContainer';
 
 // Today
 export { default as TodayPage } from './Today/Today';

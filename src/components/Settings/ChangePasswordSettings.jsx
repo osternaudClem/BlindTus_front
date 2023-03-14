@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { isStrongPassword } from 'validator';
 import {
   TextField,
@@ -18,7 +18,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { useTextfield, useToggle } from '../../hooks/formHooks';
-import { UserContext } from '../../contexts/userContext';
 import { Heading, PaperBox } from '../UI';
 
 function SlideTransition(props) {

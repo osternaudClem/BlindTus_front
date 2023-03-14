@@ -9,7 +9,7 @@ import useMergeProps from '../../hooks/useMergeProps';
 import { TodayLogged } from './';
 
 const TodayLoggedContainer = (ownProps) => {
-  const { user, updateUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const selectedProps = useSelector((state) => {
     return {
@@ -22,10 +22,6 @@ const TodayLoggedContainer = (ownProps) => {
     () => ({
       onUpdateHistory: (history) =>
         historyTodayActions.saveHistory({ ...history, user: user._id }),
-
-      // console.log('>>> data', data);
-      // updateUser(data.)
-      // return data;
     }),
     [user._id]
   );

@@ -7,13 +7,13 @@ import {
 } from '../../components/Today';
 
 function Today() {
-  const { user } = useContext(UserContext);
+  const { isLogged } = useContext(UserContext);
 
   useEffect(() => {
     updateTitle('Partie du jour');
   }, []);
 
-  return user._id ? <TodayLoggedContainer /> : <TodayNotLoggedContainer />;
+  return isLogged ? <TodayLoggedContainer /> : <TodayNotLoggedContainer />;
 }
 
 export default Today;

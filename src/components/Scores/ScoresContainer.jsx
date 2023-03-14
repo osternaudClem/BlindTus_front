@@ -5,8 +5,6 @@ import useMergeProps from '../../hooks/useMergeProps';
 import { Scores } from './';
 
 const ScoresContainer = ({ currentGame }) => {
-  console.log('>>> currentGame 2', currentGame);
-
   const otherProps = useMemo(
     () => ({
       currentGame,
@@ -21,10 +19,6 @@ const ScoresContainer = ({ currentGame }) => {
   const enhancedProps = useMergeProps({
     otherProps,
   });
-
-  if (!currentGame._id) {
-    return;
-  }
 
   return <Scores {...enhancedProps} />;
 };

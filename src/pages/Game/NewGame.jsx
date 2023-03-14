@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   CssBaseline,
   Grid,
@@ -13,12 +11,7 @@ import {
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import {
-  musicsActions,
-  gamesActions,
-  historyActions,
-  scoresActions,
-} from '../../actions';
+
 import { shuffle } from '../../lib/array';
 import { checkSimilarity } from '../../lib/check';
 import { updateTitle } from '../../lib/document';
@@ -35,13 +28,13 @@ import {
 } from '../../components/Forms';
 import { Heading } from '../../components/UI';
 import { useTextfield } from '../../hooks/formHooks';
-import { UserContext } from '../../contexts/userContext';
 import '../Page.scss';
 
 // const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
 function NewGame({
+  game,
   currentGame,
   getMusics,
   onSaveGame,
@@ -61,7 +54,7 @@ function NewGame({
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
-  const [categories, setCategories] = useState([]);
+  const [, setCategories] = useState([]);
   const [gameWithCode, setGameWithCode] = useState(false);
   const [proposals, setProposals] = useState([]);
   const [score, setScore] = useState(0);
@@ -77,7 +70,7 @@ function NewGame({
 
   useEffect(() => {
     if (code) {
-      if (currentGame._id) {
+      if (game._id) {
         setTotalMusics(game.musics.length);
         setTimeLimit(game.round_time);
         setDifficulty(game.difficulty);
@@ -94,23 +87,23 @@ function NewGame({
   }, [inputDisabled]);
 
   useEffect(() => {
-    if (currentGame.proposals && musicNumber < totalMusics) {
-      const music = currentGame.musics[musicNumber];
+    if (game.proposals && musicNumber < totalMusics) {
+      const music = game.musics[musicNumber];
       setProposals(
         shuffle([
           music[music.movie ? 'movie' : 'tvShow'].title_fr,
-          ...currentGame.proposals[musicNumber].slice(0, 7),
+          ...game.proposals[musicNumber].slice(0, 7),
         ])
       );
     }
-  }, [musicNumber, currentGame, totalMusics]);
+  }, [musicNumber, totalMusics, game]);
 
   useEffect(() => {
     if (musicNumber > totalMusics - 1) {
       onSaveHistory();
       setIsEndGame(true);
     }
-  }, [totalMusics, musicNumber, currentGame]);
+  }, [totalMusics, musicNumber, onSaveHistory]);
 
   const onStartGame = async function ({
     time,
@@ -119,13 +112,14 @@ function NewGame({
     categories,
   }) {
     try {
-      getMusics(movieNumber, categories);
+      const musics = await getMusics(movieNumber, categories);
 
-      // onSaveGame(
-      //   time,
-      //   difficulty,
-      //   Object.keys(categories).filter((c) => categories[c])
-      // );
+      onSaveGame({
+        time,
+        difficulty,
+        categories: Object.keys(categories).filter((c) => categories[c]),
+        musics,
+      });
 
       setIsStarted(true);
       setDisplayTimer(true);
@@ -174,7 +168,7 @@ function NewGame({
   };
 
   const handleClickAnswer = function (answer) {
-    const music = currentGame.musics[musicNumber];
+    const music = game.musics[musicNumber];
     let score = 0;
 
     let isAnswerCorrect = false;
@@ -200,7 +194,7 @@ function NewGame({
   };
 
   const onSendAnswer = (event, timeOut = false) => {
-    const music = currentGame.musics[musicNumber];
+    const music = game.musics[musicNumber];
 
     let score = 0;
 
@@ -247,8 +241,7 @@ function NewGame({
   };
 
   const saveScore = function (music, isAnswerCorrect, score) {
-    console.log('>>> currentGame', currentGame);
-    // onSaveScore(music, isAnswerCorrect, score, answer);
+    onSaveScore(music, isAnswerCorrect, score, answer);
   };
 
   return (
@@ -266,7 +259,7 @@ function NewGame({
         md={8}
       >
         {renderButton()}
-        {game()}
+        {gameLayout()}
       </Grid>
       <Grid
         item
@@ -274,9 +267,7 @@ function NewGame({
         sm={6}
         md={4}
       >
-        {isStarted && currentGame._id && (
-          <ScoresContainer currentGame={currentGame} />
-        )}
+        {isStarted ? <ScoresContainer currentGame={currentGame} /> : null}
       </Grid>
     </Grid>
   );
@@ -289,7 +280,7 @@ function NewGame({
     if (gameWithCode) {
       return (
         <GameSettingsResumeContainer
-          game={currentGame}
+          game={game}
           displayStart
           code={code}
           onClickStart={handleClickStart}
@@ -308,16 +299,16 @@ function NewGame({
     );
   }
 
-  function game() {
-    if (!isStarted || !currentGame.musics || currentGame.musics.length === 0) {
+  function gameLayout() {
+    if (!isStarted || !game.musics || game.musics.length === 0) {
       return;
     }
-    const music = currentGame.musics[musicNumber];
+    const music = game.musics[musicNumber];
 
     return (
       <div>
         <div>
-          {musicNumber} / {currentGame.musics.length}
+          {musicNumber} / {game.musics.length}
         </div>
 
         {renderTimer()}
@@ -397,7 +388,7 @@ function NewGame({
   function renderPlayer() {
     if (!displayGame || isEndGame) {
       if (musicNumber > 0) {
-        const music = currentGame.musics[musicNumber - 1];
+        const music = game.musics[musicNumber - 1];
         return (
           <React.Fragment>
             <Alert
@@ -419,7 +410,7 @@ function NewGame({
       return;
     }
 
-    const music = currentGame.musics[musicNumber];
+    const music = game.musics[musicNumber];
 
     return (
       <GamePlayer

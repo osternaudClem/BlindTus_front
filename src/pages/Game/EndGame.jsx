@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { useCopyToClipboard } from 'usehooks-ts';
 import {
   CssBaseline,
@@ -17,11 +15,10 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import FlareIcon from '@mui/icons-material/Flare';
 
 import { updateTitle } from '../../lib/document';
-import { scoresActions, musicsActions } from '../../actions';
 import { ScoresDetailsContainer } from '../../components/Scores';
 import { Heading, PaperBox } from '../../components/UI';
 
-function EndGame(props) {
+function EndGame({ categories, game, scores, onResetScore }) {
   const [, copyToClipBoard] = useCopyToClipboard();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
@@ -33,19 +30,18 @@ function EndGame(props) {
   }, []);
 
   useEffect(() => {
-    props.musicsActions.reset();
-  }, [props.musicsActions]);
+    return () => {
+      onResetScore();
+    };
+  }, [onResetScore]);
 
   const handleCloseAlert = function () {
     setIsAlertOpen(false);
   };
 
   const handleClickShareResults = async function () {
-    const scores = props.scores.currentGame;
-    const game = props.games.currentGame;
-
-    const categories = game.categories.map(
-      (c) => props.categories.all.find((k) => k._id === c).label_fr
+    const usedCategories = game.categories.map(
+      (c) => categories.find((k) => k._id === c).label_fr
     );
 
     const totalPoint = scores.reduce((accumulator, game) => {
@@ -60,7 +56,7 @@ function EndGame(props) {
 
     header = header + resultsEmotes.join('\t') + '\n\n';
     header = header + `Score total: ${totalPoint}\n\n`;
-    header = header + `Categories: ${categories.join(' | ')}\n\n`;
+    header = header + `Categories: ${usedCategories.join(' | ')}\n\n`;
     header = header + `https://blindtus.com/game?code=${game.code}`;
 
     const isCopied = await copyToClipBoard(header);
@@ -75,7 +71,6 @@ function EndGame(props) {
   };
 
   const generateResults = function () {
-    const scores = props.scores.currentGame;
     let resultsEmotes = [];
     let resultsScores = [];
 
@@ -110,9 +105,7 @@ function EndGame(props) {
           >
             <Button
               variant="contained"
-              onClick={() =>
-                navigate(`/game?code=${props.games.currentGame.code}`)
-              }
+              onClick={() => navigate(`/game?code=${game.code}`)}
               startIcon={<ReplayIcon />}
             >
               Rejouer la partie
@@ -160,19 +153,4 @@ function EndGame(props) {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    scores: state.scores,
-    games: state.games,
-    categories: state.categories,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    scoresActions: bindActionCreators(scoresActions, dispatch),
-    musicsActions: bindActionCreators(musicsActions, dispatch),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EndGame);
+export default EndGame;
