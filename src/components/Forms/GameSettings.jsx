@@ -220,7 +220,7 @@ function GameSettings({
               step={5}
               marks
               min={5}
-              max={180}
+              max={60}
               onChange={onTimeChange}
             />
           </Grid>
