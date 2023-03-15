@@ -19,8 +19,13 @@ import {
   IconButton,
   Alert,
   AlertTitle,
-  FormGroup,
   Checkbox,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  Chip,
+  MenuItem,
+  ListItemText,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -55,7 +60,8 @@ function GameSettings({
   const [difficulty, updateDifficulty] = useTextfield(
     (room.settings && room.settings.difficulty) || 'easy'
   );
-  const [categories, updateCategories] = useState({});
+
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [code, updateCode] = useTextfield('');
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
@@ -67,11 +73,11 @@ function GameSettings({
           time_limit: settings.updatedTime || time,
           total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
           difficulty: settings.updatedDifficulty || difficulty,
-          categories: settings.categories || categories,
+          categories: settings.categories || selectedCategories,
         });
       }
     },
-    [categories, difficulty, movieNumber, onSettingsChange, time]
+    [selectedCategories, difficulty, movieNumber, onSettingsChange, time]
   );
 
   useEffect(() => {
@@ -81,8 +87,8 @@ function GameSettings({
   }, [props.categories, props.categoriesActions]);
 
   useEffect(() => {
-    sendChangeSettings({ categories });
-  }, [categories, sendChangeSettings]);
+    sendChangeSettings({ selectedCategories });
+  }, [selectedCategories, sendChangeSettings]);
 
   const handleClickSettings = async function (event) {
     event.preventDefault();
@@ -97,11 +103,25 @@ function GameSettings({
       return navigate(`/${redirect}?code=${code}`);
     }
 
-    onSettingsSaved({ time, movieNumber, difficulty, categories });
+    onSettingsSaved({
+      time,
+      movieNumber,
+      difficulty,
+      categories: selectedCategories,
+    });
   };
 
   const handleClickResetCode = function () {
     updateCode('');
+  };
+
+  const onUpdateCategories = (event) => {
+    setSelectedCategories(
+      // On autofill we get a stringified value.
+      typeof value === 'string'
+        ? event.target.value.split(',')
+        : event.target.value
+    );
   };
 
   const onTimeChange = useCallback(
@@ -126,14 +146,6 @@ function GameSettings({
       sendChangeSettings({ updatedDifficulty: event.target.value });
     },
     [updateDifficulty, sendChangeSettings]
-  );
-
-  const onCategoriesChange = useCallback(
-    (event, category) => {
-      const isChecked = event.target.checked;
-      updateCategories({ ...categories, [category._id]: isChecked });
-    },
-    [updateCategories, categories]
   );
 
   if (!props.categories) {
@@ -230,22 +242,58 @@ function GameSettings({
             xs={12}
           >
             <FormControl required>
-              <Typography gutterBottom>Thème</Typography>
+              <Typography gutterBottom>Thèmes</Typography>
               <Typography variant="subtitle2">
                 Choisissez au moins 1 thème
               </Typography>
-              <FormGroup row>
-                {props.categories
-                  .filter((c) => c.isDisplayInGame)
-                  .map((category) => (
-                    <FormControlLabel
-                      key={category._id}
-                      control={<Checkbox />}
-                      label={category.label_fr}
-                      onChange={(event) => onCategoriesChange(event, category)}
+              <FormControl sx={{ mt: 1, width: 300 }}>
+                <InputLabel id="select-categories-label">Thèmes</InputLabel>
+
+                <Select
+                  labelId="select-categories-label"
+                  id="select-categories"
+                  multiple
+                  value={selectedCategories}
+                  onChange={onUpdateCategories}
+                  input={
+                    <OutlinedInput
+                      id="select-multiple-categories"
+                      label="Thèmes"
                     />
-                  ))}
-              </FormGroup>
+                  }
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={
+                            props.categories.find((c) => c._id === value).label
+                          }
+                        />
+                      ))}
+                    </Box>
+                  )}
+                  // MenuProps={MenuProps}
+                >
+                  {props.categories
+                    .filter((c) => c.isDisplayInGame)
+                    .map((category) => {
+                      return (
+                        <MenuItem
+                          key={category._id}
+                          value={category._id}
+                        >
+                          <Checkbox
+                            checked={
+                              selectedCategories.indexOf(category._id) > -1
+                            }
+                          />
+                          <ListItemText primary={category.label} />
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormControl>
             </FormControl>
           </Grid>
 
@@ -304,9 +352,7 @@ function GameSettings({
               variant="contained"
               onClick={handleClickSettings}
               type="submit"
-              disabled={
-                !Object.keys(categories).filter((c) => categories[c]).length
-              }
+              disabled={!selectedCategories.length}
             >
               Lancer la partie
             </Button>
