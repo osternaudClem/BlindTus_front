@@ -60,7 +60,7 @@ function GameSettings({
   const [difficulty, updateDifficulty] = useTextfield(
     (room.settings && room.settings.difficulty) || 'easy'
   );
-  const [categories, updateCategories] = useState({});
+
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [code, updateCode] = useTextfield('');
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
@@ -73,11 +73,11 @@ function GameSettings({
           time_limit: settings.updatedTime || time,
           total_musics: parseInt(settings.updatedMovieNumber || movieNumber),
           difficulty: settings.updatedDifficulty || difficulty,
-          categories: settings.categories || categories,
+          categories: settings.categories || selectedCategories,
         });
       }
     },
-    [categories, difficulty, movieNumber, onSettingsChange, time]
+    [selectedCategories, difficulty, movieNumber, onSettingsChange, time]
   );
 
   useEffect(() => {
@@ -87,8 +87,8 @@ function GameSettings({
   }, [props.categories, props.categoriesActions]);
 
   useEffect(() => {
-    sendChangeSettings({ categories });
-  }, [categories, sendChangeSettings]);
+    sendChangeSettings({ selectedCategories });
+  }, [selectedCategories, sendChangeSettings]);
 
   const handleClickSettings = async function (event) {
     event.preventDefault();
@@ -103,7 +103,12 @@ function GameSettings({
       return navigate(`/${redirect}?code=${code}`);
     }
 
-    onSettingsSaved({ time, movieNumber, difficulty, categories });
+    onSettingsSaved({
+      time,
+      movieNumber,
+      difficulty,
+      categories: selectedCategories,
+    });
   };
 
   const handleClickResetCode = function () {
@@ -141,14 +146,6 @@ function GameSettings({
       sendChangeSettings({ updatedDifficulty: event.target.value });
     },
     [updateDifficulty, sendChangeSettings]
-  );
-
-  const onCategoriesChange = useCallback(
-    (event, category) => {
-      const isChecked = event.target.checked;
-      updateCategories({ ...categories, [category._id]: isChecked });
-    },
-    [updateCategories, categories]
   );
 
   if (!props.categories) {
@@ -269,7 +266,9 @@ function GameSettings({
                       {selected.map((value) => (
                         <Chip
                           key={value}
-                          label={value}
+                          label={
+                            props.categories.find((c) => c._id === value).label
+                          }
                         />
                       ))}
                     </Box>
@@ -282,11 +281,11 @@ function GameSettings({
                       return (
                         <MenuItem
                           key={category._id}
-                          value={category.label}
+                          value={category._id}
                         >
                           <Checkbox
                             checked={
-                              selectedCategories.indexOf(category.label) > -1
+                              selectedCategories.indexOf(category._id) > -1
                             }
                           />
                           <ListItemText primary={category.label} />
@@ -353,9 +352,7 @@ function GameSettings({
               variant="contained"
               onClick={handleClickSettings}
               type="submit"
-              disabled={
-                !Object.keys(categories).filter((c) => categories[c]).length
-              }
+              disabled={!selectedCategories.length}
             >
               Lancer la partie
             </Button>

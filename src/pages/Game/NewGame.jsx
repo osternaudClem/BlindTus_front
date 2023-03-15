@@ -148,7 +148,7 @@ function NewGame(props) {
         round_time: time,
         difficulty,
         musics,
-        categories: Object.keys(categories).filter((c) => categories[c]),
+        categories,
         created_by: user._id,
       });
 

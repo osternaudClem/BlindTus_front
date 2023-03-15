@@ -101,8 +101,6 @@ function Suggest(props) {
     }
   };
 
-  // console.log('>>> test', props.categories.all);
-
   return (
     <div>
       <Snackbar
