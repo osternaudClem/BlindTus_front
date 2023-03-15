@@ -119,7 +119,7 @@ const Suggest = (props) => {
       </Snackbar>
       <Heading>Suggérer...</Heading>
       <Typography variant="subtitle1">
-        Aidez-moi a ajouté des œuvres et des musiques. Toutes les demandes
+        Aidez-moi à ajouter des œuvres et des musiques. Toutes les demandes
         seront vérifiées.
       </Typography>
 
