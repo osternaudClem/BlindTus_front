@@ -123,7 +123,7 @@ function Suggest(props) {
 
       <Heading>Suggérer...</Heading>
       <Typography variant="subtitle1">
-        Aidez-moi a jouté des films, des séries et des musiques. Toutes demandes
+        Aidez-moi a jouté des oeuvres et des musiques. Toutes les demandes
         seront vérifiées.
       </Typography>
 
