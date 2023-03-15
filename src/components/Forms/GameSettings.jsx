@@ -19,8 +19,13 @@ import {
   IconButton,
   Alert,
   AlertTitle,
-  FormGroup,
   Checkbox,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  Chip,
+  MenuItem,
+  ListItemText,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -56,6 +61,7 @@ function GameSettings({
     (room.settings && room.settings.difficulty) || 'easy'
   );
   const [categories, updateCategories] = useState({});
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [code, updateCode] = useTextfield('');
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
   const navigate = useNavigate();
@@ -102,6 +108,15 @@ function GameSettings({
 
   const handleClickResetCode = function () {
     updateCode('');
+  };
+
+  const onUpdateCategories = (event) => {
+    setSelectedCategories(
+      // On autofill we get a stringified value.
+      typeof value === 'string'
+        ? event.target.value.split(',')
+        : event.target.value
+    );
   };
 
   const onTimeChange = useCallback(
@@ -230,22 +245,56 @@ function GameSettings({
             xs={12}
           >
             <FormControl required>
-              <Typography gutterBottom>Thème</Typography>
+              <Typography gutterBottom>Thèmes</Typography>
               <Typography variant="subtitle2">
                 Choisissez au moins 1 thème
               </Typography>
-              <FormGroup row>
-                {props.categories
-                  .filter((c) => c.isDisplayInGame)
-                  .map((category) => (
-                    <FormControlLabel
-                      key={category._id}
-                      control={<Checkbox />}
-                      label={category.label_fr}
-                      onChange={(event) => onCategoriesChange(event, category)}
+              <FormControl sx={{ mt: 1, width: 300 }}>
+                <InputLabel id="select-categories-label">Thèmes</InputLabel>
+
+                <Select
+                  labelId="select-categories-label"
+                  id="select-categories"
+                  multiple
+                  value={selectedCategories}
+                  onChange={onUpdateCategories}
+                  input={
+                    <OutlinedInput
+                      id="select-multiple-categories"
+                      label="Thèmes"
                     />
-                  ))}
-              </FormGroup>
+                  }
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                  // MenuProps={MenuProps}
+                >
+                  {props.categories
+                    .filter((c) => c.isDisplayInGame)
+                    .map((category) => {
+                      return (
+                        <MenuItem
+                          key={category._id}
+                          value={category.label}
+                        >
+                          <Checkbox
+                            checked={
+                              selectedCategories.indexOf(category.label) > -1
+                            }
+                          />
+                          <ListItemText primary={category.label} />
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormControl>
             </FormControl>
           </Grid>
 
