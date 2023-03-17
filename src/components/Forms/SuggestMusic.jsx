@@ -30,7 +30,10 @@ import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 const STEPS = [null, 'video', 'title', 'author'];
-const MORE_INFO_CATEGOIRES = ['movies', 'tv-shows'];
+const MORE_INFO_CATEGOIRES = [
+  '626962053dcb17a8995789a1',
+  '63699a061f58ed06693a1f81',
+];
 
 const BottomNavigation = styled('div')`
   position: fixed;
@@ -133,7 +136,7 @@ function SuggestMusic({ onSubmit, ...props }) {
   };
 
   const isMoreDetails = useMemo(() => {
-    return MORE_INFO_CATEGOIRES.includes(newMusic.category.slug);
+    return MORE_INFO_CATEGOIRES.includes(newMusic.category);
   }, [newMusic.category]);
 
   return (
