@@ -86,7 +86,7 @@ function SuggestMusic({ onSubmit, ...props }) {
   const onChangeMedia = function (value) {
     setMediaError(null);
     setMovie(value);
-    setNewMusic({ ...newMusic, category: value.category });
+    setNewMusic({ ...newMusic, category: value.category._id });
 
     if (value.musics.length >= 3) {
       return setMediaError(
@@ -138,6 +138,8 @@ function SuggestMusic({ onSubmit, ...props }) {
   const isMoreDetails = useMemo(() => {
     return MORE_INFO_CATEGOIRES.includes(newMusic.category);
   }, [newMusic.category]);
+
+  console.log('>>> activeStep', activeStep);
 
   return (
     <Grid
@@ -387,7 +389,7 @@ function SuggestMusic({ onSubmit, ...props }) {
               {isMoreDetails ? (
                 <Button
                   onClick={handleNext}
-                  disabled={!newMusic[STEPS[activeStep]]}
+                  disabled={!newMusic[STEPS[activeStep]] || activeStep === 3}
                   variant="outlined"
                 >
                   Étape suivante
