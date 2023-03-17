@@ -391,7 +391,7 @@ function Today({ onSaveHistory, game, history }) {
         clues.push({ key: 'Réalisateur', value: addSpaces(media.directors) });
       } else {
         clues.push({
-          key: 'Ganres',
+          key: 'Genres',
           value: media.genres.join(','),
         });
       }
@@ -420,7 +420,9 @@ function Today({ onSaveHistory, game, history }) {
                 sx={{ margin: '16px 0' }}
                 key={index}
               >
-                <div style={{ width: '180px' }}>{clue.key}</div>
+                <div style={{ width: '180px', marginRight: '10px' }}>
+                  {clue.key}
+                </div>
                 <div style={{ flex: 1 }}>{clue.value}</div>
               </Stack>
             );

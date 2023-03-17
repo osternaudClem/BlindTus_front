@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactPlayer from 'react-player';
@@ -30,6 +30,7 @@ import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 const STEPS = [null, 'video', 'title', 'author'];
+const MORE_INFO_CATEGOIRES = ['movies', 'tv-shows'];
 
 const BottomNavigation = styled('div')`
   position: fixed;
@@ -48,14 +49,13 @@ function SuggestMusic({ onSubmit, ...props }) {
   const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
   const [allMovies, updateAllMovies] = useState([]);
   const [newMusic, setNewMusic] = useState({
-    category: '',
+    category: {},
     author: '',
     timecode: 0,
     title: '',
     video: '',
   });
   const [mediaError, setMediaError] = useState(null);
-
   const [movie, setMovie] = useState(null);
   const [youtubeUrlError, setYoutubeUrlError] = useState(false);
 
@@ -83,7 +83,7 @@ function SuggestMusic({ onSubmit, ...props }) {
   const onChangeMedia = function (value) {
     setMediaError(null);
     setMovie(value);
-    setNewMusic({ ...newMusic, category: value.category._id });
+    setNewMusic({ ...newMusic, category: value.category });
 
     if (value.musics.length >= 3) {
       return setMediaError(
@@ -131,6 +131,10 @@ function SuggestMusic({ onSubmit, ...props }) {
       console.log('>>> some error to display');
     }
   };
+
+  const isMoreDetails = useMemo(() => {
+    return MORE_INFO_CATEGOIRES.includes(newMusic.category.slug);
+  }, [newMusic.category]);
 
   return (
     <Grid
@@ -331,36 +335,38 @@ function SuggestMusic({ onSubmit, ...props }) {
                 )}
               </StepContent>
             </Step>
-
-            <Step>
-              <StepLabel>Ajoutez le titre de la musique</StepLabel>
-              <StepContent>
-                <TextField
-                  label="Titre"
-                  name="title"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  value={newMusic.title}
-                  onChange={onChangeMusic}
-                />
-              </StepContent>
-            </Step>
-
-            <Step>
-              <StepLabel>Ajoutez le(s) auteurs de la musique</StepLabel>
-              <StepContent>
-                <TextField
-                  label="Artiste"
-                  name="author"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  value={newMusic.author}
-                  onChange={onChangeMusic}
-                />
-              </StepContent>
-            </Step>
+            {isMoreDetails ? (
+              <Step>
+                <StepLabel>Ajoutez le titre de la musique</StepLabel>
+                <StepContent>
+                  <TextField
+                    label="Titre"
+                    name="title"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newMusic.title}
+                    onChange={onChangeMusic}
+                  />
+                </StepContent>
+              </Step>
+            ) : null}
+            {isMoreDetails ? (
+              <Step>
+                <StepLabel>Ajoutez le(s) auteurs de la musique</StepLabel>
+                <StepContent>
+                  <TextField
+                    label="Artiste"
+                    name="author"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={newMusic.author}
+                    onChange={onChangeMusic}
+                  />
+                </StepContent>
+              </Step>
+            ) : null}
           </Stepper>
 
           <BottomNavigation $theme={theme}>
@@ -375,19 +381,24 @@ function SuggestMusic({ onSubmit, ...props }) {
                 Étape précédente
               </Button>
 
-              <Button
-                onClick={handleNext}
-                disabled={!newMusic[STEPS[activeStep]]}
-                variant="outlined"
-              >
-                Étape suivante
-              </Button>
+              {isMoreDetails ? (
+                <Button
+                  onClick={handleNext}
+                  disabled={!newMusic[STEPS[activeStep]]}
+                  variant="outlined"
+                >
+                  Étape suivante
+                </Button>
+              ) : null}
 
               <Button
                 variant="contained"
                 onClick={handleSubmit}
                 type="submit"
-                disabled={activeStep < 3 || !newMusic[STEPS[3]]}
+                disabled={
+                  (isMoreDetails && (activeStep < 3 || !newMusic[STEPS[3]])) ||
+                  (!isMoreDetails && newMusic.video === '')
+                }
                 sx={{ marginLeft: 'auto' }}
               >
                 Ajouter

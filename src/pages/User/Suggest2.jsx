@@ -68,7 +68,7 @@ const Suggest = (props) => {
     music.tvShow = tvShow && tvShow._id;
     music.video = `${music.video}&t=${music.timecode}`;
     music.type = props.categories.all.find(
-      (c) => c._id === music.category
+      (c) => c._id === music.category._id
     ).type;
     delete music.timecode;
 
