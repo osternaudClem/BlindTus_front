@@ -49,9 +49,7 @@ function SuggestMedia({ onAddMedia, type, findMedias, resetSearch, media }) {
           sx={{ mb: 4 }}
         >
           <TextField
-            label={`Tapez le nom ${
-              type === 'movies' ? "d'un film" : "d'une série"
-            }`}
+            label={`Tapez le nom de l'Œuvre`}
             variant="outlined"
             value={query}
             onChange={onChangeQuery}
@@ -87,7 +85,11 @@ function SuggestMedia({ onAddMedia, type, findMedias, resetSearch, media }) {
         columns={{ xs: 4, sm: 8, md: 16 }}
       >
         {media.search.map((movie) => {
-          let isAlreadyAdded = isMediaAlreadyAdded(media.all, movie, type);
+          let isAlreadyAdded = isMediaAlreadyAdded(
+            media[type].all,
+            movie,
+            type
+          );
 
           return (
             <Grid
@@ -123,8 +125,9 @@ function SuggestMedia({ onAddMedia, type, findMedias, resetSearch, media }) {
                     color="text.secondary"
                   >
                     Date de sortie:{' '}
-                    {(movie.release_date && movie.release_date.slice(0, 4)) ||
-                      movie.first_air_date.slice(0, 4)}
+                    {(movie?.release_date &&
+                      movie?.release_date?.slice(0, 4)) ||
+                      movie?.first_air_date?.slice(0, 4)}
                   </Typography>
                 </CardContent>
 

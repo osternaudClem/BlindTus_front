@@ -12,10 +12,9 @@ import useMergeProps from '../../hooks/useMergeProps';
 import NewGame from './NewGame';
 
 const NewGameContainer = (ownProps) => {
-  const [currentGame, setCurrentGame] = useState([]);
+  const [currentGameScores, setCurrentGameScores] = useState([]);
 
   const selectedProps = useSelector((state) => {
-    console.log('>>> state', state);
     return {
       user: state.users?.me,
       musics: state.musics?.selection,
@@ -28,31 +27,27 @@ const NewGameContainer = (ownProps) => {
       getMusics: (limit, categories) =>
         musicsActions.getMusics(limit, categories),
       getGame: (code) => gamesActions.getGame(code),
-      onSaveGame: (time, difficulty, categories) =>
-        gamesActions.saveGame({
+      onSaveGame: ({ time, difficulty, categories, musics }) => {
+        return gamesActions.saveGame({
           round_time: time,
           difficulty,
-          musics: selectedProps.musics,
-          categories: Object.keys(categories).filter((c) => categories[c]),
+          musics,
+          categories,
           created_by: selectedProps.user._id,
-        }),
+        });
+      },
 
       onSaveHistory: () =>
         historyActions.saveHistory({
-          scores: currentGame,
+          scores: currentGameScores,
           user: selectedProps.user._id,
           game: selectedProps.currentGame,
-          totalScore: currentGame.reduce((accumulator, game) => {
+          totalScore: currentGameScores.reduce((accumulator, game) => {
             return accumulator + game.score;
           }, 0),
         }),
     }),
-    [
-      selectedProps.musics,
-      selectedProps.user._id,
-      selectedProps.currentGame,
-      currentGame,
-    ]
+    [selectedProps.user._id, selectedProps.currentGame, currentGameScores]
   );
 
   const actionsProps = useBindActionsCreator(actions);
@@ -71,11 +66,12 @@ const NewGameContainer = (ownProps) => {
           music_id: music._id,
         };
 
-        setCurrentGame((g) => ({ ...g, newScore }));
+        setCurrentGameScores((g) => [...g, newScore]);
         scoresActions.addScore(newScore);
       },
+      currentGameScores,
     }),
-    []
+    [currentGameScores]
   );
 
   const enhancedProps = useMergeProps({

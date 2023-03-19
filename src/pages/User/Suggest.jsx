@@ -126,7 +126,7 @@ function Suggest(props) {
 
       <Heading>Suggérer...</Heading>
       <Typography variant="subtitle1">
-        Aidez-moi a jouté des films, des séries et des musiques. Toutes demandes
+        Aidez-moi a jouté des oeuvres et des musiques. Toutes les demandes
         seront vérifiées.
       </Typography>
 
@@ -141,8 +141,16 @@ function Suggest(props) {
           mb: '16px',
         }}
       >
-        <Tab label="un film" />
-        <Tab label="une série" />
+        {props.categories.all.find((c) => c.slug === 'movies')
+          ?.isDisplaySuggest ? (
+          <Tab label="un film" />
+        ) : null}
+
+        {props.categories.all.find((c) => c.slug === 'tv-shows')
+          ?.isDisplaySuggest ? (
+          <Tab label="une série" />
+        ) : null}
+
         <Tab label="une musique" />
       </Tabs>
 

@@ -26,7 +26,6 @@ export function getFullHistory(user_id) {
 export function saveHistory(history) {
   return async function (dispatch) {
     try {
-      console.log('>>> history', history);
       const success = await callApi.post('/history', {
         ...history,
       });

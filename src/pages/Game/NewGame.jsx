@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -43,6 +49,7 @@ const TIMER_GAME = 10;
 
 function NewGame({
   currentGame,
+  currentGameScores,
   getMusics,
   onSaveGame,
   onSaveHistory,
@@ -77,15 +84,15 @@ function NewGame({
 
   useEffect(() => {
     if (code) {
-      if (currentGame._id) {
-        setTotalMusics(game.musics.length);
-        setTimeLimit(game.round_time);
-        setDifficulty(game.difficulty);
+      if (currentGame._id && currentGame) {
+        setTotalMusics(currentGame.musics.length);
+        setTimeLimit(currentGame.round_time);
+        setDifficulty(currentGame.difficulty);
         return setGameWithCode(true);
       }
       navigate('/game');
     }
-  }, [code, currentGame, game, navigate]);
+  }, [code, currentGame, currentGame, navigate]);
 
   useEffect(() => {
     if (!inputDisabled && answerField.current) {
@@ -112,20 +119,28 @@ function NewGame({
     }
   }, [totalMusics, musicNumber, currentGame]);
 
+  const saveScore = useCallback(
+    (music, isAnswerCorrect, score) => {
+      onSaveScore(music, isAnswerCorrect, score, answer);
+    },
+    [answer, currentGame, onSaveScore]
+  );
+
   const onStartGame = async function ({
     time,
     movieNumber,
     difficulty,
     categories,
+    musics,
   }) {
     try {
-      getMusics(movieNumber, categories);
-
-      // onSaveGame(
-      //   time,
-      //   difficulty,
-      //   Object.keys(categories).filter((c) => categories[c])
-      // );
+      const musics = await getMusics(movieNumber, categories);
+      onSaveGame({
+        time,
+        difficulty,
+        categories,
+        musics,
+      });
 
       setIsStarted(true);
       setDisplayTimer(true);
@@ -147,168 +162,222 @@ function NewGame({
     onStartGame(settings);
   };
 
-  function onTimerFinished(count, sending = true) {
-    setTimeLeft(count);
-    if (count === 0 && displayGame) {
-      if (sending) {
-        onSendAnswer(null, true);
+  const onSendAnswer = useCallback(
+    (event, timeOut = false) => {
+      const music = currentGame.musics[musicNumber];
+
+      let score = 0;
+
+      if (event) {
+        event.preventDefault();
       }
 
-      setTimer(0);
-      setDisplayGame(false);
-      setInputDisabled(true);
-      setMusicsNumber(musicNumber + 1);
-      updateAnswer('');
-    }
-  }
+      if (inputDisabled) {
+        return;
+      }
 
-  const handleClickShowResults = function () {
+      const titles =
+        (music.movie && [
+          music.movie.title,
+          music.movie.title_fr,
+          ...music.movie.simple_title,
+        ]) ||
+        (music.tvShow && [
+          music.tvShow.title,
+          music.tvShow.title_fr,
+          ...music.tvShow.simple_title,
+        ]);
+
+      const isAnswerCorrect = checkSimilarity(answer, titles);
+
+      setIsCorrect(isAnswerCorrect);
+
+      if (!isAnswerCorrect && !timeOut) {
+        window.setTimeout(() => {
+          setIsCorrect(null);
+        }, 500);
+        return updateAnswer('');
+      }
+
+      if (isAnswerCorrect) {
+        score = calculScore(timeLeft, timeLimit);
+      }
+
+      setScore(score);
+
+      saveScore(music, isAnswerCorrect, score);
+
+      onTimerFinished(0, false);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      answer,
+      currentGame.musics,
+      inputDisabled,
+      musicNumber,
+      saveScore,
+      timeLeft,
+      timeLimit,
+      updateAnswer,
+    ]
+  );
+
+  const onTimerFinished = useCallback(
+    (count, sending = true) => {
+      setTimeLeft(count);
+      if (count === 0 && displayGame) {
+        if (sending) {
+          onSendAnswer(null, true);
+        }
+
+        setTimer(0);
+        setDisplayGame(false);
+        setInputDisabled(true);
+        setMusicsNumber(musicNumber + 1);
+        updateAnswer('');
+      }
+    },
+    [displayGame, musicNumber, onSendAnswer, updateAnswer]
+  );
+
+  const handleClickShowResults = useCallback(() => {
     navigate('/game/end');
-  };
+  }, [navigate]);
 
-  const handleClickStartMusic = function () {
+  const handleClickStartMusic = useCallback(() => {
     setInputDisabled(false);
     setTimer(timeLimit);
     setIsCorrect(null);
     setDisplayGame(true);
-  };
+  }, [timeLimit]);
 
-  const handleClickAnswer = function (answer) {
-    const music = currentGame.musics[musicNumber];
-    let score = 0;
+  const handleClickAnswer = useCallback(
+    (answer) => {
+      const music = currentGame.musics[musicNumber];
+      let score = 0;
 
-    let isAnswerCorrect = false;
+      let isAnswerCorrect = false;
 
-    if (
-      (music.movie && music.movie.title_fr === answer) ||
-      (music.tvShow && music.tvShow.title_fr === answer)
-    ) {
-      isAnswerCorrect = true;
-    }
+      if (
+        (music.movie && music.movie.title_fr === answer) ||
+        (music.tvShow && music.tvShow.title_fr === answer)
+      ) {
+        isAnswerCorrect = true;
+      }
 
-    setIsCorrect(isAnswerCorrect);
+      setIsCorrect(isAnswerCorrect);
 
-    if (isAnswerCorrect) {
-      score = calculScore(timeLeft, timeLimit);
-    }
+      if (isAnswerCorrect) {
+        score = calculScore(timeLeft, timeLimit);
+      }
 
-    setScore(score);
+      setScore(score);
 
-    saveScore(music, isAnswerCorrect, score);
+      saveScore(music, isAnswerCorrect, score);
 
-    onTimerFinished(0, false);
-  };
-
-  const onSendAnswer = (event, timeOut = false) => {
-    const music = currentGame.musics[musicNumber];
-
-    let score = 0;
-
-    if (event) {
-      event.preventDefault();
-    }
-
-    if (inputDisabled) {
-      return;
-    }
-
-    const titles =
-      (music.movie && [
-        music.movie.title,
-        music.movie.title_fr,
-        ...music.movie.simple_title,
-      ]) ||
-      (music.tvShow && [
-        music.tvShow.title,
-        music.tvShow.title_fr,
-        ...music.tvShow.simple_title,
-      ]);
-
-    const isAnswerCorrect = checkSimilarity(answer, titles);
-
-    setIsCorrect(isAnswerCorrect);
-
-    if (!isAnswerCorrect && !timeOut) {
-      window.setTimeout(() => {
-        setIsCorrect(null);
-      }, 500);
-      return updateAnswer('');
-    }
-
-    if (isAnswerCorrect) {
-      score = calculScore(timeLeft, timeLimit);
-    }
-
-    setScore(score);
-
-    saveScore(music, isAnswerCorrect, score);
-
-    onTimerFinished(0, false);
-  };
-
-  const saveScore = function (music, isAnswerCorrect, score) {
-    console.log('>>> currentGame', currentGame);
-    // onSaveScore(music, isAnswerCorrect, score, answer);
-  };
-
-  return (
-    <Grid
-      container
-      spacing={12}
-      component="main"
-      className="LoginPage"
-    >
-      <CssBaseline />
-      <Grid
-        item
-        xs={12}
-        sm={isStarted ? 6 : 12}
-        md={8}
-      >
-        {renderButton()}
-        {game()}
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        md={4}
-      >
-        {isStarted && currentGame._id && (
-          <ScoresContainer currentGame={currentGame} />
-        )}
-      </Grid>
-    </Grid>
+      onTimerFinished(0, false);
+    },
+    [
+      currentGame.musics,
+      musicNumber,
+      onTimerFinished,
+      saveScore,
+      timeLeft,
+      timeLimit,
+    ]
   );
 
-  function renderButton() {
-    if (isStarted) {
+  const renderStart = useCallback(() => {
+    if (displayGame && !isEndGame) {
       return;
     }
 
-    if (gameWithCode) {
-      return (
-        <GameSettingsResumeContainer
-          game={currentGame}
-          displayStart
-          code={code}
-          onClickStart={handleClickStart}
-        />
-      );
+    return (
+      <Button
+        onClick={isEndGame ? handleClickShowResults : handleClickStartMusic}
+        variant="contained"
+        size="large"
+        startIcon={isEndGame ? <SportsScoreIcon /> : <PlayArrowIcon />}
+        sx={{ marginBottom: '16px' }}
+      >
+        {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
+      </Button>
+    );
+  }, [displayGame, handleClickShowResults, handleClickStartMusic, isEndGame]);
+
+  const renderProposals = useCallback(() => {
+    if (!displayGame || isEndGame) {
+      return;
+    }
+
+    return (
+      <GameProposals
+        proposals={proposals}
+        onClick={handleClickAnswer}
+      />
+    );
+  }, [displayGame, handleClickAnswer, isEndGame, proposals]);
+
+  const renderPlayer = useCallback(() => {
+    if (!displayGame || isEndGame) {
+      if (musicNumber > 0) {
+        const music = currentGame.musics[musicNumber - 1];
+        return (
+          <React.Fragment>
+            <Alert
+              variant="outlined"
+              icon={false}
+              severity={isCorrect ? 'success' : 'error'}
+              sx={{ marginBottom: '16px' }}
+            >
+              <AlertTitle>
+                Réponse {isCorrect ? 'correct' : 'fausse'} !
+              </AlertTitle>
+              + {Math.round(score)} points !
+            </Alert>
+
+            <Result music={music} />
+          </React.Fragment>
+        );
+      }
+      return;
+    }
+
+    const music = currentGame.musics[musicNumber];
+
+    return (
+      <GamePlayer
+        audioName={music.audio_name}
+        timecode={music.timecode}
+      />
+    );
+  }, [
+    currentGame.musics,
+    displayGame,
+    isCorrect,
+    isEndGame,
+    musicNumber,
+    score,
+  ]);
+
+  const renderTimer = useCallback(() => {
+    if (!displayTimer) {
+      return;
     }
 
     return (
       <div>
-        <Heading>Nouvelle partie</Heading>
-        <GameSettingsContainer
-          onSettingsSaved={onSettingsSaved}
-          redirect="game"
+        <Timer
+          limit={timer}
+          onFinished={(count) => onTimerFinished(count)}
+          key={timer}
+          className="NewGame__timer"
         />
       </div>
     );
-  }
+  }, [displayTimer, onTimerFinished, timer]);
 
-  function game() {
+  const gameStep = useCallback(() => {
     if (!isStarted || !currentGame.musics || currentGame.musics.length === 0) {
       return;
     }
@@ -361,86 +430,78 @@ function NewGame({
         {renderPlayer()}
       </div>
     );
-  }
+  }, [
+    answer,
+    currentGame.musics,
+    difficulty,
+    displayGame,
+    inputDisabled,
+    isCorrect,
+    isStarted,
+    musicNumber,
+    onSendAnswer,
+    renderPlayer,
+    renderProposals,
+    renderStart,
+    renderTimer,
+    updateAnswer,
+  ]);
 
-  function renderStart() {
-    if (displayGame && !isEndGame) {
-      return;
-    }
-
-    return (
-      <Button
-        onClick={isEndGame ? handleClickShowResults : handleClickStartMusic}
-        variant="contained"
-        size="large"
-        startIcon={isEndGame ? <SportsScoreIcon /> : <PlayArrowIcon />}
-        sx={{ marginBottom: '16px' }}
+  return (
+    <Grid
+      container
+      spacing={12}
+      component="main"
+      className="LoginPage"
+    >
+      <CssBaseline />
+      <Grid
+        item
+        xs={12}
+        sm={isStarted ? 6 : 12}
+        md={8}
       >
-        {isEndGame ? 'Afficher les résultats' : 'Lancer la musique'}
-      </Button>
-    );
-  }
+        {renderButton()}
+        {gameStep()}
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={4}
+      >
+        {isStarted && currentGame._id && (
+          <ScoresContainer
+            currentGame={currentGame}
+            currentGameScores={currentGameScores}
+          />
+        )}
+      </Grid>
+    </Grid>
+  );
 
-  function renderProposals() {
-    if (!displayGame || isEndGame) {
+  function renderButton() {
+    if (isStarted) {
       return;
     }
 
-    return (
-      <GameProposals
-        proposals={proposals}
-        onClick={handleClickAnswer}
-      />
-    );
-  }
-
-  function renderPlayer() {
-    if (!displayGame || isEndGame) {
-      if (musicNumber > 0) {
-        const music = currentGame.musics[musicNumber - 1];
-        return (
-          <React.Fragment>
-            <Alert
-              variant="outlined"
-              icon={false}
-              severity={isCorrect ? 'success' : 'error'}
-              sx={{ marginBottom: '16px' }}
-            >
-              <AlertTitle>
-                Réponse {isCorrect ? 'correct' : 'fausse'} !
-              </AlertTitle>
-              + {Math.round(score)} points !
-            </Alert>
-
-            <Result music={music} />
-          </React.Fragment>
-        );
-      }
-      return;
-    }
-
-    const music = currentGame.musics[musicNumber];
-
-    return (
-      <GamePlayer
-        audioName={music.audio_name}
-        timecode={music.timecode}
-      />
-    );
-  }
-
-  function renderTimer() {
-    if (!displayTimer) {
-      return;
+    if (gameWithCode) {
+      return (
+        <GameSettingsResumeContainer
+          game={currentGame}
+          displayStart
+          code={code}
+          onClickStart={handleClickStart}
+        />
+      );
     }
 
     return (
       <div>
-        <Timer
-          limit={timer}
-          onFinished={(count) => onTimerFinished(count)}
-          key={timer}
-          className="NewGame__timer"
+        <Heading>Nouvelle partie</Heading>
+        <GameSettingsContainer
+          onSettingsSaved={onSettingsSaved}
+          redirect="game"
         />
       </div>
     );
