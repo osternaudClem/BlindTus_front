@@ -1,6 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   TextField,
   Stack,
@@ -13,7 +11,6 @@ import {
 } from '@mui/material';
 import { isEmail } from 'validator';
 
-import { usersActions } from '../../actions';
 import { useTextfield, useToggle } from '../../hooks/formHooks';
 import { UserContext } from '../../contexts/userContext';
 import { Heading, PaperBox } from '../UI';

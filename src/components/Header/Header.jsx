@@ -4,7 +4,6 @@ import {
   NavLink as RouterLink,
   useLocation,
 } from 'react-router-dom';
-import { setCookie } from 'react-use-cookie';
 import { useLocalStorage } from 'usehooks-ts';
 import ReactMarkdown from 'react-markdown';
 

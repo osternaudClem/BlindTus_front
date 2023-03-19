@@ -30,7 +30,7 @@ function App() {
     // socket.on('UPDATE_SCORES', async () => {
     //   await getUserInfo();
     // });
-  }, []);
+  }, [acceptedCookies, ga, gat, gid]);
 
   const initConsent = ({ acceptedCategories }) => {
     setDisplayCookieConsent(false);

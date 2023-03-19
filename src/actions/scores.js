@@ -7,8 +7,13 @@ import * as types from '../datas/actionTypes';
  */
 export function addScore(datas) {
   return async function (dispatch) {
-    await dispatch({ type: types.ADD_SCORE_SUCCESS, score: datas });
-    return datas;
+    try {
+      console.log('>>> addScore', datas);
+      await dispatch({ type: types.ADD_SCORE_SUCCESS, score: datas });
+      return datas;
+    } catch (error) {
+      console.log('>>> error', error);
+    }
   };
 }
 

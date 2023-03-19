@@ -1,13 +1,5 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   CssBaseline,
   Grid,
@@ -19,12 +11,7 @@ import {
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import {
-  musicsActions,
-  gamesActions,
-  historyActions,
-  scoresActions,
-} from '../../actions';
+
 import { shuffle } from '../../lib/array';
 import { checkSimilarity } from '../../lib/check';
 import { updateTitle } from '../../lib/document';
@@ -41,13 +28,13 @@ import {
 } from '../../components/Forms';
 import { Heading } from '../../components/UI';
 import { useTextfield } from '../../hooks/formHooks';
-import { UserContext } from '../../contexts/userContext';
 import '../Page.scss';
 
 // const TIMER_PENDING = 5;
 const TIMER_GAME = 10;
 
 function NewGame({
+  game,
   currentGame,
   currentGameScores,
   getMusics,
@@ -68,7 +55,7 @@ function NewGame({
   const [timeLimit, setTimeLimit] = useState(TIMER_GAME);
   const [difficulty, setDifficulty] = useState('easy');
   const [totalMusics, setTotalMusics] = useState(5);
-  const [categories, setCategories] = useState([]);
+  const [, setCategories] = useState([]);
   const [gameWithCode, setGameWithCode] = useState(false);
   const [proposals, setProposals] = useState([]);
   const [score, setScore] = useState(0);
@@ -84,10 +71,10 @@ function NewGame({
 
   useEffect(() => {
     if (code) {
-      if (currentGame._id && currentGame) {
-        setTotalMusics(currentGame.musics.length);
-        setTimeLimit(currentGame.round_time);
-        setDifficulty(currentGame.difficulty);
+      if (game._id) {
+        setTotalMusics(game.musics.length);
+        setTimeLimit(game.round_time);
+        setDifficulty(game.difficulty);
         return setGameWithCode(true);
       }
       navigate('/game');
@@ -101,23 +88,23 @@ function NewGame({
   }, [inputDisabled]);
 
   useEffect(() => {
-    if (currentGame.proposals && musicNumber < totalMusics) {
-      const music = currentGame.musics[musicNumber];
+    if (game.proposals && musicNumber < totalMusics) {
+      const music = game.musics[musicNumber];
       setProposals(
         shuffle([
           music[music.movie ? 'movie' : 'tvShow'].title_fr,
-          ...currentGame.proposals[musicNumber].slice(0, 7),
+          ...game.proposals[musicNumber].slice(0, 7),
         ])
       );
     }
-  }, [musicNumber, currentGame, totalMusics]);
+  }, [musicNumber, totalMusics, game]);
 
   useEffect(() => {
     if (musicNumber > totalMusics - 1) {
       onSaveHistory();
       setIsEndGame(true);
     }
-  }, [totalMusics, musicNumber, currentGame]);
+  }, [totalMusics, musicNumber, onSaveHistory]);
 
   const saveScore = useCallback(
     (music, isAnswerCorrect, score) => {
@@ -381,12 +368,12 @@ function NewGame({
     if (!isStarted || !currentGame.musics || currentGame.musics.length === 0) {
       return;
     }
-    const music = currentGame.musics[musicNumber];
+    const music = game.musics[musicNumber];
 
     return (
       <div>
         <div>
-          {musicNumber} / {currentGame.musics.length}
+          {musicNumber} / {game.musics.length}
         </div>
 
         {renderTimer()}

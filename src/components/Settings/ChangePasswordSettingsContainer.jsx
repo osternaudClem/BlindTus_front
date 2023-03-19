@@ -1,5 +1,4 @@
 import { useContext, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
 import { usersActions } from '../../actions';
 import { UserContext } from '../../contexts/userContext';

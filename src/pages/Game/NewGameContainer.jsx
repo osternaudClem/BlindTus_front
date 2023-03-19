@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   gamesActions,
   historyActions,
@@ -14,47 +14,45 @@ import NewGame from './NewGame';
 const NewGameContainer = (ownProps) => {
   const [currentGameScores, setCurrentGameScores] = useState([]);
 
-  const selectedProps = useSelector((state) => {
-    return {
-      user: state.users?.me,
-      musics: state.musics?.selection,
-      currentGame: state.games?.currentGame,
-    };
-  });
+  const selectedProps = useSelector((state) => ({
+    user: state.users?.me,
+    musics: state.musics?.selection,
+    game: state.games?.currentGame,
+  }));
 
   const actions = useMemo(
     () => ({
       getMusics: (limit, categories) =>
         musicsActions.getMusics(limit, categories),
       getGame: (code) => gamesActions.getGame(code),
-      onSaveGame: ({ time, difficulty, categories, musics }) => {
-        return gamesActions.saveGame({
+      onSaveGame: ({ time, difficulty, categories, musics }) =>
+        gamesActions.saveGame({
           round_time: time,
           difficulty,
           musics,
           categories,
           created_by: selectedProps.user._id,
-        });
-      },
+        }),
 
       onSaveHistory: () =>
         historyActions.saveHistory({
           scores: currentGameScores,
           user: selectedProps.user._id,
-          game: selectedProps.currentGame,
+          game: selectedProps.game,
           totalScore: currentGameScores.reduce((accumulator, game) => {
             return accumulator + game.score;
           }, 0),
         }),
     }),
-    [selectedProps.user._id, selectedProps.currentGame, currentGameScores]
+    [selectedProps.user._id, selectedProps.game, currentGameScores]
   );
 
   const actionsProps = useBindActionsCreator(actions);
 
   const otherProps = useMemo(
     () => ({
-      onSaveScore: (music, isAnswerCorrect, score, answer) => {
+      currentGameScores,
+      onSaveScore: async (music, isAnswerCorrect, score, answer) => {
         const newScore = {
           movie: (music.movie && music.movie.title_fr) || null,
           tvShow: (music.tvShow && music.tvShow.title_fr) || null,
@@ -69,7 +67,6 @@ const NewGameContainer = (ownProps) => {
         setCurrentGameScores((g) => [...g, newScore]);
         scoresActions.addScore(newScore);
       },
-      currentGameScores,
     }),
     [currentGameScores]
   );
